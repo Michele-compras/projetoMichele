@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: sidebar}"></nav>
+
+<div class="main-content">
+<div class="container-fluid p-4">
+    <h2 class="mb-4">Dashboard</h2>
+
+    <!-- Cards totais gerais -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card border-0 shadow-sm text-white bg-dark">
+                <div class="card-body text-center py-3">
+                    <h6 class="card-title mb-1">Total de Fichas</h6>
+                    <h2 class="fw-bold" th:text="${total}">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card border-0 shadow-sm text-white bg-primary">
+                <div class="card-body text-center py-3">
+                    <h6 class="card-title mb-1">Tecidos</h6>
+                    <h2 class="fw-bold" th:text="${qtdTecido}">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card border-0 shadow-sm text-white bg-info">
+                <div class="card-body text-center py-3">
+                    <h6 class="card-title mb-1">Acessórios</h6>
+                    <h2 class="fw-bold" th:text="${qtdAcessorio}">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card border-0 shadow-sm text-white bg-warning">
+                <div class="card-body text-center py-3">
+                    <h6 class="card-title mb-1">Em Andamento</h6>
+                    <h2 class="fw-bold" th:text="${qtdEmAndamento}">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card border-0 shadow-sm text-white bg-success">
+                <div class="card-body text-center py-3">
+                    <h6 class="card-title mb-1">Recebidos</h6>
+                    <h2 class="fw-bold" th:text="${qtdRecebido}">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card border-0 shadow-sm text-white bg-danger">
+                <div class="card-body text-center py-3">
+                    <h6 class="card-title mb-1">Cancelados</h6>
+                    <h2 class="fw-bold" th:text="${qtdCancelado}">0</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela comparativa por Coleção -->
+    <div class="card border-0 shadow-sm mb-4" th:if="${!#lists.isEmpty(colecaoLabels)}">
+        <div class="card-header bg-dark text-white">
+            <strong>Resumo Comparativo por Coleção</strong>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover mb-0" style="font-size:0.82rem;">
+                    <thead>
+                        <tr class="table-secondary text-center">
+                            <th rowspan="2" class="align-middle text-start ps-3" style="min-width:130px">Coleção</th>
+                            <!-- Fichas -->
+                            <th colspan="3" class="border-start border-2">Fichas</th>
+                            <!-- Status Pedido -->
+                            <th colspan="4" class="border-start border-2">Status do Pedido</th>
+                            <!-- Amostra Cor -->
+                            <th colspan="3" class="border-start border-2">Amostra Cor/Qualidade</th>
+                            <!-- Amostra Embarque -->
+                            <th colspan="3" class="border-start border-2">Amostra Embarque</th>
+                        </tr>
+                        <tr class="table-light text-center" style="font-size:0.75rem;">
+                            <!-- Fichas -->
+                            <th class="border-start border-2 fw-bold">Total</th>
+                            <th class="text-primary">Tecidos</th>
+                            <th class="text-info">Acess.</th>
+                            <!-- Status Pedido -->
+                            <th class="border-start border-2 text-warning">Em Andamento</th>
+                            <th class="text-primary">Embarcado</th>
+                            <th class="text-success">Recebido</th>
+                            <th class="text-danger">Cancelado</th>
+                            <!-- Amostra Cor -->
+                            <th class="border-start border-2 text-warning">Aguardando</th>
+                            <th class="text-success">Aprovada</th>
+                            <th class="text-danger">Reprovada</th>
+                            <!-- Amostra Embarque -->
+                            <th class="border-start border-2 text-warning">Aguardando</th>
+                            <th class="text-success">Aprovada</th>
+                            <th class="text-danger">Reprovada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="i : ${#numbers.sequence(0, colecaoLabels.size() - 1)}" class="text-center">
+                            <td class="text-start ps-3 fw-bold" th:text="${colecaoLabels[i]}"></td>
+                            <!-- Fichas -->
+                            <td class="border-start border-2 fw-bold" th:text="${colecaoValues[i]}"></td>
+                            <td class="text-primary fw-bold" th:text="${colecaoTecidoValues[i]}"></td>
+                            <td class="text-info fw-bold" th:text="${colecaoAcessorioValues[i]}"></td>
+                            <!-- Status Pedido -->
+                            <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoPedidoEmAndamento[i]}"></td>
+                            <td class="text-primary fw-bold" th:text="${colecaoPedidoEmbarcado[i]}"></td>
+                            <td class="text-success fw-bold" th:text="${colecaoPedidoRecebido[i]}"></td>
+                            <td class="text-danger fw-bold" th:text="${colecaoPedidoCancelado[i]}"></td>
+                            <!-- Amostra Cor -->
+                            <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoCorPendente[i]}"></td>
+                            <td class="text-success fw-bold" th:text="${colecaoCorAprovado[i]}"></td>
+                            <td class="text-danger fw-bold" th:text="${colecaoCorReprovado[i]}"></td>
+                            <!-- Amostra Embarque -->
+                            <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoProdPendente[i]}"></td>
+                            <td class="text-success fw-bold" th:text="${colecaoProdAprovado[i]}"></td>
+                            <td class="text-danger fw-bold" th:text="${colecaoProdReprovado[i]}"></td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="table-secondary fw-bold text-center">
+                        <tr>
+                            <td class="text-start ps-3">TOTAL</td>
+                            <td class="border-start border-2" th:text="${total}"></td>
+                            <td th:text="${qtdTecido}"></td>
+                            <td th:text="${qtdAcessorio}"></td>
+                            <td class="border-start border-2 text-warning" th:text="${qtdEmAndamento}"></td>
+                            <td class="text-primary" th:text="${qtdEmbarcado}"></td>
+                            <td class="text-success" th:text="${qtdRecebido}"></td>
+                            <td class="text-danger" th:text="${qtdCancelado}"></td>
+                            <td class="border-start border-2 text-warning" th:text="${corPendente}"></td>
+                            <td class="text-success" th:text="${corAprovado}"></td>
+                            <td class="text-danger" th:text="${corReprovado}"></td>
+                            <td class="border-start border-2 text-warning" th:text="${prodPendente}"></td>
+                            <td class="text-success" th:text="${prodAprovado}"></td>
+                            <td class="text-danger" th:text="${prodReprovado}"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fichas por Marca -->
+    <div class="row mb-4" th:if="${!#lists.isEmpty(marcaLabels)}">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom"><strong>Fichas por Marca</strong></div>
+                <div class="card-body p-0">
+                    <table class="table table-sm table-bordered mb-0" style="font-size:0.82rem;">
+                        <tbody>
+                            <tr th:each="i : ${#numbers.sequence(0, marcaLabels.size() - 1)}">
+                                <td class="ps-3" th:text="${marcaLabels[i]}"></td>
+                                <td class="text-center fw-bold" style="width:80px" th:text="${marcaValues[i]}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

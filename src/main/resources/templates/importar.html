@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Importar Planilha')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: sidebar}"></nav>
+
+<div class="main-content">
+<div class="container-fluid p-4">
+    <h2>Importar Planilha Excel</h2>
+
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show">
+        <span th:text="${erro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/importar}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="arquivo" class="form-label">Arquivo Excel (.xlsx)</label>
+                    <input type="file" class="form-control" id="arquivo" name="arquivo"
+                           accept=".xlsx" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Importar</button>
+                <a th:href="@{/fichas}" class="btn btn-secondary">Voltar para Fichas</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><strong>Colunas aceitas na planilha</strong></div>
+        <div class="card-body">
+            <p class="text-muted">A primeira linha deve conter os cabeçalhos. As colunas são mapeadas pelo nome (ordem livre).</p>
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Coluna</th>
+                        <th>Obrigatório</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>ESTÁGIO</code></td><td>Não</td><td>Estágio do item</td></tr>
+                    <tr><td><code>TIPO DE SOLICITAÇÃO</code></td><td>Não</td><td>Tipo de solicitação</td></tr>
+                    <tr><td><code>TIPO</code></td><td>Não</td><td>Tecido ou Acessório (padrão: Tecido)</td></tr>
+                    <tr><td><code>CÓDIGO</code></td><td>Não</td><td>Código do item</td></tr>
+                    <tr><td><code>FORNECEDOR</code></td><td>Não</td><td>Nome do fornecedor</td></tr>
+                    <tr><td><code>REFERÊNCIA</code></td><td>Não</td><td>Referência do item</td></tr>
+                    <tr><td><code>CATEGORIA</code></td><td>Não</td><td>Categoria do produto</td></tr>
+                    <tr><td><code>MARCA QUE COMPROU</code></td><td>Não</td><td>Marca que efetuou a compra</td></tr>
+                    <tr><td><code>MARCA QUE UTILIZA</code></td><td>Não</td><td>Marca que utiliza o item</td></tr>
+                    <tr><td><code>DESCRIÇÃO</code></td><td>Não</td><td>Descrição do item</td></tr>
+                    <tr><td><code>COR</code></td><td>Não</td><td>Cor do item</td></tr>
+                    <tr><td><code>COMPOSIÇÃO</code></td><td>Não</td><td>Composição do material</td></tr>
+                    <tr><td><code>GRAMATURA</code></td><td>Não</td><td>Gramatura (tecidos)</td></tr>
+                    <tr><td><code>LARGURA</code></td><td>Não</td><td>Largura do material</td></tr>
+                    <tr><td><code>Nº PEDIDO</code></td><td>Não</td><td>Número do pedido</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Ficha Técnica')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: sidebar}"></nav>
+
+<div class="main-content">
+<div class="container-fluid p-4">
+    <h2 th:text="${ficha.id != null ? 'Editar Ficha Técnica' : 'Nova Ficha Técnica'}"></h2>
+
+    <form th:action="@{/fichas/salvar}" th:object="${ficha}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{fotoPath}">
+
+        <!-- Informações Gerais -->
+        <div class="card mb-3">
+            <div class="card-header"><strong>Informações Gerais</strong></div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <label for="estagio" class="form-label">Estágio</label>
+                        <input type="text" id="estagio" class="form-control" th:field="*{estagio}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="tipoSolicitacao" class="form-label">Tipo Solicitação</label>
+                        <input type="text" id="tipoSolicitacao" class="form-control" th:field="*{tipoSolicitacao}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="tipo" class="form-label">Tipo *</label>
+                        <select id="tipo" class="form-select" th:field="*{tipo}" required>
+                            <option value="">Selecione...</option>
+                            <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="codigo" class="form-label">Código</label>
+                        <input type="text" id="codigo" class="form-control" th:field="*{codigo}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="descricao" class="form-label">Descrição *</label>
+                        <input type="text" id="descricao" class="form-control" th:field="*{descricao}" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="fornecedor" class="form-label">Fornecedor</label>
+                        <input type="text" id="fornecedor" class="form-control" th:field="*{fornecedor}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="referencia" class="form-label">Referência</label>
+                        <input type="text" id="referencia" class="form-control" th:field="*{referencia}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="refFornecedor" class="form-label">Ref. Fornecedor</label>
+                        <input type="text" id="refFornecedor" class="form-control" th:field="*{refFornecedor}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="categoriaProduto" class="form-label">Categoria</label>
+                        <input type="text" id="categoriaProduto" class="form-control" th:field="*{categoriaProduto}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cor" class="form-label">Cor *</label>
+                        <input type="text" id="cor" class="form-control" th:field="*{cor}" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="marca" class="form-label">Marca</label>
+                        <input type="text" id="marca" class="form-control" th:field="*{marca}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="marcaQueComprou" class="form-label">Marca que Comprou</label>
+                        <input type="text" id="marcaQueComprou" class="form-control" th:field="*{marcaQueComprou}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="marcaQueUtiliza" class="form-label">Marca que Utiliza</label>
+                        <input type="text" id="marcaQueUtiliza" class="form-control" th:field="*{marcaQueUtiliza}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="composicao" class="form-label">Composição</label>
+                        <input type="text" id="composicao" class="form-control" th:field="*{composicao}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3 campo-gramatura">
+                        <label for="gramatura" class="form-label">Gramatura</label>
+                        <input type="text" id="gramatura" class="form-control" th:field="*{gramatura}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="largura" class="form-label">Largura</label>
+                        <input type="text" id="largura" class="form-control" th:field="*{largura}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="colecao" class="form-label">Coleção</label>
+                        <input type="text" id="colecao" class="form-control" th:field="*{colecao}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="statusColecao" class="form-label">Status Coleção</label>
+                        <input type="text" id="statusColecao" class="form-control" th:field="*{statusColecao}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="foto" class="form-label">Foto do Item</label>
+                        <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
+                        <small th:if="${ficha.fotoPath != null}" class="text-muted">
+                            Foto atual: <span th:text="${ficha.fotoPath}"></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pedido e Preços -->
+        <div class="card mb-3">
+            <div class="card-header"><strong>Dados do Pedido</strong></div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="numeroPedido" class="form-label">Nº Pedido</label>
+                        <input type="text" id="numeroPedido" class="form-control" th:field="*{numeroPedido}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="dataColocacaoPedido" class="form-label">Data Colocação</label>
+                        <input type="date" id="dataColocacaoPedido" class="form-control" th:field="*{dataColocacaoPedido}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="statusPedido" class="form-label">Status do Pedido</label>
+                        <select id="statusPedido" class="form-select" th:field="*{statusPedido}">
+                            <option th:each="s : ${statusPedidoList}" th:value="${s}" th:text="${s.descricao}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="minimoCompra" class="form-label">Mínimo de Compra</label>
+                        <input type="number" step="0.01" id="minimoCompra" class="form-control" th:field="*{minimoCompra}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="minimo" class="form-label">Mínimo</label>
+                        <input type="number" step="0.01" id="minimo" class="form-control" th:field="*{minimo}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="quantidadeComprada" class="form-label">Quantidade Comprada</label>
+                        <input type="number" step="0.01" id="quantidadeComprada" class="form-control" th:field="*{quantidadeComprada}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="precoUsd" class="form-label">Preço USD</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" id="precoUsd" class="form-control" th:field="*{precoUsd}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="precoReais" class="form-label">Preço R$</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R$</span>
+                            <input type="number" step="0.01" id="precoReais" class="form-control" th:field="*{precoReais}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Embarque -->
+        <div class="card mb-3">
+            <div class="card-header"><strong>Dados de Embarque</strong></div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="nomeNavio" class="form-label">Nome do Navio</label>
+                        <input type="text" id="nomeNavio" class="form-control" th:field="*{nomeNavio}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dataSaidaOrigem" class="form-label">Data Saída Origem</label>
+                        <input type="date" id="dataSaidaOrigem" class="form-control" th:field="*{dataSaidaOrigem}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dataChegadaDestino" class="form-label">Data Chegada Destino</label>
+                        <input type="date" id="dataChegadaDestino" class="form-control" th:field="*{dataChegadaDestino}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Amostra de Cor -->
+        <div class="card mb-3">
+            <div class="card-header"><strong>Amostra de Cor</strong></div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="statusAmostraCor" class="form-label">Status</label>
+                        <select id="statusAmostraCor" class="form-select" th:field="*{statusAmostraCor}">
+                            <option th:each="s : ${statusList}" th:value="${s}" th:text="${s.descricao}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dataAmostraCor" class="form-label">Data Recebimento</label>
+                        <input type="date" id="dataAmostraCor" class="form-control" th:field="*{dataAmostraCor}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dataAprovacaoAmostraCor" class="form-label">Data Aprovação</label>
+                        <input type="date" id="dataAprovacaoAmostraCor" class="form-control" th:field="*{dataAprovacaoAmostraCor}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="observacaoAmostraCor" class="form-label">Observação</label>
+                        <textarea id="observacaoAmostraCor" class="form-control" rows="2" th:field="*{observacaoAmostraCor}"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Amostra de Produção -->
+        <div class="card mb-3">
+            <div class="card-header"><strong>Amostra de Produção</strong></div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="statusAmostraProducao" class="form-label">Status</label>
+                        <select id="statusAmostraProducao" class="form-select" th:field="*{statusAmostraProducao}">
+                            <option th:each="s : ${statusList}" th:value="${s}" th:text="${s.descricao}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dataAmostraProducao" class="form-label">Data Recebimento</label>
+                        <input type="date" id="dataAmostraProducao" class="form-control" th:field="*{dataAmostraProducao}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dataAprovacaoAmostraProducao" class="form-label">Data Aprovação</label>
+                        <input type="date" id="dataAprovacaoAmostraProducao" class="form-control" th:field="*{dataAprovacaoAmostraProducao}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="observacaoAmostraProducao" class="form-label">Observação</label>
+                        <textarea id="observacaoAmostraProducao" class="form-control" rows="2" th:field="*{observacaoAmostraProducao}"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a th:href="@{/fichas}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tipoSelect = document.getElementById('tipo');
+    const gramaturaDiv = document.querySelector('.campo-gramatura');
+
+    function toggleGramatura() {
+        if (tipoSelect.value === 'ACESSORIO') {
+            gramaturaDiv.style.display = 'none';
+            document.getElementById('gramatura').value = '';
+        } else {
+            gramaturaDiv.style.display = '';
+        }
+    }
+
+    tipoSelect.addEventListener('change', toggleGramatura);
+    toggleGramatura();
+});
+</script>
+</body>
+</html>

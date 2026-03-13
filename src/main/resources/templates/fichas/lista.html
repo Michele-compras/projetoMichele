@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Fichas Técnicas')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: sidebar}"></nav>
+<style>
+    .tabela-aprovacao th {
+        white-space: normal !important;
+        font-size: 0.75rem;
+        vertical-align: middle;
+        text-align: center;
+        padding: 4px 6px;
+    }
+    .tabela-aprovacao td {
+        font-size: 0.78rem;
+        vertical-align: middle;
+        padding: 3px 6px;
+    }
+    .tabela-aprovacao th.col-descricao,
+    .tabela-aprovacao td.col-descricao { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
+
+<div class="main-content">
+<div class="container-fluid p-3">
+    <h2>Fichas Técnicas</h2>
+
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-3 no-print">
+        <div class="card-body">
+            <form th:action="@{/fichas}" method="get">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Coleção</label>
+                        <input type="text" class="form-control form-control-sm" name="colecao"
+                               th:value="${colecaoFiltro}" placeholder="Buscar por coleção...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-select form-select-sm" name="tipo">
+                            <option value="">Todos</option>
+                            <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}"
+                                    th:selected="${tipoSelecionado != null and tipoSelecionado == t}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Status Pedido</label>
+                        <select class="form-select form-select-sm" name="statusPedido">
+                            <option value="">Todos</option>
+                            <option th:each="s : ${statusPedidoList}" th:value="${s}" th:text="${s.descricao}"
+                                    th:selected="${statusPedidoSelecionado != null and statusPedidoSelecionado == s}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Data Início</label>
+                        <input type="date" class="form-control form-control-sm" name="dataInicio"
+                               th:value="${dataInicio}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Data Fim</label>
+                        <input type="date" class="form-control form-control-sm" name="dataFim"
+                               th:value="${dataFim}">
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-sm btn-primary w-100">Filtrar</button>
+                    </div>
+                    <div class="col-md-auto">
+                        <a th:href="@{/fichas}" class="btn btn-sm btn-outline-secondary">Limpar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quantidade por Coleção + Tipo -->
+    <div class="card mb-3 no-print" th:if="${!#maps.isEmpty(qtdPorColecao)}">
+        <div class="card-header"><strong>Quantidade total por Coleção</strong></div>
+        <div class="card-body p-0">
+            <table class="table table-sm table-bordered mb-0">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Coleção</th>
+                        <th class="text-center" style="width:80px">Total</th>
+                        <th class="text-center text-primary" style="width:120px">Tecido</th>
+                        <th class="text-center text-info" style="width:120px">Acessório</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${qtdPorColecao}">
+                        <td th:text="${entry.key}"></td>
+                        <td class="text-center fw-bold" th:text="${entry.value}"></td>
+                        <td class="text-center text-primary fw-bold"
+                            th:text="${qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['TECIDO'] != null ? qtdTipoPorColecao[entry.key]['TECIDO'] : 0}"></td>
+                        <td class="text-center text-info fw-bold"
+                            th:text="${qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['ACESSORIO'] != null ? qtdTipoPorColecao[entry.key]['ACESSORIO'] : 0}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mb-3 no-print">
+        <a th:href="@{/fichas/nova}" class="btn btn-success">+ Nova Ficha Técnica</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-sm tabela-aprovacao">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width:48px">Foto</th>
+                    <th>Coleção</th>
+                    <th>Tipo</th>
+                    <th>Categoria</th>
+                    <th class="col-descricao">Descrição</th>
+                    <th>Fornecedor</th>
+                    <th>Marca</th>
+                    <th>Cor</th>
+                    <th>Ref. Forn.</th>
+                    <th>Composição</th>
+                    <th>Gramatura</th>
+                    <th>Largura</th>
+                    <th>Mín. Compra</th>
+                    <th class="no-print">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ficha : ${fichas}">
+                    <td>
+                        <img th:if="${ficha.fotoPath != null}" th:src="@{'/uploads/' + ${ficha.fotoPath}}"
+                             alt="Foto" style="width:36px; height:36px; object-fit:cover; border-radius:4px;">
+                        <span th:if="${ficha.fotoPath == null}" class="text-muted">-</span>
+                    </td>
+                    <td th:text="${ficha.colecao}"></td>
+                    <td th:text="${ficha.tipo.descricao}"></td>
+                    <td th:text="${ficha.categoriaProduto}"></td>
+                    <td class="col-descricao" th:text="${ficha.descricao}" th:title="${ficha.descricao}"></td>
+                    <td th:text="${ficha.fornecedor}"></td>
+                    <td th:text="${ficha.marca}"></td>
+                    <td th:text="${ficha.cor}"></td>
+                    <td th:text="${ficha.refFornecedor}"></td>
+                    <td th:text="${ficha.composicao}"></td>
+                    <td th:text="${ficha.gramatura}"></td>
+                    <td th:text="${ficha.largura}"></td>
+                    <td th:text="${ficha.minimoCompra != null ? ficha.minimoCompra : ''}"></td>
+                    <td class="no-print">
+                        <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id})}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="@{/fichas/editar/{id}(id=${ficha.id})}" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="@{/fichas/excluir/{id}(id=${ficha.id})}" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Deseja realmente excluir esta ficha?')">Excluir</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(fichas)}">
+                    <td colspan="14" class="text-center text-muted">Nenhuma ficha técnica encontrada.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
