@@ -4,6 +4,7 @@ import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
 import com.example.projeto.model.TipoItem;
 import com.example.projeto.repository.FichaTecnicaRepository;
+import com.example.projeto.repository.QuadroPlanejamentoRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +18,11 @@ import java.util.Map;
 public class DashboardController {
 
     private final FichaTecnicaRepository repository;
+    private final QuadroPlanejamentoRepository quadroRepository;
 
-    public DashboardController(FichaTecnicaRepository repository) {
+    public DashboardController(FichaTecnicaRepository repository, QuadroPlanejamentoRepository quadroRepository) {
         this.repository = repository;
+        this.quadroRepository = quadroRepository;
     }
 
     @GetMapping("/dashboard")
@@ -140,48 +143,27 @@ public class DashboardController {
         model.addAttribute("colecaoProdReprovado", new ArrayList<>(prodReprovadoMap.values()));
         model.addAttribute("colecaoProdPendente",  new ArrayList<>(prodPendenteMap.values()));
 
-        // ── Por coleção: quantidades orçadas e compradas por tipo ─────
-        Map<String, Double> colOrcTecido = initDoubleMap(colecaoLabels);
-        Map<String, Double> colCmpTecido = initDoubleMap(colecaoLabels);
-        Map<String, Double> colOrcAcess  = initDoubleMap(colecaoLabels);
-        Map<String, Double> colCmpAcess  = initDoubleMap(colecaoLabels);
-        for (Object[] row : repository.sumQuantidadeByColecaoAndTipo()) {
-            String col  = (String) row[0];
-            TipoItem tp = (TipoItem) row[1];
-            double orc  = row[2] != null ? ((Number) row[2]).doubleValue() : 0.0;
-            double cmp  = row[3] != null ? ((Number) row[3]).doubleValue() : 0.0;
-            if (tp == TipoItem.TECIDO) { colOrcTecido.put(col, orc); colCmpTecido.put(col, cmp); }
-            else                       { colOrcAcess.put(col, orc);  colCmpAcess.put(col, cmp); }
+        // ── Por coleção: cotado vs aprovado do quadro de planejamento ─────
+        List<Object[]> qtdColecaoTipo = quadroRepository.sumCotadoAprovadoByColecao();
+        long qtdTotalOrc = 0, qtdTotalCmp = 0;
+        for (Object[] row : qtdColecaoTipo) {
+            qtdTotalOrc += row[1] != null ? ((Number) row[1]).longValue() : 0;
+            qtdTotalCmp += row[2] != null ? ((Number) row[2]).longValue() : 0;
         }
-        model.addAttribute("colOrcTecido", new ArrayList<>(colOrcTecido.values()));
-        model.addAttribute("colCmpTecido", new ArrayList<>(colCmpTecido.values()));
-        model.addAttribute("colOrcAcess",  new ArrayList<>(colOrcAcess.values()));
-        model.addAttribute("colCmpAcess",  new ArrayList<>(colCmpAcess.values()));
+        model.addAttribute("qtdColecaoTipo", qtdColecaoTipo);
+        model.addAttribute("qtdTotalOrc", qtdTotalOrc);
+        model.addAttribute("qtdTotalCmp", qtdTotalCmp);
 
-        // ── Por marca: quantidades orçadas e compradas por tipo ───────
-        List<String> marcaQtdLabels = new ArrayList<>();
-        Map<String, Double> mOrcTecido = new LinkedHashMap<>();
-        Map<String, Double> mCmpTecido = new LinkedHashMap<>();
-        Map<String, Double> mOrcAcess  = new LinkedHashMap<>();
-        Map<String, Double> mCmpAcess  = new LinkedHashMap<>();
-        for (Object[] row : repository.sumQuantidadeByMarcaAndTipo()) {
-            String marc = (String) row[0];
-            TipoItem tp = (TipoItem) row[1];
-            double orc  = row[2] != null ? ((Number) row[2]).doubleValue() : 0.0;
-            double cmp  = row[3] != null ? ((Number) row[3]).doubleValue() : 0.0;
-            if (!mOrcTecido.containsKey(marc)) {
-                marcaQtdLabels.add(marc);
-                mOrcTecido.put(marc, 0.0); mCmpTecido.put(marc, 0.0);
-                mOrcAcess.put(marc, 0.0);  mCmpAcess.put(marc, 0.0);
-            }
-            if (tp == TipoItem.TECIDO) { mOrcTecido.put(marc, orc); mCmpTecido.put(marc, cmp); }
-            else                       { mOrcAcess.put(marc, orc);  mCmpAcess.put(marc, cmp); }
+        // ── Por marca: itens orçados vs comprados (cada ficha = 1 item) ───────
+        List<Object[]> qtdMarca = repository.countOrcadoCompradoByMarca();
+        long qtdMarcaTotalOrc = 0, qtdMarcaTotalCmp = 0;
+        for (Object[] row : qtdMarca) {
+            qtdMarcaTotalOrc += row[2] != null ? ((Number) row[2]).longValue() : 0;
+            qtdMarcaTotalCmp += row[3] != null ? ((Number) row[3]).longValue() : 0;
         }
-        model.addAttribute("marcaQtdLabels", marcaQtdLabels);
-        model.addAttribute("mOrcTecido", new ArrayList<>(mOrcTecido.values()));
-        model.addAttribute("mCmpTecido", new ArrayList<>(mCmpTecido.values()));
-        model.addAttribute("mOrcAcess",  new ArrayList<>(mOrcAcess.values()));
-        model.addAttribute("mCmpAcess",  new ArrayList<>(mCmpAcess.values()));
+        model.addAttribute("qtdMarca", qtdMarca);
+        model.addAttribute("qtdMarcaTotalOrc", qtdMarcaTotalOrc);
+        model.addAttribute("qtdMarcaTotalCmp", qtdMarcaTotalCmp);
 
         return "dashboard";
     }
@@ -189,12 +171,6 @@ public class DashboardController {
     private Map<String, Long> initMap(List<String> keys) {
         Map<String, Long> map = new LinkedHashMap<>();
         for (String k : keys) map.put(k, 0L);
-        return map;
-    }
-
-    private Map<String, Double> initDoubleMap(List<String> keys) {
-        Map<String, Double> map = new LinkedHashMap<>();
-        for (String k : keys) map.put(k, 0.0);
         return map;
     }
 }

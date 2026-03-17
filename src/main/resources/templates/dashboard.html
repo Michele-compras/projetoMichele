@@ -146,7 +146,7 @@
     </div>
 
     <!-- Quantidades Orçadas vs Compradas por Coleção e Tipo -->
-    <div class="card border-0 shadow-sm mb-4" th:if="${!#lists.isEmpty(colecaoLabels)}">
+    <div class="card border-0 shadow-sm mb-4" th:if="${!#lists.isEmpty(qtdColecaoTipo)}">
         <div class="card-header bg-dark text-white">
             <strong>Quantidades Orçadas vs Compradas por Coleção e Tipo</strong>
         </div>
@@ -155,40 +155,26 @@
                 <table class="table table-sm table-bordered table-hover mb-0" style="font-size:0.82rem;">
                     <thead>
                         <tr class="table-secondary text-center">
-                            <th rowspan="2" class="align-middle text-start ps-3" style="min-width:130px">Coleção</th>
-                            <th colspan="2" class="border-start border-2 text-primary">Tecido</th>
-                            <th colspan="2" class="border-start border-2 text-info">Acessório</th>
-                            <th colspan="2" class="border-start border-2">Total</th>
-                        </tr>
-                        <tr class="table-light text-center" style="font-size:0.75rem;">
-                            <th class="border-start border-2 text-warning">Orçado</th>
+                            <th class="text-start ps-3" style="min-width:130px">Coleção</th>
+                            <th class="text-warning">Orçado</th>
                             <th class="text-success">Comprado</th>
-                            <th class="border-start border-2 text-warning">Orçado</th>
-                            <th class="text-success">Comprado</th>
-                            <th class="border-start border-2 text-warning">Orçado</th>
-                            <th class="text-success">Comprado</th>
+                            <th>% Comprado</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="i : ${#numbers.sequence(0, colecaoLabels.size() - 1)}" class="text-center">
-                            <td class="text-start ps-3 fw-bold" th:text="${colecaoLabels[i]}"></td>
-                            <td class="border-start border-2 text-warning fw-bold" th:text="${colOrcTecido[i].longValue()}"></td>
-                            <td class="text-success fw-bold" th:text="${colCmpTecido[i].longValue()}"></td>
-                            <td class="border-start border-2 text-warning fw-bold" th:text="${colOrcAcess[i].longValue()}"></td>
-                            <td class="text-success fw-bold" th:text="${colCmpAcess[i].longValue()}"></td>
-                            <td class="border-start border-2 text-warning fw-bold" th:text="${(colOrcTecido[i] + colOrcAcess[i]).longValue()}"></td>
-                            <td class="text-success fw-bold" th:text="${(colCmpTecido[i] + colCmpAcess[i]).longValue()}"></td>
+                        <tr th:each="row : ${qtdColecaoTipo}" class="text-center">
+                            <td class="text-start ps-3 fw-bold" th:text="${row[0]}"></td>
+                            <td class="text-warning fw-bold" th:text="${row[1] != null ? row[1] : 0}"></td>
+                            <td class="text-success fw-bold" th:text="${row[2] != null ? row[2] : 0}"></td>
+                            <td class="fw-bold" th:text="${row[1] != null and row[1] > 0 ? #numbers.formatDecimal(row[2] * 100.0 / row[1], 1, 1) + '%' : '-'}"></td>
                         </tr>
                     </tbody>
                     <tfoot class="table-secondary fw-bold text-center">
                         <tr>
                             <td class="text-start ps-3">TOTAL</td>
-                            <td class="border-start border-2 text-warning" th:text="${#aggregates.sum(colOrcTecido.![longValue()])}"></td>
-                            <td class="text-success" th:text="${#aggregates.sum(colCmpTecido.![longValue()])}"></td>
-                            <td class="border-start border-2 text-warning" th:text="${#aggregates.sum(colOrcAcess.![longValue()])}"></td>
-                            <td class="text-success" th:text="${#aggregates.sum(colCmpAcess.![longValue()])}"></td>
-                            <td class="border-start border-2 text-warning" th:text="${#aggregates.sum(colOrcTecido.![longValue()]) + #aggregates.sum(colOrcAcess.![longValue()])}"></td>
-                            <td class="text-success" th:text="${#aggregates.sum(colCmpTecido.![longValue()]) + #aggregates.sum(colCmpAcess.![longValue()])}"></td>
+                            <td class="text-warning" th:text="${qtdTotalOrc}"></td>
+                            <td class="text-success" th:text="${qtdTotalCmp}"></td>
+                            <td th:text="${qtdTotalOrc > 0 ? #numbers.formatDecimal(qtdTotalCmp * 100.0 / qtdTotalOrc, 1, 1) + '%' : '-'}"></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -196,50 +182,38 @@
         </div>
     </div>
 
-    <!-- Quantidades Orçadas vs Compradas por Marca e Tipo -->
-    <div class="card border-0 shadow-sm mb-4" th:if="${!#lists.isEmpty(marcaQtdLabels)}">
+    <!-- Quantidades Orçadas vs Compradas por Marca -->
+    <div class="card border-0 shadow-sm mb-4" th:if="${!#lists.isEmpty(qtdMarca)}">
         <div class="card-header bg-dark text-white">
-            <strong>Quantidades Orçadas vs Compradas por Marca e Tipo</strong>
+            <strong>Quantidades Orçadas vs Compradas por Marca</strong>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-sm table-bordered table-hover mb-0" style="font-size:0.82rem;">
                     <thead>
                         <tr class="table-secondary text-center">
-                            <th rowspan="2" class="align-middle text-start ps-3" style="min-width:130px">Marca</th>
-                            <th colspan="2" class="border-start border-2 text-primary">Tecido</th>
-                            <th colspan="2" class="border-start border-2 text-info">Acessório</th>
-                            <th colspan="2" class="border-start border-2">Total</th>
-                        </tr>
-                        <tr class="table-light text-center" style="font-size:0.75rem;">
-                            <th class="border-start border-2 text-warning">Orçado</th>
+                            <th class="text-start ps-3" style="min-width:130px">Marca</th>
+                            <th style="min-width:130px">Coleção</th>
+                            <th class="text-warning">Orçado</th>
                             <th class="text-success">Comprado</th>
-                            <th class="border-start border-2 text-warning">Orçado</th>
-                            <th class="text-success">Comprado</th>
-                            <th class="border-start border-2 text-warning">Orçado</th>
-                            <th class="text-success">Comprado</th>
+                            <th>% Comprado</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="i : ${#numbers.sequence(0, marcaQtdLabels.size() - 1)}" class="text-center">
-                            <td class="text-start ps-3 fw-bold" th:text="${marcaQtdLabels[i]}"></td>
-                            <td class="border-start border-2 text-warning fw-bold" th:text="${mOrcTecido[i].longValue()}"></td>
-                            <td class="text-success fw-bold" th:text="${mCmpTecido[i].longValue()}"></td>
-                            <td class="border-start border-2 text-warning fw-bold" th:text="${mOrcAcess[i].longValue()}"></td>
-                            <td class="text-success fw-bold" th:text="${mCmpAcess[i].longValue()}"></td>
-                            <td class="border-start border-2 text-warning fw-bold" th:text="${(mOrcTecido[i] + mOrcAcess[i]).longValue()}"></td>
-                            <td class="text-success fw-bold" th:text="${(mCmpTecido[i] + mCmpAcess[i]).longValue()}"></td>
+                        <tr th:each="row : ${qtdMarca}" class="text-center">
+                            <td class="text-start ps-3 fw-bold" th:text="${row[0]}"></td>
+                            <td th:text="${row[1]}"></td>
+                            <td class="text-warning fw-bold" th:text="${row[2] != null ? row[2] : 0}"></td>
+                            <td class="text-success fw-bold" th:text="${row[3] != null ? row[3] : 0}"></td>
+                            <td class="fw-bold" th:text="${row[2] != null and row[2] > 0 ? #numbers.formatDecimal(row[3] * 100.0 / row[2], 1, 1) + '%' : '-'}"></td>
                         </tr>
                     </tbody>
                     <tfoot class="table-secondary fw-bold text-center">
                         <tr>
-                            <td class="text-start ps-3">TOTAL</td>
-                            <td class="border-start border-2 text-warning" th:text="${#aggregates.sum(mOrcTecido.![longValue()])}"></td>
-                            <td class="text-success" th:text="${#aggregates.sum(mCmpTecido.![longValue()])}"></td>
-                            <td class="border-start border-2 text-warning" th:text="${#aggregates.sum(mOrcAcess.![longValue()])}"></td>
-                            <td class="text-success" th:text="${#aggregates.sum(mCmpAcess.![longValue()])}"></td>
-                            <td class="border-start border-2 text-warning" th:text="${#aggregates.sum(mOrcTecido.![longValue()]) + #aggregates.sum(mOrcAcess.![longValue()])}"></td>
-                            <td class="text-success" th:text="${#aggregates.sum(mCmpTecido.![longValue()]) + #aggregates.sum(mCmpAcess.![longValue()])}"></td>
+                            <td colspan="2" class="text-start ps-3">TOTAL</td>
+                            <td class="text-warning" th:text="${qtdMarcaTotalOrc}"></td>
+                            <td class="text-success" th:text="${qtdMarcaTotalCmp}"></td>
+                            <td th:text="${qtdMarcaTotalOrc > 0 ? #numbers.formatDecimal(qtdMarcaTotalCmp * 100.0 / qtdMarcaTotalOrc, 1, 1) + '%' : '-'}"></td>
                         </tr>
                     </tfoot>
                 </table>
