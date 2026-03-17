@@ -1,7 +1,7 @@
 package com.example.projeto.model;
 
 public enum StatusPedido {
-    EM_ANDAMENTO("Em Andamento"),
+    EM_ANDAMENTO("Em Produção"),
     EMBARCADO("Embarcado"),
     RECEBIDO("Recebido"),
     CANCELADO("Cancelado");
