@@ -16,8 +16,6 @@
         vertical-align: middle;
         padding: 3px 6px;
     }
-    .tabela-aprovacao th.col-descricao,
-    .tabela-aprovacao td.col-descricao { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .tabela-aprovacao th.col-comentario,
     .tabela-aprovacao td.col-comentario { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
@@ -175,7 +173,6 @@
                     <th>Coleção</th>
                     <th>Tipo</th>
                     <th>Categoria</th>
-                    <th class="col-descricao">Descrição</th>
                     <th>Fornecedor</th>
                     <th>Marca</th>
                     <th>Cor</th>
@@ -201,7 +198,6 @@
                     <td th:text="${ficha.colecao}"></td>
                     <td th:text="${ficha.tipo.descricao}"></td>
                     <td th:text="${ficha.categoriaProduto}"></td>
-                    <td class="col-descricao" th:text="${ficha.descricao}" th:title="${ficha.descricao}"></td>
                     <td th:text="${ficha.fornecedor}"></td>
                     <td th:text="${ficha.marca}"></td>
                     <td th:text="${ficha.cor}"></td>
@@ -226,7 +222,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(fichas)}">
-                    <td colspan="18" class="text-center text-muted">Nenhum registro encontrado.</td>
+                    <td colspan="17" class="text-center text-muted">Nenhum registro encontrado.</td>
                 </tr>
             </tbody>
         </table>

@@ -15,7 +15,6 @@ public class FichaTecnica {
     @Column(nullable = false)
     private TipoItem tipo;
 
-    @Column(nullable = false)
     private String descricao;
 
     @Column(nullable = false)
@@ -38,6 +37,8 @@ public class FichaTecnica {
     private String referencia;
 
     private String refFornecedor;
+
+    private String refTexcotton;
 
     private String categoriaProduto;
 
@@ -75,6 +76,8 @@ public class FichaTecnica {
     private LocalDate dataSaidaOrigem;
 
     private LocalDate dataChegadaDestino;
+
+    private String duimpDi;
 
     @Enumerated(EnumType.STRING)
     private StatusAmostra statusAmostraCor;
@@ -211,6 +214,14 @@ public class FichaTecnica {
 
     public void setDataChegadaDestino(LocalDate dataChegadaDestino) {
         this.dataChegadaDestino = dataChegadaDestino;
+    }
+
+    public String getDuimpDi() {
+        return duimpDi;
+    }
+
+    public void setDuimpDi(String duimpDi) {
+        this.duimpDi = duimpDi;
     }
 
     public StatusAmostra getStatusAmostraCor() {
@@ -403,6 +414,14 @@ public class FichaTecnica {
 
     public void setRefFornecedor(String refFornecedor) {
         this.refFornecedor = refFornecedor;
+    }
+
+    public String getRefTexcotton() {
+        return refTexcotton;
+    }
+
+    public void setRefTexcotton(String refTexcotton) {
+        this.refTexcotton = refTexcotton;
     }
 
     public String getMarcaQueComprou() {

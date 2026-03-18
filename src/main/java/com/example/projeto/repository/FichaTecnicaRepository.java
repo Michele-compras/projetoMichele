@@ -67,6 +67,6 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Long
     @Query("SELECT f.marcaQueComprou, f.tipo, SUM(f.minimo), SUM(f.quantidadeComprada) FROM FichaTecnica f WHERE f.marcaQueComprou IS NOT NULL GROUP BY f.marcaQueComprou, f.tipo ORDER BY f.marcaQueComprou ASC")
     List<Object[]> sumQuantidadeByMarcaAndTipo();
 
-    @Query("SELECT f.marca, f.colecao, COUNT(f), COUNT(f.quantidadeComprada) FROM FichaTecnica f WHERE f.marca IS NOT NULL AND f.colecao IS NOT NULL AND f.colecao <> '' GROUP BY f.marca, f.colecao ORDER BY f.marca ASC, f.colecao ASC")
+    @Query("SELECT f.marca, f.colecao, COUNT(f), COUNT(f.quantidadeComprada) FROM FichaTecnica f WHERE f.marca IS NOT NULL AND f.colecao IS NOT NULL AND f.colecao <> '' GROUP BY f.marca, f.colecao ORDER BY f.colecao DESC, f.marca ASC")
     List<Object[]> countOrcadoCompradoByMarca();
 }

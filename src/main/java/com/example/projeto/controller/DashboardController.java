@@ -154,16 +154,6 @@ public class DashboardController {
         model.addAttribute("qtdTotalOrc", qtdTotalOrc);
         model.addAttribute("qtdTotalCmp", qtdTotalCmp);
 
-        // ── Por marca: itens orçados vs comprados (cada ficha = 1 item) ───────
-        List<Object[]> qtdMarca = repository.countOrcadoCompradoByMarca();
-        long qtdMarcaTotalOrc = 0, qtdMarcaTotalCmp = 0;
-        for (Object[] row : qtdMarca) {
-            qtdMarcaTotalOrc += row[2] != null ? ((Number) row[2]).longValue() : 0;
-            qtdMarcaTotalCmp += row[3] != null ? ((Number) row[3]).longValue() : 0;
-        }
-        model.addAttribute("qtdMarca", qtdMarca);
-        model.addAttribute("qtdMarcaTotalOrc", qtdMarcaTotalOrc);
-        model.addAttribute("qtdMarcaTotalCmp", qtdMarcaTotalCmp);
 
         return "dashboard";
     }

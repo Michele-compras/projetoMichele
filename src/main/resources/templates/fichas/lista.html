@@ -16,8 +16,6 @@
         vertical-align: middle;
         padding: 3px 6px;
     }
-    .tabela-aprovacao th.col-descricao,
-    .tabela-aprovacao td.col-descricao { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 
 <div class="main-content">
@@ -111,15 +109,15 @@
         <table class="table table-striped table-hover table-sm tabela-aprovacao">
             <thead class="table-dark">
                 <tr>
-                    <th style="width:48px">Foto</th>
+                    <th style="width:80px">Foto</th>
                     <th>Coleção</th>
                     <th>Tipo</th>
                     <th>Categoria</th>
-                    <th class="col-descricao">Descrição</th>
                     <th>Fornecedor</th>
                     <th>Marca</th>
                     <th>Cor</th>
                     <th>Ref. Forn.</th>
+                    <th>Ref. Texcotton</th>
                     <th>Composição</th>
                     <th>Gramatura</th>
                     <th>Largura</th>
@@ -131,17 +129,17 @@
                 <tr th:each="ficha : ${fichas}">
                     <td>
                         <img th:if="${ficha.fotoPath != null}" th:src="@{'/uploads/' + ${ficha.fotoPath}}"
-                             alt="Foto" style="width:36px; height:36px; object-fit:cover; border-radius:4px;">
+                             alt="Foto" style="width:64px; height:64px; object-fit:cover; border-radius:4px;">
                         <span th:if="${ficha.fotoPath == null}" class="text-muted">-</span>
                     </td>
                     <td th:text="${ficha.colecao}"></td>
                     <td th:text="${ficha.tipo.descricao}"></td>
                     <td th:text="${ficha.categoriaProduto}"></td>
-                    <td class="col-descricao" th:text="${ficha.descricao}" th:title="${ficha.descricao}"></td>
                     <td th:text="${ficha.fornecedor}"></td>
                     <td th:text="${ficha.marca}"></td>
                     <td th:text="${ficha.cor}"></td>
                     <td th:text="${ficha.refFornecedor}"></td>
+                    <td th:text="${ficha.refTexcotton}"></td>
                     <td th:text="${ficha.composicao}"></td>
                     <td th:text="${ficha.gramatura}"></td>
                     <td th:text="${ficha.largura}"></td>

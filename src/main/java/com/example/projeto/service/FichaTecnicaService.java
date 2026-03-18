@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
@@ -53,7 +54,7 @@ public class FichaTecnicaService {
         if (foto != null && !foto.isEmpty()) {
             String filename = UUID.randomUUID() + "_" + foto.getOriginalFilename();
             try {
-                Files.copy(foto.getInputStream(), uploadDir.resolve(filename));
+                Files.copy(foto.getInputStream(), uploadDir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
                 ficha.setFotoPath(filename);
             } catch (IOException e) {
                 throw new RuntimeException("Erro ao salvar foto", e);

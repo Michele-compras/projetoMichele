@@ -16,6 +16,6 @@ public interface QuadroPlanejamentoRepository extends JpaRepository<QuadroPlanej
         "SELECT q.colecao, " +
         "SUM(COALESCE(q.animeCotado,0) + COALESCE(q.momiCotado,0) + COALESCE(q.authoriaCotado,0) + COALESCE(q.bimbiCotado,0) + COALESCE(q.youcciecotado,0)), " +
         "SUM(COALESCE(q.animeAprovado,0) + COALESCE(q.momiAprovado,0) + COALESCE(q.authoriaAprovado,0) + COALESCE(q.bimbiAprovado,0) + COALESCE(q.youccieeAprovado,0)) " +
-        "FROM QuadroPlanejamento q WHERE q.colecao IS NOT NULL GROUP BY q.colecao ORDER BY q.colecao ASC")
+        "FROM QuadroPlanejamento q WHERE q.colecao IS NOT NULL GROUP BY q.colecao ORDER BY q.colecao DESC")
     List<Object[]> sumCotadoAprovadoByColecao();
 }

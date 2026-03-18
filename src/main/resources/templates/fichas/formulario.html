@@ -8,7 +8,12 @@
 <div class="container-fluid p-4">
     <h2 th:text="${ficha.id != null ? 'Editar Ficha Técnica' : 'Nova Ficha Técnica'}"></h2>
 
-    <form th:action="@{/fichas/salvar}" th:object="${ficha}" method="post" enctype="multipart/form-data">
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${erro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <form th:action="@{/fichas/salvar}" th:object="${ficha}" method="post">
         <input type="hidden" th:field="*{id}">
         <input type="hidden" th:field="*{fotoPath}">
 
@@ -17,10 +22,6 @@
             <div class="card-header"><strong>Informações Gerais</strong></div>
             <div class="card-body">
                 <div class="row mb-3">
-                    <div class="col-md-2">
-                        <label for="estagio" class="form-label">Estágio</label>
-                        <input type="text" id="estagio" class="form-control" th:field="*{estagio}">
-                    </div>
                     <div class="col-md-2">
                         <label for="tipoSolicitacao" class="form-label">Tipo Solicitação</label>
                         <input type="text" id="tipoSolicitacao" class="form-control" th:field="*{tipoSolicitacao}">
@@ -35,10 +36,6 @@
                     <div class="col-md-2">
                         <label for="codigo" class="form-label">Código</label>
                         <input type="text" id="codigo" class="form-control" th:field="*{codigo}">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="descricao" class="form-label">Descrição *</label>
-                        <input type="text" id="descricao" class="form-control" th:field="*{descricao}" required>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -55,6 +52,10 @@
                         <input type="text" id="refFornecedor" class="form-control" th:field="*{refFornecedor}">
                     </div>
                     <div class="col-md-3">
+                        <label for="refTexcotton" class="form-label">Ref. Texcotton</label>
+                        <input type="text" id="refTexcotton" class="form-control" th:field="*{refTexcotton}">
+                    </div>
+                    <div class="col-md-3">
                         <label for="categoriaProduto" class="form-label">Categoria</label>
                         <input type="text" id="categoriaProduto" class="form-control" th:field="*{categoriaProduto}">
                     </div>
@@ -67,10 +68,6 @@
                     <div class="col-md-3">
                         <label for="marca" class="form-label">Marca</label>
                         <input type="text" id="marca" class="form-control" th:field="*{marca}">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="marcaQueComprou" class="form-label">Marca que Comprou</label>
-                        <input type="text" id="marcaQueComprou" class="form-control" th:field="*{marcaQueComprou}">
                     </div>
                     <div class="col-md-3">
                         <label for="marcaQueUtiliza" class="form-label">Marca que Utiliza</label>
@@ -97,13 +94,6 @@
                     <div class="col-md-3">
                         <label for="statusColecao" class="form-label">Status Coleção</label>
                         <input type="text" id="statusColecao" class="form-control" th:field="*{statusColecao}">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="foto" class="form-label">Foto do Item</label>
-                        <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
-                        <small th:if="${ficha.fotoPath != null}" class="text-muted">
-                            Foto atual: <span th:text="${ficha.fotoPath}"></span>
-                        </small>
                     </div>
                 </div>
             </div>
@@ -134,10 +124,6 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label for="minimo" class="form-label">Mínimo</label>
-                        <input type="number" step="0.01" id="minimo" class="form-control" th:field="*{minimo}">
-                    </div>
                     <div class="col-md-3">
                         <label for="quantidadeComprada" class="form-label">Quantidade Comprada</label>
                         <input type="number" step="0.01" id="quantidadeComprada" class="form-control" th:field="*{quantidadeComprada}">
@@ -176,6 +162,12 @@
                     <div class="col-md-4">
                         <label for="dataChegadaDestino" class="form-label">Data Chegada Destino</label>
                         <input type="date" id="dataChegadaDestino" class="form-control" th:field="*{dataChegadaDestino}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="duimpDi" class="form-label">DUIMP/DI</label>
+                        <input type="text" id="duimpDi" class="form-control" th:field="*{duimpDi}">
                     </div>
                 </div>
             </div>
@@ -244,6 +236,27 @@
             <a th:href="@{/fichas}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
+
+    <!-- Foto: form separado para evitar limite de multipart -->
+    <div class="card mb-3" th:if="${ficha.id != null}">
+        <div class="card-header"><strong>Foto do Item</strong></div>
+        <div class="card-body">
+            <form th:action="@{/fichas/foto/{id}(id=${ficha.id})}" method="post" enctype="multipart/form-data">
+                <div class="row align-items-end">
+                    <div class="col-md-5">
+                        <input type="file" name="foto" class="form-control" accept="image/*">
+                        <small th:if="${ficha.fotoPath != null and !ficha.fotoPath.isEmpty()}" class="text-muted">
+                            Foto atual: <span th:text="${ficha.fotoPath}"></span>
+                        </small>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-outline-primary">Enviar Foto</button>
+                    </div>
+                </div>
+            </form>
+            <p th:if="${ficha.id == null}" class="text-muted small mt-1">Salve a ficha primeiro para poder adicionar foto.</p>
+        </div>
+    </div>
 </div>
 </div>
 

@@ -8,6 +8,7 @@ import com.example.projeto.service.FichaTecnicaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -64,18 +65,45 @@ public class FichaTecnicaController {
     }
 
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute FichaTecnica ficha,
+    public String salvar(@ModelAttribute("ficha") FichaTecnica ficha,
+                         BindingResult bindingResult,
                          @RequestParam(value = "foto", required = false) MultipartFile foto,
+                         Model model,
                          RedirectAttributes redirectAttributes) {
-        service.salvar(ficha, foto);
-        redirectAttributes.addFlashAttribute("mensagem", "Ficha técnica salva com sucesso!");
-        return "redirect:/fichas";
+        if (bindingResult.hasErrors()) {
+            addFormAttributes(model, ficha);
+            model.addAttribute("erro", "Verifique os campos obrigatórios.");
+            return "fichas/formulario";
+        }
+        try {
+            service.salvar(ficha, foto);
+            redirectAttributes.addFlashAttribute("mensagem", "Ficha técnica salva com sucesso!");
+            return "redirect:/fichas";
+        } catch (Exception e) {
+            addFormAttributes(model, ficha);
+            model.addAttribute("erro", "Erro ao salvar: " + e.getMessage());
+            return "fichas/formulario";
+        }
     }
 
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model) {
         addFormAttributes(model, service.buscarPorId(id));
         return "fichas/formulario";
+    }
+
+    @PostMapping("/foto/{id}")
+    public String uploadFoto(@PathVariable Long id,
+                             @RequestParam("foto") MultipartFile foto,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            FichaTecnica ficha = service.buscarPorId(id);
+            service.salvar(ficha, foto);
+            redirectAttributes.addFlashAttribute("mensagem", "Foto atualizada com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao salvar foto: " + e.getMessage());
+        }
+        return "redirect:/fichas/editar/" + id;
     }
 
     @GetMapping("/excluir/{id}")
@@ -94,7 +122,7 @@ public class FichaTecnicaController {
     private void addFormAttributes(Model model, FichaTecnica ficha) {
         model.addAttribute("ficha", ficha);
         model.addAttribute("tipos", TipoItem.values());
-        model.addAttribute("statusList", StatusAmostra.values());
+        model.addAttribute("statusList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.APROVADO});
         model.addAttribute("statusPedidoList", StatusPedido.values());
     }
 }

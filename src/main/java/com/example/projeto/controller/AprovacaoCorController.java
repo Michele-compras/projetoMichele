@@ -55,7 +55,7 @@ public class AprovacaoCorController {
         model.addAttribute("fichas", fichas);
         model.addAttribute("tipos", TipoItem.values());
         model.addAttribute("statusPedidoList", StatusPedido.values());
-        model.addAttribute("statusAmostraList", StatusAmostra.values());
+        model.addAttribute("statusAmostraList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.APROVADO});
         model.addAttribute("colecaoFiltro", colecao);
         model.addAttribute("tipoSelecionado", tipo);
         model.addAttribute("statusPedidoSelecionado", statusPedido);
