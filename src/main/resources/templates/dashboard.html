@@ -23,9 +23,9 @@
                             <!-- Fichas -->
                             <th colspan="4" class="border-start border-2">Fichas</th>
                             <!-- Amostra Cor -->
-                            <th colspan="3" class="border-start border-2">Amostra Cor/Qualidade</th>
+                            <th colspan="2" class="border-start border-2">Amostra Cor/Qualidade</th>
                             <!-- Amostra Embarque -->
-                            <th colspan="3" class="border-start border-2">Amostra Embarque</th>
+                            <th colspan="2" class="border-start border-2">Amostra Embarque</th>
                             <!-- Por Fornecedor -->
                             <th th:colspan="${fornecedores.size()}" class="border-start border-2">Por Fornecedor</th>
                         </tr>
@@ -38,11 +38,9 @@
                             <!-- Amostra Cor -->
                             <th class="border-start border-2 text-warning">Aguardando</th>
                             <th class="text-success">Aprovada</th>
-                            <th class="text-danger">Reprovada</th>
                             <!-- Amostra Embarque -->
                             <th class="border-start border-2 text-warning">Aguardando</th>
                             <th class="text-success">Aprovada</th>
-                            <th class="text-danger">Reprovada</th>
                             <!-- Por Fornecedor -->
                             <th th:each="forn : ${fornecedores}" class="border-start text-secondary"
                                 th:text="${forn}" style="min-width:90px; white-space:normal;"></th>
@@ -59,14 +57,14 @@
                             <!-- Amostra Cor -->
                             <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoCorPendente[i]}"></td>
                             <td class="text-success fw-bold" th:text="${colecaoCorAprovado[i]}"></td>
-                            <td class="text-danger fw-bold" th:text="${colecaoCorReprovado[i]}"></td>
                             <!-- Amostra Embarque -->
                             <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoProdPendente[i]}"></td>
                             <td class="text-success fw-bold" th:text="${colecaoProdAprovado[i]}"></td>
-                            <td class="text-danger fw-bold" th:text="${colecaoProdReprovado[i]}"></td>
                             <!-- Por Fornecedor -->
-                            <td th:each="forn : ${fornecedores}" class="border-start text-secondary fw-bold"
-                                th:text="${colecaoFornecedorMap[forn][i]}"></td>
+                            <td th:each="forn : ${fornecedores}"
+                                th:with="vals=${colecaoFornecedorMap.get(forn)}"
+                                class="border-start text-secondary fw-bold"
+                                th:text="${vals != null ? vals.get(i) : 0}"></td>
                         </tr>
                     </tbody>
                     <tfoot class="table-secondary fw-bold text-center">
@@ -78,13 +76,13 @@
                             <td th:text="${qtdAcessorioUnidade}"></td>
                             <td class="border-start border-2 text-warning" th:text="${corPendente}"></td>
                             <td class="text-success" th:text="${corAprovado}"></td>
-                            <td class="text-danger" th:text="${corReprovado}"></td>
                             <td class="border-start border-2 text-warning" th:text="${prodPendente}"></td>
                             <td class="text-success" th:text="${prodAprovado}"></td>
-                            <td class="text-danger" th:text="${prodReprovado}"></td>
                             <!-- Por Fornecedor -->
-                            <td th:each="forn : ${fornecedores}" class="border-start text-secondary"
-                                th:text="${fornecedorTotais[forn]}"></td>
+                            <td th:each="forn : ${fornecedores}"
+                                th:with="tot=${fornecedorTotais.get(forn)}"
+                                class="border-start text-secondary fw-bold"
+                                th:text="${tot != null ? tot : 0}"></td>
                         </tr>
                     </tfoot>
                 </table>
