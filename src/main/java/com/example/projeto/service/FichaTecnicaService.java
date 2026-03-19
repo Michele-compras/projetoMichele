@@ -48,7 +48,7 @@ public class FichaTecnicaService {
     }
 
     public FichaTecnica salvar(FichaTecnica ficha, MultipartFile foto) {
-        if (ficha.getTipo() == TipoItem.ACESSORIO) {
+        if (ficha.getTipo() == TipoItem.ACESSORIO_METRO || ficha.getTipo() == TipoItem.ACESSORIO_UNIDADE) {
             ficha.setGramatura(null);
         }
         if (foto != null && !foto.isEmpty()) {

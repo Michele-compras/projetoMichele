@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/aprovacao-embarque")
@@ -62,7 +63,10 @@ public class AprovacaoEmbarqueController {
         model.addAttribute("statusAmostraSelecionado", statusAmostra);
         model.addAttribute("dataInicio", dataInicio);
         model.addAttribute("dataFim", dataFim);
-        model.addAttribute("qtdPorColecao", service.qtdPorColecao());
+        Map<String, Long> qtdPorColecao = service.qtdPorColecao();
+        long totalGeral = qtdPorColecao.values().stream().mapToLong(Long::longValue).sum();
+        model.addAttribute("qtdPorColecao", qtdPorColecao);
+        model.addAttribute("totalGeral", totalGeral);
         model.addAttribute("qtdStatusProducaoPorColecao", service.qtdStatusProducaoPorColecao());
         model.addAttribute("qtdFornecedorPorColecao", service.qtdFornecedorPorColecao());
         model.addAttribute("totalPorFornecedor", service.totalPorFornecedor());

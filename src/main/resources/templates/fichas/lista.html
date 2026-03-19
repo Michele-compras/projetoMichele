@@ -38,7 +38,7 @@
                                th:value="${colecaoFiltro}" placeholder="Buscar por coleção...">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Tipo</label>
+                        <label class="form-label">Insumo</label>
                         <select class="form-select form-select-sm" name="tipo">
                             <option value="">Todos</option>
                             <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}"
@@ -84,7 +84,7 @@
                         <th>Coleção</th>
                         <th class="text-center" style="width:80px">Total</th>
                         <th class="text-center text-primary" style="width:120px">Tecido</th>
-                        <th class="text-center text-info" style="width:120px">Acessório</th>
+                        <th class="text-center text-info" style="width:120px">Aviamento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,7 +94,7 @@
                         <td class="text-center text-primary fw-bold"
                             th:text="${qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['TECIDO'] != null ? qtdTipoPorColecao[entry.key]['TECIDO'] : 0}"></td>
                         <td class="text-center text-info fw-bold"
-                            th:text="${qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['ACESSORIO'] != null ? qtdTipoPorColecao[entry.key]['ACESSORIO'] : 0}"></td>
+                            th:text="${(qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['ACESSORIO_METRO'] != null ? qtdTipoPorColecao[entry.key]['ACESSORIO_METRO'] : 0) + (qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['ACESSORIO_UNIDADE'] != null ? qtdTipoPorColecao[entry.key]['ACESSORIO_UNIDADE'] : 0)}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -111,7 +111,7 @@
                 <tr>
                     <th style="width:80px">Foto</th>
                     <th>Coleção</th>
-                    <th>Tipo</th>
+                    <th>Insumo</th>
                     <th>Categoria</th>
                     <th>Fornecedor</th>
                     <th>Marca</th>

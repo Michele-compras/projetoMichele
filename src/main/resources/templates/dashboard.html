@@ -21,24 +21,20 @@
                         <tr class="table-secondary text-center">
                             <th rowspan="2" class="align-middle text-start ps-3" style="min-width:130px">Coleção</th>
                             <!-- Fichas -->
-                            <th colspan="3" class="border-start border-2">Fichas</th>
-                            <!-- Status Pedido -->
-                            <th colspan="4" class="border-start border-2">Status do Pedido</th>
+                            <th colspan="4" class="border-start border-2">Fichas</th>
                             <!-- Amostra Cor -->
                             <th colspan="3" class="border-start border-2">Amostra Cor/Qualidade</th>
                             <!-- Amostra Embarque -->
                             <th colspan="3" class="border-start border-2">Amostra Embarque</th>
+                            <!-- Por Fornecedor -->
+                            <th th:colspan="${fornecedores.size()}" class="border-start border-2">Por Fornecedor</th>
                         </tr>
                         <tr class="table-light text-center" style="font-size:0.75rem;">
                             <!-- Fichas -->
                             <th class="border-start border-2 fw-bold">Total</th>
                             <th class="text-primary">Tecidos</th>
-                            <th class="text-info">Acess.</th>
-                            <!-- Status Pedido -->
-                            <th class="border-start border-2 text-warning">Em Andamento</th>
-                            <th class="text-primary">Embarcado</th>
-                            <th class="text-success">Recebido</th>
-                            <th class="text-danger">Cancelado</th>
+                            <th class="text-info">Av. Metro</th>
+                            <th class="text-info">Av. Unidade</th>
                             <!-- Amostra Cor -->
                             <th class="border-start border-2 text-warning">Aguardando</th>
                             <th class="text-success">Aprovada</th>
@@ -47,6 +43,9 @@
                             <th class="border-start border-2 text-warning">Aguardando</th>
                             <th class="text-success">Aprovada</th>
                             <th class="text-danger">Reprovada</th>
+                            <!-- Por Fornecedor -->
+                            <th th:each="forn : ${fornecedores}" class="border-start text-secondary"
+                                th:text="${forn}" style="min-width:90px; white-space:normal;"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,12 +54,8 @@
                             <!-- Fichas -->
                             <td class="border-start border-2 fw-bold" th:text="${colecaoValues[i]}"></td>
                             <td class="text-primary fw-bold" th:text="${colecaoTecidoValues[i]}"></td>
-                            <td class="text-info fw-bold" th:text="${colecaoAcessorioValues[i]}"></td>
-                            <!-- Status Pedido -->
-                            <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoPedidoEmAndamento[i]}"></td>
-                            <td class="text-primary fw-bold" th:text="${colecaoPedidoEmbarcado[i]}"></td>
-                            <td class="text-success fw-bold" th:text="${colecaoPedidoRecebido[i]}"></td>
-                            <td class="text-danger fw-bold" th:text="${colecaoPedidoCancelado[i]}"></td>
+                            <td class="text-info fw-bold" th:text="${colecaoAcessorioMetroValues[i]}"></td>
+                            <td class="text-info fw-bold" th:text="${colecaoAcessorioUnidadeValues[i]}"></td>
                             <!-- Amostra Cor -->
                             <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoCorPendente[i]}"></td>
                             <td class="text-success fw-bold" th:text="${colecaoCorAprovado[i]}"></td>
@@ -69,6 +64,9 @@
                             <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoProdPendente[i]}"></td>
                             <td class="text-success fw-bold" th:text="${colecaoProdAprovado[i]}"></td>
                             <td class="text-danger fw-bold" th:text="${colecaoProdReprovado[i]}"></td>
+                            <!-- Por Fornecedor -->
+                            <td th:each="forn : ${fornecedores}" class="border-start text-secondary fw-bold"
+                                th:text="${colecaoFornecedorMap[forn][i]}"></td>
                         </tr>
                     </tbody>
                     <tfoot class="table-secondary fw-bold text-center">
@@ -76,17 +74,17 @@
                             <td class="text-start ps-3">TOTAL</td>
                             <td class="border-start border-2" th:text="${total}"></td>
                             <td th:text="${qtdTecido}"></td>
-                            <td th:text="${qtdAcessorio}"></td>
-                            <td class="border-start border-2 text-warning" th:text="${qtdEmAndamento}"></td>
-                            <td class="text-primary" th:text="${qtdEmbarcado}"></td>
-                            <td class="text-success" th:text="${qtdRecebido}"></td>
-                            <td class="text-danger" th:text="${qtdCancelado}"></td>
+                            <td th:text="${qtdAcessorioMetro}"></td>
+                            <td th:text="${qtdAcessorioUnidade}"></td>
                             <td class="border-start border-2 text-warning" th:text="${corPendente}"></td>
                             <td class="text-success" th:text="${corAprovado}"></td>
                             <td class="text-danger" th:text="${corReprovado}"></td>
                             <td class="border-start border-2 text-warning" th:text="${prodPendente}"></td>
                             <td class="text-success" th:text="${prodAprovado}"></td>
                             <td class="text-danger" th:text="${prodReprovado}"></td>
+                            <!-- Por Fornecedor -->
+                            <td th:each="forn : ${fornecedores}" class="border-start text-secondary"
+                                th:text="${fornecedorTotais[forn]}"></td>
                         </tr>
                     </tfoot>
                 </table>

@@ -2,9 +2,8 @@ package com.example.projeto.model;
 
 public enum TipoItem {
     TECIDO("Tecido"),
-    ACESSORIO("Acessório"),
-    ACESSORIO_METRO("Acessório em Metro"),
-    ACESSORIO_UNIDADE("Acessório em Unidade");
+    ACESSORIO_METRO("Aviamento em Metro"),
+    ACESSORIO_UNIDADE("Aviamento em Unidade");
 
     private final String descricao;
 

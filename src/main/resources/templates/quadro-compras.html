@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header('Comprado por Tipo e Metragem')}"></head>
+<head th:replace="~{fragments/layout :: header('Comprado por Insumo e Metragem')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: sidebar}"></nav>
 
 <div class="main-content">
 <div class="container-fluid p-4">
 
-    <h2 class="mb-3">Comprado por Tipo e Metragem por Coleção</h2>
+    <h2 class="mb-3">Comprado por Insumo e Metragem por Coleção</h2>
 
     <!-- Abas -->
     <ul class="nav nav-tabs mb-4">
@@ -167,7 +167,7 @@
                             <table class="table table-sm table-bordered mb-0 text-center" style="font-size:0.82rem;">
                                 <thead>
                                     <tr class="table-secondary text-center">
-                                        <th class="text-start ps-3 align-middle" style="min-width:150px">Tipo</th>
+                                        <th class="text-start ps-3 align-middle" style="min-width:150px">Insumo</th>
                                         <th th:each="m : ${marcaDisplay}" th:text="${m}" class="border-start border-2"></th>
                                         <th class="border-start border-2 fw-bold">Total</th>
                                     </tr>

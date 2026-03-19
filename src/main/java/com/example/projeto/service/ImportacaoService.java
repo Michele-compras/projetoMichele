@@ -71,8 +71,10 @@ public class ImportacaoService {
                 // Tipo
                 if (colTipo >= 0) {
                     String tipoStr = getCellString(row.getCell(colTipo)).toUpperCase().trim();
-                    if (tipoStr.contains("ACESS")) {
-                        ficha.setTipo(TipoItem.ACESSORIO);
+                    if (tipoStr.contains("METRO")) {
+                        ficha.setTipo(TipoItem.ACESSORIO_METRO);
+                    } else if (tipoStr.contains("ACESS") || tipoStr.contains("UNID") || tipoStr.contains("AVIAM")) {
+                        ficha.setTipo(TipoItem.ACESSORIO_UNIDADE);
                     } else {
                         ficha.setTipo(TipoItem.TECIDO);
                     }

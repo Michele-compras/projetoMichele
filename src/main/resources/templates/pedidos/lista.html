@@ -33,7 +33,7 @@
                                th:value="${colecaoFiltro}" placeholder="Buscar por coleção...">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Tipo</label>
+                        <label class="form-label">Insumo</label>
                         <select class="form-select form-select-sm" name="tipo">
                             <option value="">Todos</option>
                             <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}"
@@ -89,7 +89,7 @@
                 <tr>
                     <th style="width:48px">Foto</th>
                     <th>Coleção</th>
-                    <th>Tipo</th>
+                    <th>Insumo</th>
                     <th>Categoria</th>
                     <th>Fornecedor</th>
                     <th>Marca</th>

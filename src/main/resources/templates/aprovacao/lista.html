@@ -35,7 +35,7 @@
                                th:value="${colecaoFiltro}" placeholder="Buscar por coleção...">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Tipo</label>
+                        <label class="form-label">Insumo</label>
                         <select class="form-select form-select-sm" name="tipo">
                             <option value="">Todos</option>
                             <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}"
@@ -88,7 +88,6 @@
                         <th class="text-center" style="width:80px">Total</th>
                         <th class="text-center text-warning" style="width:120px">Aguardando Amostra</th>
                         <th class="text-center text-success" style="width:120px">Aprovada</th>
-                        <th class="text-center text-danger" style="width:120px">Reprovada</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -99,8 +98,6 @@
                             th:text="${qtdStatusCorPorColecao[entry.key] != null and qtdStatusCorPorColecao[entry.key]['PENDENTE'] != null ? qtdStatusCorPorColecao[entry.key]['PENDENTE'] : 0}"></td>
                         <td class="text-center text-success fw-bold"
                             th:text="${qtdStatusCorPorColecao[entry.key] != null and qtdStatusCorPorColecao[entry.key]['APROVADO'] != null ? qtdStatusCorPorColecao[entry.key]['APROVADO'] : 0}"></td>
-                        <td class="text-center text-danger fw-bold"
-                            th:text="${qtdStatusCorPorColecao[entry.key] != null and qtdStatusCorPorColecao[entry.key]['REPROVADO'] != null ? qtdStatusCorPorColecao[entry.key]['REPROVADO'] : 0}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -145,7 +142,6 @@
                     <tr>
                         <th>Coleção</th>
                         <th>Marca</th>
-                        <th class="text-center" style="width:80px">Fichas</th>
                         <th class="text-center" style="width:120px">Média (dias)</th>
                         <th class="text-center" style="width:120px">Mínimo (dias)</th>
                         <th class="text-center" style="width:120px">Máximo (dias)</th>
@@ -155,7 +151,6 @@
                     <tr th:each="row : ${leadtimePorMarca}">
                         <td th:text="${row['colecao']}"></td>
                         <td th:text="${row['marca']}"></td>
-                        <td class="text-center" th:text="${row['qtd']}"></td>
                         <td class="text-center fw-bold text-primary" th:text="${row['mediaLeadtime']} + ' dias'"></td>
                         <td class="text-center text-success" th:text="${row['minLeadtime']} + ' dias'"></td>
                         <td class="text-center text-danger" th:text="${row['maxLeadtime']} + ' dias'"></td>
@@ -171,7 +166,7 @@
                 <tr>
                     <th style="width:48px">Foto</th>
                     <th>Coleção</th>
-                    <th>Tipo</th>
+                    <th>Insumo</th>
                     <th>Categoria</th>
                     <th>Fornecedor</th>
                     <th>Marca</th>

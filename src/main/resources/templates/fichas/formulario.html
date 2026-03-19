@@ -27,7 +27,7 @@
                         <input type="text" id="tipoSolicitacao" class="form-control" th:field="*{tipoSolicitacao}">
                     </div>
                     <div class="col-md-2">
-                        <label for="tipo" class="form-label">Tipo *</label>
+                        <label for="tipo" class="form-label">Insumo *</label>
                         <select id="tipo" class="form-select" th:field="*{tipo}" required>
                             <option value="">Selecione...</option>
                             <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}"></option>
@@ -90,10 +90,6 @@
                     <div class="col-md-3">
                         <label for="colecao" class="form-label">Coleção</label>
                         <input type="text" id="colecao" class="form-control" th:field="*{colecao}">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="statusColecao" class="form-label">Status Coleção</label>
-                        <input type="text" id="statusColecao" class="form-control" th:field="*{statusColecao}">
                     </div>
                 </div>
             </div>
@@ -267,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const gramaturaDiv = document.querySelector('.campo-gramatura');
 
     function toggleGramatura() {
-        if (tipoSelect.value === 'ACESSORIO') {
+        if (tipoSelect.value === 'ACESSORIO_METRO' || tipoSelect.value === 'ACESSORIO_UNIDADE') {
             gramaturaDiv.style.display = 'none';
             document.getElementById('gramatura').value = '';
         } else {

@@ -31,7 +31,8 @@ public class DashboardController {
 
         // Totais gerais
         long qtdTecido    = repository.countByTipo(TipoItem.TECIDO);
-        long qtdAcessorio = repository.countByTipo(TipoItem.ACESSORIO);
+        long qtdAcessorioMetro   = repository.countByTipo(TipoItem.ACESSORIO_METRO);
+        long qtdAcessorioUnidade = repository.countByTipo(TipoItem.ACESSORIO_UNIDADE);
         long qtdEmAndamento = repository.countByStatusPedido(StatusPedido.EM_ANDAMENTO);
         long qtdEmbarcado   = repository.countByStatusPedido(StatusPedido.EMBARCADO);
         long qtdRecebido    = repository.countByStatusPedido(StatusPedido.RECEBIDO);
@@ -45,7 +46,8 @@ public class DashboardController {
 
         model.addAttribute("total", total);
         model.addAttribute("qtdTecido", qtdTecido);
-        model.addAttribute("qtdAcessorio", qtdAcessorio);
+        model.addAttribute("qtdAcessorioMetro", qtdAcessorioMetro);
+        model.addAttribute("qtdAcessorioUnidade", qtdAcessorioUnidade);
         model.addAttribute("qtdEmAndamento", qtdEmAndamento);
         model.addAttribute("qtdEmbarcado", qtdEmbarcado);
         model.addAttribute("qtdRecebido", qtdRecebido);
@@ -80,17 +82,20 @@ public class DashboardController {
         model.addAttribute("colecaoValues", colecaoValues);
 
         // ── Por coleção: tipo ────────────────────────────────────────
-        Map<String, Long> tecidoPorColecao    = initMap(colecaoLabels);
-        Map<String, Long> acessorioPorColecao = initMap(colecaoLabels);
+        Map<String, Long> tecidoPorColecao          = initMap(colecaoLabels);
+        Map<String, Long> acessorioMetroPorColecao   = initMap(colecaoLabels);
+        Map<String, Long> acessorioUnidadePorColecao = initMap(colecaoLabels);
         for (Object[] row : repository.countByColecaoAndTipo()) {
             String col = (String) row[0];
             TipoItem tipo = (TipoItem) row[1];
             Long cnt = (Long) row[2];
-            if (tipo == TipoItem.TECIDO) tecidoPorColecao.put(col, cnt);
-            else acessorioPorColecao.put(col, cnt);
+            if (tipo == TipoItem.TECIDO)            tecidoPorColecao.put(col, cnt);
+            else if (tipo == TipoItem.ACESSORIO_METRO)   acessorioMetroPorColecao.put(col, cnt);
+            else if (tipo == TipoItem.ACESSORIO_UNIDADE) acessorioUnidadePorColecao.put(col, cnt);
         }
-        model.addAttribute("colecaoTecidoValues",    new ArrayList<>(tecidoPorColecao.values()));
-        model.addAttribute("colecaoAcessorioValues", new ArrayList<>(acessorioPorColecao.values()));
+        model.addAttribute("colecaoTecidoValues",          new ArrayList<>(tecidoPorColecao.values()));
+        model.addAttribute("colecaoAcessorioMetroValues",   new ArrayList<>(acessorioMetroPorColecao.values()));
+        model.addAttribute("colecaoAcessorioUnidadeValues", new ArrayList<>(acessorioUnidadePorColecao.values()));
 
         // ── Por coleção: status pedido ───────────────────────────────
         Map<String, Long> pedidoEmAndamento = initMap(colecaoLabels);
@@ -142,6 +147,34 @@ public class DashboardController {
         model.addAttribute("colecaoProdAprovado",  new ArrayList<>(prodAprovadoMap.values()));
         model.addAttribute("colecaoProdReprovado", new ArrayList<>(prodReprovadoMap.values()));
         model.addAttribute("colecaoProdPendente",  new ArrayList<>(prodPendenteMap.values()));
+
+        // ── Por coleção: por fornecedor ──────────────────────────────────
+        List<String> fornecedores = new ArrayList<>();
+        Map<String, Map<String, Long>> fornColMap = new LinkedHashMap<>();
+        for (Object[] row : repository.countByFornecedorAndColecao()) {
+            String forn = (String) row[0];
+            String col  = (String) row[1];
+            Long   cnt  = (Long)   row[2];
+            if (!fornecedores.contains(forn)) fornecedores.add(forn);
+            fornColMap.computeIfAbsent(forn, k -> new LinkedHashMap<>()).put(col, cnt);
+        }
+        Map<String, List<Long>> colecaoFornecedorMap = new LinkedHashMap<>();
+        Map<String, Long> fornecedorTotais = new LinkedHashMap<>();
+        for (String forn : fornecedores) {
+            Map<String, Long> colMap = fornColMap.getOrDefault(forn, new LinkedHashMap<>());
+            List<Long> values = new ArrayList<>();
+            long soma = 0L;
+            for (String col : colecaoLabels) {
+                long v = colMap.getOrDefault(col, 0L);
+                values.add(v);
+                soma += v;
+            }
+            colecaoFornecedorMap.put(forn, values);
+            fornecedorTotais.put(forn, soma);
+        }
+        model.addAttribute("fornecedores", fornecedores);
+        model.addAttribute("colecaoFornecedorMap", colecaoFornecedorMap);
+        model.addAttribute("fornecedorTotais", fornecedorTotais);
 
         // ── Por coleção: cotado vs aprovado do quadro de planejamento ─────
         List<Object[]> qtdColecaoTipo = quadroRepository.sumCotadoAprovadoByColecao();
