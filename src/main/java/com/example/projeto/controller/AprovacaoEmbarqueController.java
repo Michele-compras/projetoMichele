@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/aprovacao-embarque")
@@ -70,6 +71,14 @@ public class AprovacaoEmbarqueController {
         model.addAttribute("qtdStatusProducaoPorColecao", service.qtdStatusProducaoPorColecao());
         model.addAttribute("qtdFornecedorPorColecao", service.qtdFornecedorPorColecao());
         model.addAttribute("totalPorFornecedor", service.totalPorFornecedor());
+        List<Map<String, Object>> leadtime = service.leadtimeAprovacaoProducaoPorMarca();
+        if (colecao != null && !colecao.isBlank()) {
+            final String col = colecao.toLowerCase();
+            leadtime = leadtime.stream()
+                    .filter(r -> r.get("colecao") != null && ((String) r.get("colecao")).toLowerCase().contains(col))
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("leadtimePorMarca", leadtime);
         return "aprovacao/embarque";
     }
 }

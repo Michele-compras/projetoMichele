@@ -58,6 +58,9 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Long
     @Query("SELECT f FROM FichaTecnica f WHERE f.marca IS NOT NULL AND f.dataColocacaoPedido IS NOT NULL AND f.dataAprovacaoAmostraCor IS NOT NULL")
     List<FichaTecnica> findComLeadtimeAprovacaoCor();
 
+    @Query("SELECT f FROM FichaTecnica f WHERE f.marca IS NOT NULL AND f.dataColocacaoPedido IS NOT NULL AND f.dataAprovacaoAmostraProducao IS NOT NULL")
+    List<FichaTecnica> findComLeadtimeAprovacaoProducao();
+
     @Query("SELECT f.colecao, f.tipo, SUM(f.minimo), SUM(f.quantidadeComprada) FROM FichaTecnica f WHERE f.colecao IS NOT NULL AND f.colecao <> '' GROUP BY f.colecao, f.tipo ORDER BY f.colecao ASC")
     List<Object[]> sumQuantidadeByColecaoAndTipo();
 

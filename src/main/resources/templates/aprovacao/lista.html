@@ -121,10 +121,12 @@
                     <tr th:each="entry : ${qtdFornecedorPorColecao}">
                         <td th:text="${entry.key}"></td>
                         <td th:each="col : ${qtdPorColecao.keySet()}"
+                            th:with="val=${entry.value.get(col)}"
                             class="text-center fw-bold"
-                            th:text="${entry.value[col] != null ? entry.value[col] : 0}"></td>
+                            th:text="${val != null ? val : 0}"></td>
                         <td class="text-center fw-bold text-dark"
-                            th:text="${totalPorFornecedor[entry.key]}"></td>
+                            th:with="tot=${totalPorFornecedor.get(entry.key)}"
+                            th:text="${tot != null ? tot : 0}"></td>
                     </tr>
                 </tbody>
             </table>

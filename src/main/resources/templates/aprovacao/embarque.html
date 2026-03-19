@@ -121,10 +121,12 @@
                     <tr th:each="entry : ${qtdFornecedorPorColecao}">
                         <td th:text="${entry.key}"></td>
                         <td th:each="col : ${qtdPorColecao.keySet()}"
+                            th:with="val=${entry.value.get(col)}"
                             class="text-center fw-bold"
-                            th:text="${entry.value[col] != null ? entry.value[col] : 0}"></td>
+                            th:text="${val != null ? val : 0}"></td>
                         <td class="text-center fw-bold text-dark"
-                            th:text="${totalPorFornecedor[entry.key]}"></td>
+                            th:with="tot=${totalPorFornecedor.get(entry.key)}"
+                            th:text="${tot != null ? tot : 0}"></td>
                     </tr>
                 </tbody>
                 <tfoot class="table-secondary fw-bold">
@@ -135,6 +137,35 @@
                         <td class="text-center" th:text="${totalGeral}"></td>
                     </tr>
                 </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- Lead Time de Aprovação por Marca -->
+    <div class="card mb-3 no-print" th:if="${!#lists.isEmpty(leadtimePorMarca)}">
+        <div class="card-header"><strong>Lead Time de Aprovação por Marca</strong>
+            <small class="text-muted ms-2">dias entre colocação do pedido e aprovação da amostra produção</small>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-sm table-bordered mb-0">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Coleção</th>
+                        <th>Marca</th>
+                        <th class="text-center" style="width:120px">Média (dias)</th>
+                        <th class="text-center" style="width:120px">Mínimo (dias)</th>
+                        <th class="text-center" style="width:120px">Máximo (dias)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="row : ${leadtimePorMarca}">
+                        <td th:text="${row['colecao']}"></td>
+                        <td th:text="${row['marca']}"></td>
+                        <td class="text-center fw-bold text-primary" th:text="${row['mediaLeadtime']} + ' dias'"></td>
+                        <td class="text-center text-success" th:text="${row['minLeadtime']} + ' dias'"></td>
+                        <td class="text-center text-danger" th:text="${row['maxLeadtime']} + ' dias'"></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>

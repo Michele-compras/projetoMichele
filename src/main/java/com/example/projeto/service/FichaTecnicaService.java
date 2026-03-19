@@ -175,6 +175,37 @@ public class FichaTecnicaService {
         return resultado;
     }
 
+    public List<Map<String, Object>> leadtimeAprovacaoProducaoPorMarca() {
+        Map<String, List<Long>> porChave = new LinkedHashMap<>();
+        Map<String, String[]> metadados = new LinkedHashMap<>();
+        for (FichaTecnica f : repository.findComLeadtimeAprovacaoProducao()) {
+            long dias = ChronoUnit.DAYS.between(f.getDataColocacaoPedido(), f.getDataAprovacaoAmostraProducao());
+            String colecao = f.getColecao() != null ? f.getColecao() : "-";
+            String marca = f.getMarca() != null ? f.getMarca() : "-";
+            String chave = colecao + "||" + marca;
+            porChave.computeIfAbsent(chave, k -> new java.util.ArrayList<>()).add(dias);
+            metadados.putIfAbsent(chave, new String[]{colecao, marca});
+        }
+        List<Map<String, Object>> resultado = new java.util.ArrayList<>();
+        porChave.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(e -> {
+                    List<Long> dias = e.getValue();
+                    long media = Math.round(dias.stream().mapToLong(Long::longValue).average().orElse(0));
+                    long min = dias.stream().mapToLong(Long::longValue).min().orElse(0);
+                    long max = dias.stream().mapToLong(Long::longValue).max().orElse(0);
+                    String[] meta = metadados.get(e.getKey());
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    row.put("colecao", meta[0]);
+                    row.put("marca", meta[1]);
+                    row.put("mediaLeadtime", media);
+                    row.put("minLeadtime", min);
+                    row.put("maxLeadtime", max);
+                    resultado.add(row);
+                });
+        return resultado;
+    }
+
     private String emptyToNull(String value) {
         return (value == null || value.isBlank()) ? null : value;
     }
