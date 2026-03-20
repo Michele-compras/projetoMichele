@@ -95,11 +95,41 @@ public class QuadroComprasController {
             }
         }
 
+        // ── Resumo por Fornecedor x Tipo de Insumo ──
+        Map<String, double[]> fornMap = new LinkedHashMap<>();
+        for (FichaTecnica f : fichas) {
+            if (f.getQuantidadeComprada() == null) continue;
+            String forn = (f.getFornecedor() != null && !f.getFornecedor().isBlank())
+                    ? f.getFornecedor() : "(Sem fornecedor)";
+            fornMap.computeIfAbsent(forn, k -> new double[3]);
+            fornMap.get(forn)[tipoIndex(f)] += f.getQuantidadeComprada();
+        }
+        List<List<Object>> resumoFornecedor = new ArrayList<>();
+        double[] totForn = new double[4];
+        for (Map.Entry<String, double[]> e : fornMap.entrySet()) {
+            double total = e.getValue()[0] + e.getValue()[1] + e.getValue()[2];
+            List<Object> row = new ArrayList<>();
+            row.add(e.getKey());
+            row.add(e.getValue()[0]);
+            row.add(e.getValue()[1]);
+            row.add(e.getValue()[2]);
+            row.add(total);
+            resumoFornecedor.add(row);
+            totForn[0] += e.getValue()[0];
+            totForn[1] += e.getValue()[1];
+            totForn[2] += e.getValue()[2];
+            totForn[3] += total;
+        }
+        List<Double> totFornList = new ArrayList<>();
+        for (double v : totForn) totFornList.add(v);
+
         model.addAttribute("colecoes", colecoes);
         model.addAttribute("colecaoAtual", colecaoAtual);
         model.addAttribute("invernos", invernos);
         model.addAttribute("veraos",   veraos);
         model.addAttribute("pivotRows", pivotRows);
+        model.addAttribute("resumoFornecedor", resumoFornecedor);
+        model.addAttribute("totaisFornecedor", totFornList);
         List<Double> colTotalList = new ArrayList<>();
         for (double v : colTotals) colTotalList.add(v);
         model.addAttribute("colTotals", colTotalList);
@@ -112,7 +142,7 @@ public class QuadroComprasController {
 
     private int tipoIndex(FichaTecnica f) {
         if (f.getTipo() == TipoItem.TECIDO) return 0;
-        if (f.getLargura() != null && !f.getLargura().isBlank()) return 1;
+        if (f.getTipo() == TipoItem.ACESSORIO_METRO) return 1;
         return 2;
     }
 }

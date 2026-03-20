@@ -51,15 +51,11 @@
                     <td th:text="${ficha.fornecedor ?: '-'}"></td>
                 </tr>
                 <tr>
-                    <th>Referência:</th>
-                    <td th:text="${ficha.referencia ?: '-'}"></td>
-                </tr>
-                <tr>
                     <th>Categoria:</th>
                     <td th:text="${ficha.categoriaProduto ?: '-'}"></td>
                 </tr>
                 <tr>
-                    <th>Marca:</th>
+                    <th>Marca solicitante:</th>
                     <td th:text="${ficha.marca ?: '-'}"></td>
                 </tr>
                 <tr>
@@ -75,15 +71,15 @@
                     <td th:text="${ficha.cor}"></td>
                 </tr>
                 <tr>
-                    <th>Composição:</th>
+                    <th>Composição detalhada:</th>
                     <td th:text="${ficha.composicao ?: '-'}"></td>
                 </tr>
                 <tr th:if="${ficha.tipo.name() == 'TECIDO'}">
-                    <th>Gramatura:</th>
+                    <th>Gramatura(G/M2):</th>
                     <td th:text="${ficha.gramatura ?: '-'}"></td>
                 </tr>
                 <tr>
-                    <th>Largura:</th>
+                    <th>Largura(MT):</th>
                     <td th:text="${ficha.largura ?: '-'}"></td>
                 </tr>
             </table>
@@ -125,11 +121,11 @@
                 </tr>
                 <tr>
                     <th>Preço USD:</th>
-                    <td th:text="${ficha.precoUsd != null ? '$ ' + #numbers.formatDecimal(ficha.precoUsd, 1, 2) : '-'}"></td>
+                    <td th:text="${ficha.precoUsd != null ? '$ ' + #numbers.formatDecimal(ficha.precoUsd, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
                 </tr>
                 <tr>
                     <th>Preço R$:</th>
-                    <td th:text="${ficha.precoReais != null ? 'R$ ' + #numbers.formatDecimal(ficha.precoReais, 1, 2) : '-'}"></td>
+                    <td th:text="${ficha.precoReais != null ? 'R$ ' + #numbers.formatDecimal(ficha.precoReais, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
                 </tr>
             </table>
         </div>
