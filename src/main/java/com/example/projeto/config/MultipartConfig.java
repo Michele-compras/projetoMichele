@@ -3,7 +3,7 @@ package com.example.projeto.config;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+claude --dangerously-skip-permissionsclaude --dangerously-skip-permissions
 @Configuration
 public class MultipartConfig {
 
