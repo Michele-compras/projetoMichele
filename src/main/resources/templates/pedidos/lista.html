@@ -29,8 +29,11 @@
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label">Coleção</label>
-                        <input type="text" class="form-control form-control-sm" name="colecao"
-                               th:value="${colecaoFiltro}" placeholder="Buscar por coleção...">
+                        <select class="form-select form-select-sm" name="colecao">
+                            <option value="">Todas</option>
+                            <option th:each="c : ${colecoesCadastradas}" th:value="${c.nome}" th:text="${c.nome}"
+                                    th:selected="${colecaoFiltro != null and colecaoFiltro == c.nome}"></option>
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Insumo</label>
@@ -94,7 +97,7 @@
                     <th>Fornecedor</th>
                     <th>Marca</th>
                     <th>Cor</th>
-                    <th>Ref. Tex.</th>
+                    <th style="min-width:130px">Código</th>
                     <th>Ref. Forn.</th>
                     <th>Nº Pedido</th>
                     <th>Dt. Pedido</th>
@@ -123,8 +126,8 @@
                     <td th:text="${ficha.refFornecedor}"></td>
                     <td th:text="${ficha.numeroPedido}"></td>
                     <td th:text="${ficha.dataColocacaoPedido != null ? #temporals.format(ficha.dataColocacaoPedido, 'dd/MM/yyyy') : ''}"></td>
-                    <td th:text="${ficha.quantidadeComprada != null ? ficha.quantidadeComprada : ''}"></td>
-                    <td th:text="${ficha.minimoCompra != null ? ficha.minimoCompra : ''}"></td>
+                    <td th:text="${ficha.quantidadeComprada != null ? #numbers.formatDecimal(ficha.quantidadeComprada, 1, 'POINT', 2, 'COMMA') : ''}"></td>
+                    <td th:text="${ficha.minimoCompra != null ? #numbers.formatDecimal(ficha.minimoCompra, 1, 'POINT', 2, 'COMMA') : ''}"></td>
                     <td th:text="${ficha.precoUsd != null ? '$ ' + #numbers.formatDecimal(ficha.precoUsd, 1, 'POINT', 2, 'COMMA') : ''}"></td>
                     <td th:text="${ficha.precoReais != null ? 'R$ ' + #numbers.formatDecimal(ficha.precoReais, 1, 'POINT', 2, 'COMMA') : ''}"></td>
                     <td>

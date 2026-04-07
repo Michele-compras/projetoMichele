@@ -160,6 +160,18 @@
                     <th>Data Chegada Destino:</th>
                     <td th:text="${ficha.dataChegadaDestino != null ? #temporals.format(ficha.dataChegadaDestino, 'dd/MM/yyyy') : '-'}"></td>
                 </tr>
+                <tr>
+                    <th>DUIMP/DI - Protocolo:</th>
+                    <td th:text="${ficha.duimpDi ?: '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Contrato de Câmbio Adiant. 30%:</th>
+                    <td th:text="${ficha.contratoCambioAdiant ?: '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Contrato de Câmbio Pgto Final:</th>
+                    <td th:text="${ficha.contratoCambioPgtoFinal ?: '-'}"></td>
+                </tr>
             </table>
         </div>
     </div>

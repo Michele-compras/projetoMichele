@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,13 +65,16 @@ public class FichaTecnicaService {
 
     public List<FichaTecnica> buscarComFiltros(String colecao,
                                                 String tipo, StatusPedido statusPedido,
-                                                LocalDate dataInicio, LocalDate dataFim) {
+                                                LocalDate dataInicio, LocalDate dataFim,
+                                                String duimpDi, String contratoCambio) {
         return repository.buscarComFiltros(
                 emptyToNull(colecao),
                 tipo,
                 statusPedido,
                 dataInicio,
-                dataFim);
+                dataFim,
+                emptyToNull(duimpDi),
+                emptyToNull(contratoCambio));
     }
 
     public java.util.Map<String, Long> qtdPorColecao() {
@@ -144,7 +146,7 @@ public class FichaTecnicaService {
         Map<String, List<Long>> porChave = new LinkedHashMap<>();
         Map<String, String[]> metadados = new LinkedHashMap<>();
         for (FichaTecnica f : repository.findComLeadtimeAprovacaoCor()) {
-            long dias = ChronoUnit.DAYS.between(f.getDataColocacaoPedido(), f.getDataAprovacaoAmostraCor());
+            long dias = calcularDiasUteis(f.getDataColocacaoPedido(), f.getDataAprovacaoAmostraCor());
             String colecao = f.getColecao() != null ? f.getColecao() : "-";
             String marca = f.getMarca() != null ? f.getMarca() : "-";
             String chave = colecao + "||" + marca;
@@ -176,7 +178,7 @@ public class FichaTecnicaService {
         Map<String, List<Long>> porChave = new LinkedHashMap<>();
         Map<String, String[]> metadados = new LinkedHashMap<>();
         for (FichaTecnica f : repository.findComLeadtimeAprovacaoProducao()) {
-            long dias = ChronoUnit.DAYS.between(f.getDataColocacaoPedido(), f.getDataAprovacaoAmostraProducao());
+            long dias = calcularDiasUteis(f.getDataColocacaoPedido(), f.getDataAprovacaoAmostraProducao());
             String colecao = f.getColecao() != null ? f.getColecao() : "-";
             String marca = f.getMarca() != null ? f.getMarca() : "-";
             String chave = colecao + "||" + marca;
@@ -201,6 +203,20 @@ public class FichaTecnicaService {
                     resultado.add(row);
                 });
         return resultado;
+    }
+
+    private long calcularDiasUteis(LocalDate inicio, LocalDate fim) {
+        if (fim.isBefore(inicio)) return 0;
+        long dias = 0;
+        LocalDate data = inicio;
+        while (!data.isAfter(fim)) {
+            java.time.DayOfWeek dow = data.getDayOfWeek();
+            if (dow != java.time.DayOfWeek.SATURDAY && dow != java.time.DayOfWeek.SUNDAY) {
+                dias++;
+            }
+            data = data.plusDays(1);
+        }
+        return dias;
     }
 
     private String emptyToNull(String value) {

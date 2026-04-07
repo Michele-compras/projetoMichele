@@ -2,6 +2,7 @@ package com.example.projeto.controller;
 
 import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
+import com.example.projeto.repository.ColecaoRepository;
 import com.example.projeto.repository.FichaTecnicaRepository;
 import com.example.projeto.repository.QuadroPlanejamentoRepository;
 import org.springframework.stereotype.Controller;
@@ -18,10 +19,13 @@ public class DashboardController {
 
     private final FichaTecnicaRepository repository;
     private final QuadroPlanejamentoRepository quadroRepository;
+    private final ColecaoRepository colecaoRepo;
 
-    public DashboardController(FichaTecnicaRepository repository, QuadroPlanejamentoRepository quadroRepository) {
+    public DashboardController(FichaTecnicaRepository repository, QuadroPlanejamentoRepository quadroRepository,
+                               ColecaoRepository colecaoRepo) {
         this.repository = repository;
         this.quadroRepository = quadroRepository;
+        this.colecaoRepo = colecaoRepo;
     }
 
     @GetMapping("/dashboard")
@@ -73,14 +77,18 @@ public class DashboardController {
         model.addAttribute("marcaLabels", marcaLabels);
         model.addAttribute("marcaValues", marcaValues);
 
-        // ── Por coleção: totais ──────────────────────────────────────
-        List<Object[]> colecaoData = repository.countByColecao();
+        // ── Por coleção: totais (usando Cadastro Prévio como lista mestre) ──
         List<String> colecaoLabels = new ArrayList<>();
-        List<Long>   colecaoValues = new ArrayList<>();
-        for (Object[] row : colecaoData) {
-            colecaoLabels.add((String) row[0]);
-            colecaoValues.add((Long) row[1]);
+        for (com.example.projeto.model.Colecao c : colecaoRepo.findAll()) {
+            colecaoLabels.add(c.getNome());
         }
+        Map<String, Long> colecaoTotaisMap = new LinkedHashMap<>();
+        for (String col : colecaoLabels) colecaoTotaisMap.put(col, 0L);
+        for (Object[] row : repository.countByColecao()) {
+            String col = (String) row[0];
+            if (colecaoTotaisMap.containsKey(col)) colecaoTotaisMap.put(col, (Long) row[1]);
+        }
+        List<Long> colecaoValues = new ArrayList<>(colecaoTotaisMap.values());
         model.addAttribute("colecaoLabels", colecaoLabels);
         model.addAttribute("colecaoValues", colecaoValues);
 
@@ -88,6 +96,7 @@ public class DashboardController {
         Map<String, Map<String, Long>> tipoPorColecaoMap = new LinkedHashMap<>();
         for (Object[] row : repository.countByColecaoAndTipo()) {
             String col  = (String) row[0];
+            if (!colecaoLabels.contains(col)) continue;
             String tipo = (String) row[1];
             Long   cnt  = (Long)   row[2];
             tipoPorColecaoMap.computeIfAbsent(tipo, k -> initMap(colecaoLabels)).put(col, cnt);
@@ -101,6 +110,7 @@ public class DashboardController {
         Map<String, Long> pedidoCancelado   = initMap(colecaoLabels);
         for (Object[] row : repository.countByColecaoAndStatusPedido()) {
             String col = (String) row[0];
+            if (!colecaoLabels.contains(col)) continue;
             StatusPedido st = (StatusPedido) row[1];
             Long cnt = (Long) row[2];
             if (st == StatusPedido.EM_ANDAMENTO) pedidoEmAndamento.put(col, cnt);
@@ -119,6 +129,7 @@ public class DashboardController {
         Map<String, Long> corPendenteMap  = initMap(colecaoLabels);
         for (Object[] row : repository.countByColecaoAndStatusAmostraCor()) {
             String col = (String) row[0];
+            if (!colecaoLabels.contains(col)) continue;
             StatusAmostra st = (StatusAmostra) row[1];
             Long cnt = (Long) row[2];
             if (st == StatusAmostra.APROVADO)       corAprovadoMap.put(col, cnt);
@@ -135,6 +146,7 @@ public class DashboardController {
         Map<String, Long> prodPendenteMap  = initMap(colecaoLabels);
         for (Object[] row : repository.countByColecaoAndStatusAmostraProducao()) {
             String col = (String) row[0];
+            if (!colecaoLabels.contains(col)) continue;
             StatusAmostra st = (StatusAmostra) row[1];
             Long cnt = (Long) row[2];
             if (st == StatusAmostra.APROVADO)       prodAprovadoMap.put(col, cnt);
@@ -152,6 +164,7 @@ public class DashboardController {
             String forn = (String) row[0];
             String col  = (String) row[1];
             Long   cnt  = (Long)   row[2];
+            if (!colecaoLabels.contains(col)) continue;
             if (!fornecedores.contains(forn)) fornecedores.add(forn);
             fornColMap.computeIfAbsent(forn, k -> new LinkedHashMap<>()).put(col, cnt);
         }

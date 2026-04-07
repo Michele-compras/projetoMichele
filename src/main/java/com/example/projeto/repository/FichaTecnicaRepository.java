@@ -17,14 +17,18 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Long
          + "(:tipo IS NULL OR f.tipo = :tipo) AND "
          + "(:statusPedido IS NULL OR f.statusPedido = :statusPedido) AND "
          + "(:dataInicio IS NULL OR f.dataColocacaoPedido >= :dataInicio) AND "
-         + "(:dataFim IS NULL OR f.dataColocacaoPedido <= :dataFim) "
+         + "(:dataFim IS NULL OR f.dataColocacaoPedido <= :dataFim) AND "
+         + "(:duimpDi IS NULL OR LOWER(f.duimpDi) LIKE LOWER(CONCAT('%', :duimpDi, '%'))) AND "
+         + "(:contratoCambio IS NULL OR LOWER(f.contratoCambioAdiant) LIKE LOWER(CONCAT('%', :contratoCambio, '%')) OR LOWER(f.contratoCambioPgtoFinal) LIKE LOWER(CONCAT('%', :contratoCambio, '%'))) "
          + "ORDER BY f.id DESC")
     List<FichaTecnica> buscarComFiltros(
             @Param("colecao") String colecao,
             @Param("tipo") String tipo,
             @Param("statusPedido") StatusPedido statusPedido,
             @Param("dataInicio") LocalDate dataInicio,
-            @Param("dataFim") LocalDate dataFim);
+            @Param("dataFim") LocalDate dataFim,
+            @Param("duimpDi") String duimpDi,
+            @Param("contratoCambio") String contratoCambio);
 
     @Query("SELECT f.colecao, COUNT(f) FROM FichaTecnica f WHERE f.colecao IS NOT NULL AND f.colecao <> '' GROUP BY f.colecao ORDER BY f.colecao ASC")
     List<Object[]> countByColecao();

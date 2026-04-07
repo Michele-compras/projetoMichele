@@ -78,6 +78,10 @@ public class FichaTecnica {
 
     private String duimpDi;
 
+    private String contratoCambioAdiant;
+
+    private String contratoCambioPgtoFinal;
+
     @Enumerated(EnumType.STRING)
     private StatusAmostra statusAmostraCor;
 
@@ -228,6 +232,22 @@ public class FichaTecnica {
 
     public void setDuimpDi(String duimpDi) {
         this.duimpDi = duimpDi;
+    }
+
+    public String getContratoCambioAdiant() {
+        return contratoCambioAdiant;
+    }
+
+    public void setContratoCambioAdiant(String contratoCambioAdiant) {
+        this.contratoCambioAdiant = contratoCambioAdiant;
+    }
+
+    public String getContratoCambioPgtoFinal() {
+        return contratoCambioPgtoFinal;
+    }
+
+    public void setContratoCambioPgtoFinal(String contratoCambioPgtoFinal) {
+        this.contratoCambioPgtoFinal = contratoCambioPgtoFinal;
     }
 
     public StatusAmostra getStatusAmostraCor() {

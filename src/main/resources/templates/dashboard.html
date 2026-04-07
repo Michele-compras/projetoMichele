@@ -21,7 +21,7 @@
                         <tr class="table-secondary text-center">
                             <th rowspan="2" class="align-middle text-start ps-3" style="min-width:130px">Coleção</th>
                             <!-- Fichas -->
-                            <th colspan="4" class="border-start border-2">Fichas</th>
+                            <th colspan="1" class="border-start border-2">Fichas</th>
                             <!-- Amostra Cor -->
                             <th colspan="2" class="border-start border-2">Amostra Cor/Qualidade</th>
                             <!-- Amostra Embarque -->
@@ -32,9 +32,6 @@
                         <tr class="table-light text-center" style="font-size:0.75rem;">
                             <!-- Fichas -->
                             <th class="border-start border-2 fw-bold">Total</th>
-                            <th class="text-primary">Tecidos</th>
-                            <th class="text-info">Av. Metro</th>
-                            <th class="text-info">Av. Unidade</th>
                             <!-- Amostra Cor -->
                             <th class="border-start border-2 text-warning">Aguardando</th>
                             <th class="text-success">Aprovada</th>
@@ -51,9 +48,6 @@
                             <td class="text-start ps-3 fw-bold" th:text="${colecaoLabels[i]}"></td>
                             <!-- Fichas -->
                             <td class="border-start border-2 fw-bold" th:text="${colecaoValues[i]}"></td>
-                            <td class="text-primary fw-bold" th:text="${colecaoTecidoValues[i]}"></td>
-                            <td class="text-info fw-bold" th:text="${colecaoAcessorioMetroValues[i]}"></td>
-                            <td class="text-info fw-bold" th:text="${colecaoAcessorioUnidadeValues[i]}"></td>
                             <!-- Amostra Cor -->
                             <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoCorPendente[i]}"></td>
                             <td class="text-success fw-bold" th:text="${colecaoCorAprovado[i]}"></td>
@@ -71,9 +65,6 @@
                         <tr>
                             <td class="text-start ps-3">TOTAL</td>
                             <td class="border-start border-2" th:text="${total}"></td>
-                            <td th:text="${qtdTecido}"></td>
-                            <td th:text="${qtdAcessorioMetro}"></td>
-                            <td th:text="${qtdAcessorioUnidade}"></td>
                             <td class="border-start border-2 text-warning" th:text="${corPendente}"></td>
                             <td class="text-success" th:text="${corAprovado}"></td>
                             <td class="border-start border-2 text-warning" th:text="${prodPendente}"></td>

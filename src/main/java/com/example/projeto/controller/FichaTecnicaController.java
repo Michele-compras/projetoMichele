@@ -3,7 +3,9 @@ package com.example.projeto.controller;
 import com.example.projeto.model.FichaTecnica;
 import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
+import com.example.projeto.repository.CategoriaRepository;
 import com.example.projeto.repository.ColecaoRepository;
+import com.example.projeto.repository.FornecedorRepository;
 import com.example.projeto.repository.InsumoRepository;
 import com.example.projeto.repository.MarcaRepository;
 import com.example.projeto.service.FichaTecnicaService;
@@ -26,13 +28,18 @@ public class FichaTecnicaController {
     private final MarcaRepository marcaRepo;
     private final ColecaoRepository colecaoRepo;
     private final InsumoRepository insumoRepo;
+    private final FornecedorRepository fornecedorRepo;
+    private final CategoriaRepository categoriaRepo;
 
     public FichaTecnicaController(FichaTecnicaService service, MarcaRepository marcaRepo,
-                                   ColecaoRepository colecaoRepo, InsumoRepository insumoRepo) {
+                                   ColecaoRepository colecaoRepo, InsumoRepository insumoRepo,
+                                   FornecedorRepository fornecedorRepo, CategoriaRepository categoriaRepo) {
         this.service = service;
         this.marcaRepo = marcaRepo;
         this.colecaoRepo = colecaoRepo;
         this.insumoRepo = insumoRepo;
+        this.fornecedorRepo = fornecedorRepo;
+        this.categoriaRepo = categoriaRepo;
     }
 
     @GetMapping
@@ -42,25 +49,32 @@ public class FichaTecnicaController {
             @RequestParam(required = false) StatusPedido statusPedido,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataInicio,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataFim,
+            @RequestParam(required = false) String duimpDi,
+            @RequestParam(required = false) String contratoCambio,
             Model model) {
 
         List<FichaTecnica> fichas;
         boolean temFiltro = colecao != null || tipo != null
-                || statusPedido != null || dataInicio != null || dataFim != null;
+                || statusPedido != null || dataInicio != null || dataFim != null
+                || (duimpDi != null && !duimpDi.isBlank())
+                || (contratoCambio != null && !contratoCambio.isBlank());
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, duimpDi, contratoCambio);
         } else {
             fichas = service.listarTodas();
         }
 
         model.addAttribute("fichas", fichas);
         model.addAttribute("statusPedidoList", StatusPedido.values());
+        model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());
         model.addAttribute("colecaoFiltro", colecao);
         model.addAttribute("tipoSelecionado", tipo);
         model.addAttribute("statusPedidoSelecionado", statusPedido);
         model.addAttribute("dataInicio", dataInicio);
         model.addAttribute("dataFim", dataFim);
+        model.addAttribute("duimpDiFiltro", duimpDi);
+        model.addAttribute("contratoCambioFiltro", contratoCambio);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
         model.addAttribute("qtdTipoPorColecao", service.qtdTipoPorColecao());
         return "fichas/lista";
@@ -133,5 +147,7 @@ public class FichaTecnicaController {
         model.addAttribute("statusPedidoList", StatusPedido.values());
         model.addAttribute("marcasCadastradas", marcaRepo.findAll());
         model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());
+        model.addAttribute("fornecedoresCadastrados", fornecedorRepo.findAll());
+        model.addAttribute("categoriasCadastradas", categoriaRepo.findAll());
     }
 }

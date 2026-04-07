@@ -31,8 +31,11 @@
                 <div class="row g-2 align-items-end">
                     <div class="col-md-2">
                         <label class="form-label">Coleção</label>
-                        <input type="text" class="form-control form-control-sm" name="colecao"
-                               th:value="${colecaoFiltro}" placeholder="Buscar por coleção...">
+                        <select class="form-select form-select-sm" name="colecao">
+                            <option value="">Todas</option>
+                            <option th:each="c : ${colecoesCadastradas}" th:value="${c.nome}" th:text="${c.nome}"
+                                    th:selected="${colecaoFiltro != null and colecaoFiltro == c.nome}"></option>
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Insumo</label>

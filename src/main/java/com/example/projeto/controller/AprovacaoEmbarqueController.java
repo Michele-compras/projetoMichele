@@ -3,6 +3,7 @@ package com.example.projeto.controller;
 import com.example.projeto.model.FichaTecnica;
 import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
+import com.example.projeto.repository.ColecaoRepository;
 import com.example.projeto.service.FichaTecnicaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -21,9 +22,11 @@ import java.util.stream.Collectors;
 public class AprovacaoEmbarqueController {
 
     private final FichaTecnicaService service;
+    private final ColecaoRepository colecaoRepo;
 
-    public AprovacaoEmbarqueController(FichaTecnicaService service) {
+    public AprovacaoEmbarqueController(FichaTecnicaService service, ColecaoRepository colecaoRepo) {
         this.service = service;
+        this.colecaoRepo = colecaoRepo;
     }
 
     @GetMapping
@@ -42,7 +45,7 @@ public class AprovacaoEmbarqueController {
                 || dataInicio != null || dataFim != null;
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null);
             if (statusAmostra != null) {
                 final StatusAmostra filtroStatus = statusAmostra;
                 fichas = fichas.stream()
@@ -56,6 +59,7 @@ public class AprovacaoEmbarqueController {
         model.addAttribute("fichas", fichas);
         model.addAttribute("statusPedidoList", StatusPedido.values());
         model.addAttribute("statusAmostraList", StatusAmostra.values());
+        model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());
         model.addAttribute("colecaoFiltro", colecao);
         model.addAttribute("tipoSelecionado", tipo);
         model.addAttribute("statusPedidoSelecionado", statusPedido);

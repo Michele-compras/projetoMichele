@@ -39,7 +39,12 @@
                     </div>
                     <div class="col-md-3">
                         <label for="fornecedor" class="form-label">Fornecedor</label>
-                        <input type="text" id="fornecedor" class="form-control" th:field="*{fornecedor}">
+                        <select id="fornecedor" class="form-select" th:field="*{fornecedor}">
+                            <option value="">Selecione...</option>
+                            <option th:each="f : ${fornecedoresCadastrados}"
+                                    th:value="${f.nome}"
+                                    th:text="${f.nome}"></option>
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <label for="refFornecedor" class="form-label">Ref. Fornecedor</label>
@@ -53,7 +58,12 @@
                 <div class="row mb-2">
                     <div class="col-md-2">
                         <label for="categoriaProduto" class="form-label">Categoria</label>
-                        <input type="text" id="categoriaProduto" class="form-control" th:field="*{categoriaProduto}">
+                        <select id="categoriaProduto" class="form-select" th:field="*{categoriaProduto}">
+                            <option value="">Selecione...</option>
+                            <option th:each="cat : ${categoriasCadastradas}"
+                                    th:value="${cat.nome}"
+                                    th:text="${cat.nome}"></option>
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <label for="cor" class="form-label">Cor *</label>
@@ -68,7 +78,10 @@
                     </div>
                     <div class="col-md-3">
                         <label for="marcaQueUtiliza" class="form-label">Marca que Utiliza</label>
-                        <input type="text" id="marcaQueUtiliza" class="form-control" th:field="*{marcaQueUtiliza}">
+                        <select id="marcaQueUtiliza" class="form-select" th:field="*{marcaQueUtiliza}">
+                            <option value="">Selecione...</option>
+                            <option th:each="m : ${marcasCadastradas}" th:value="${m.nome}" th:text="${m.nome}"></option>
+                        </select>
                     </div>
                     <div class="col-md-3">
                         <label for="composicao" class="form-label">Composição detalhada</label>
@@ -176,8 +189,21 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label for="duimpDi" class="form-label">DUIMP/DI</label>
+                        <label for="duimpDi" class="form-label">DUIMP/DI - Protocolo</label>
                         <input type="text" id="duimpDi" class="form-control" th:field="*{duimpDi}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Contrato de Câmbio</label>
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <label for="contratoCambioAdiant" class="form-label form-label-sm text-muted mb-0">Adiant. 30%</label>
+                                <input type="text" id="contratoCambioAdiant" class="form-control form-control-sm" th:field="*{contratoCambioAdiant}">
+                            </div>
+                            <div class="col-6">
+                                <label for="contratoCambioPgtoFinal" class="form-label form-label-sm text-muted mb-0">Pgto Final</label>
+                                <input type="text" id="contratoCambioPgtoFinal" class="form-control form-control-sm" th:field="*{contratoCambioPgtoFinal}">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

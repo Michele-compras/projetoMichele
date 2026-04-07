@@ -1,7 +1,9 @@
 package com.example.projeto.controller;
 
 import com.example.projeto.model.FichaTecnica;
+import com.example.projeto.repository.ColecaoRepository;
 import com.example.projeto.repository.FichaTecnicaRepository;
+import com.example.projeto.repository.InsumoRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +22,15 @@ public class QuadroComprasController {
     private static final String[] TIPO_ROWS     = {"Tecido", "Aviamento metro", "Aviamento unidade"};
 
     private final FichaTecnicaRepository repository;
+    private final ColecaoRepository colecaoRepo;
+    private final InsumoRepository insumoRepo;
 
-    public QuadroComprasController(FichaTecnicaRepository repository) {
+    public QuadroComprasController(FichaTecnicaRepository repository,
+                                   ColecaoRepository colecaoRepo,
+                                   InsumoRepository insumoRepo) {
         this.repository = repository;
+        this.colecaoRepo = colecaoRepo;
+        this.insumoRepo = insumoRepo;
     }
 
     @GetMapping
@@ -32,32 +40,47 @@ public class QuadroComprasController {
 
         List<FichaTecnica> fichas = repository.findAll();
 
-        List<String> colecoes = fichas.stream()
-                .map(FichaTecnica::getColecao)
-                .filter(c -> c != null && !c.isBlank())
-                .distinct()
-                .sorted(Comparator.reverseOrder())
+        List<String> colecoes = colecaoRepo.findAll().stream()
+                .map(c -> c.getNome())
+                .collect(Collectors.toList());
+
+        List<String> insumos = insumoRepo.findAll().stream()
+                .map(i -> i.getNome())
                 .collect(Collectors.toList());
 
         String colecaoAtual = colecao != null ? colecao : (colecoes.isEmpty() ? null : colecoes.get(0));
 
-        // ── Resumo: listas pre-filtradas por Inverno/Verão ──
+        // ── Resumo: por coleção → fornecedor × insumo ──
         List<Map<String, Object>> invernos = new ArrayList<>();
         List<Map<String, Object>> veraos   = new ArrayList<>();
         for (String col : colecoes) {
-            double tecido = 0, avioMetro = 0, avioUnid = 0;
+            // fornecedor -> insumo -> qty
+            Map<String, Map<String, Double>> fornInsumoMap = new LinkedHashMap<>();
             for (FichaTecnica f : fichas) {
-                if (!col.equals(f.getColecao()) || f.getQuantidadeComprada() == null) continue;
-                int idx = tipoIndex(f);
-                if (idx == 0)      tecido    += f.getQuantidadeComprada();
-                else if (idx == 1) avioMetro += f.getQuantidadeComprada();
-                else               avioUnid  += f.getQuantidadeComprada();
+                if (!col.equals(f.getColecao()) || f.getQuantidadeComprada() == null
+                        || f.getFornecedor() == null || f.getFornecedor().isBlank()
+                        || f.getTipo() == null) continue;
+                String forn = f.getFornecedor().trim();
+                String tipo = f.getTipo();
+                fornInsumoMap.computeIfAbsent(forn, k -> new LinkedHashMap<>())
+                             .merge(tipo, f.getQuantidadeComprada(), Double::sum);
             }
+            List<Map<String, Object>> fornList = new ArrayList<>();
+            fornInsumoMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(e -> {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("nome", e.getKey());
+                double total = 0;
+                for (String ins : insumos) {
+                    double qty = e.getValue().getOrDefault(ins, 0.0);
+                    m.put(ins, qty);
+                    total += qty;
+                }
+                m.put("total", total);
+                fornList.add(m);
+            });
             Map<String, Object> card = new LinkedHashMap<>();
-            card.put("colecao",   col);
-            card.put("tecido",    tecido);
-            card.put("avioMetro", avioMetro);
-            card.put("avioUnid",  avioUnid);
+            card.put("colecao",      col);
+            card.put("fornecedores", fornList);
             if (col.toLowerCase().contains("inverno")) invernos.add(card);
             else                                       veraos.add(card);
         }
@@ -94,47 +117,18 @@ public class QuadroComprasController {
             }
         }
 
-        // ── Resumo por Fornecedor x Tipo de Insumo ──
-        Map<String, double[]> fornMap = new LinkedHashMap<>();
-        for (FichaTecnica f : fichas) {
-            if (f.getQuantidadeComprada() == null) continue;
-            String forn = (f.getFornecedor() != null && !f.getFornecedor().isBlank())
-                    ? f.getFornecedor() : "(Sem fornecedor)";
-            fornMap.computeIfAbsent(forn, k -> new double[3]);
-            fornMap.get(forn)[tipoIndex(f)] += f.getQuantidadeComprada();
-        }
-        List<List<Object>> resumoFornecedor = new ArrayList<>();
-        double[] totForn = new double[4];
-        for (Map.Entry<String, double[]> e : fornMap.entrySet()) {
-            double total = e.getValue()[0] + e.getValue()[1] + e.getValue()[2];
-            List<Object> row = new ArrayList<>();
-            row.add(e.getKey());
-            row.add(e.getValue()[0]);
-            row.add(e.getValue()[1]);
-            row.add(e.getValue()[2]);
-            row.add(total);
-            resumoFornecedor.add(row);
-            totForn[0] += e.getValue()[0];
-            totForn[1] += e.getValue()[1];
-            totForn[2] += e.getValue()[2];
-            totForn[3] += total;
-        }
-        List<Double> totFornList = new ArrayList<>();
-        for (double v : totForn) totFornList.add(v);
-
-        model.addAttribute("colecoes", colecoes);
+        model.addAttribute("colecoes",    colecoes);
         model.addAttribute("colecaoAtual", colecaoAtual);
-        model.addAttribute("invernos", invernos);
-        model.addAttribute("veraos",   veraos);
-        model.addAttribute("pivotRows", pivotRows);
-        model.addAttribute("resumoFornecedor", resumoFornecedor);
-        model.addAttribute("totaisFornecedor", totFornList);
+        model.addAttribute("insumos",     insumos);
+        model.addAttribute("invernos",    invernos);
+        model.addAttribute("veraos",      veraos);
+        model.addAttribute("pivotRows",   pivotRows);
         List<Double> colTotalList = new ArrayList<>();
         for (double v : colTotals) colTotalList.add(v);
-        model.addAttribute("colTotals", colTotalList);
+        model.addAttribute("colTotals",    colTotalList);
         model.addAttribute("marcaDisplay", Arrays.asList(MARCA_DISPLAY));
-        model.addAttribute("tipoRows", Arrays.asList(TIPO_ROWS));
-        model.addAttribute("abaAtiva", aba);
+        model.addAttribute("tipoRows",     Arrays.asList(TIPO_ROWS));
+        model.addAttribute("abaAtiva",     aba);
 
         return "quadro-compras";
     }

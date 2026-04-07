@@ -1,6 +1,8 @@
 package com.example.projeto.controller;
 
 import com.example.projeto.model.QuadroPlanejamento;
+import com.example.projeto.repository.ColecaoRepository;
+import com.example.projeto.repository.InsumoRepository;
 import com.example.projeto.repository.QuadroPlanejamentoRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,38 +10,48 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
 @RequestMapping("/quadro-planejamento")
 public class QuadroPlanejamentoController {
 
-    private static final List<String> TIPOS = Arrays.asList(
-        "Tecido",
-        "Aviamento em Metro",
-        "Aviamento em Unidade"
-    );
-
     private final QuadroPlanejamentoRepository repository;
+    private final ColecaoRepository colecaoRepo;
+    private final InsumoRepository insumoRepo;
 
-    public QuadroPlanejamentoController(QuadroPlanejamentoRepository repository) {
+    public QuadroPlanejamentoController(QuadroPlanejamentoRepository repository,
+                                        ColecaoRepository colecaoRepo,
+                                        InsumoRepository insumoRepo) {
         this.repository = repository;
+        this.colecaoRepo = colecaoRepo;
+        this.insumoRepo = insumoRepo;
     }
 
     @GetMapping
     public String exibir(@RequestParam(required = false) String colecao,
                          @RequestParam(required = false, defaultValue = "quadro") String aba,
                          Model model) {
-        List<String> colecoes = repository.findDistinctColecoes();
+        List<String> colecoes = colecaoRepo.findAll().stream()
+                .map(c -> c.getNome()).toList();
 
         if (colecao == null || colecao.isBlank()) {
             colecao = colecoes.isEmpty() ? "" : colecoes.get(0);
         }
 
+        List<String> insumos = insumoRepo.findAll().stream().map(i -> i.getNome()).toList();
+
+        // Eliminar registros cujo tipoSolicitacao não existe no Cadastro Prévio
+        List<QuadroPlanejamento> todos = repository.findAll();
+        for (QuadroPlanejamento q : todos) {
+            if (!insumos.contains(q.getTipoSolicitacao())) {
+                repository.delete(q);
+            }
+        }
+
         final String colecaoFinal = colecao;
         List<QuadroPlanejamento> linhas = new ArrayList<>();
-        for (String tipo : TIPOS) {
+        for (String tipo : insumos) {
             QuadroPlanejamento linha = repository
                 .findByColecaoAndTipoSolicitacao(colecaoFinal, tipo)
                 .orElseGet(() -> {
@@ -58,6 +70,7 @@ public class QuadroPlanejamentoController {
             List<QuadroPlanejamento> ls = repository.findByColecaoOrderByTipoSolicitacaoAsc(col);
             int cotado = 0, aprovado = 0, cancelado = 0;
             for (QuadroPlanejamento q : ls) {
+                if (!insumos.contains(q.getTipoSolicitacao())) continue;
                 cotado    += soma(q.getAnimeCotado(), q.getMomiCotado(), q.getAuthoriaCotado(), q.getBimbiCotado(), q.getYoucciecotado());
                 aprovado  += soma(q.getAnimeAprovado(), q.getMomiAprovado(), q.getAuthoriaAprovado(), q.getBimbiAprovado(), q.getYouccieeAprovado());
                 cancelado += soma(q.getAnimeCancelado(), q.getMomiCancelado(), q.getAuthoriaCancelado(), q.getBimbiCancelado(), q.getYoucciecancelado());
@@ -74,6 +87,7 @@ public class QuadroPlanejamentoController {
         model.addAttribute("linhas", linhas);
         model.addAttribute("colecaoAtual", colecaoFinal);
         model.addAttribute("colecoes", colecoes);
+        model.addAttribute("insumos", insumos);
         model.addAttribute("invernos", invernos);
         model.addAttribute("veraos", veraos);
         model.addAttribute("abaAtiva", aba);
@@ -82,7 +96,9 @@ public class QuadroPlanejamentoController {
 
     @GetMapping("/resumo")
     public String resumo(Model model) {
-        List<String> colecoes = repository.findDistinctColecoes();
+        List<String> colecoes = colecaoRepo.findAll().stream()
+                .map(c -> c.getNome()).toList();
+        List<String> insumos = insumoRepo.findAll().stream().map(i -> i.getNome()).toList();
 
         List<java.util.Map<String, Object>> invernos = new ArrayList<>();
         List<java.util.Map<String, Object>> veraos   = new ArrayList<>();
@@ -91,6 +107,7 @@ public class QuadroPlanejamentoController {
             List<QuadroPlanejamento> linhas = repository.findByColecaoOrderByTipoSolicitacaoAsc(col);
             int cotado = 0, aprovado = 0, cancelado = 0;
             for (QuadroPlanejamento q : linhas) {
+                if (!insumos.contains(q.getTipoSolicitacao())) continue;
                 cotado    += soma(q.getAnimeCotado(), q.getMomiCotado(), q.getAuthoriaCotado(), q.getBimbiCotado(), q.getYoucciecotado());
                 aprovado  += soma(q.getAnimeAprovado(), q.getMomiAprovado(), q.getAuthoriaAprovado(), q.getBimbiAprovado(), q.getYouccieeAprovado());
                 cancelado += soma(q.getAnimeCancelado(), q.getMomiCancelado(), q.getAuthoriaCancelado(), q.getBimbiCancelado(), q.getYoucciecancelado());

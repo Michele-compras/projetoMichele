@@ -31,11 +31,14 @@
     <div class="card mb-3 no-print">
         <div class="card-body">
             <form th:action="@{/fichas}" method="get">
-                <div class="row g-2 align-items-end">
+                <div class="row g-2 align-items-end mb-2">
                     <div class="col-md-3">
                         <label class="form-label">Coleção</label>
-                        <input type="text" class="form-control form-control-sm" name="colecao"
-                               th:value="${colecaoFiltro}" placeholder="Buscar por coleção...">
+                        <select class="form-select form-select-sm" name="colecao">
+                            <option value="">Todas</option>
+                            <option th:each="c : ${colecoesCadastradas}" th:value="${c.nome}" th:text="${c.nome}"
+                                    th:selected="${colecaoFiltro != null and colecaoFiltro == c.nome}"></option>
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Insumo</label>
@@ -62,6 +65,18 @@
                         <label class="form-label">Data Fim</label>
                         <input type="date" class="form-control form-control-sm" name="dataFim"
                                th:value="${dataFim}">
+                    </div>
+                </div>
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">DUIMP/DI - Protocolo</label>
+                        <input type="text" class="form-control form-control-sm" name="duimpDi"
+                               th:value="${duimpDiFiltro}" placeholder="Buscar por DUIMP/DI...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Contrato de Câmbio</label>
+                        <input type="text" class="form-control form-control-sm" name="contratoCambio"
+                               th:value="${contratoCambioFiltro}" placeholder="Buscar por contrato...">
                     </div>
                     <div class="col-md-1">
                         <button type="submit" class="btn btn-sm btn-primary w-100">Filtrar</button>
@@ -116,8 +131,8 @@
                     <th>Fornecedor</th>
                     <th>Marca</th>
                     <th>Cor</th>
+                    <th style="min-width:130px">Código</th>
                     <th>Ref. Forn.</th>
-                    <th>Código</th>
                     <th>Composição detalhada</th>
                     <th>Gramatura(G/M2)</th>
                     <th>Largura(MT)</th>
@@ -138,8 +153,8 @@
                     <td th:text="${ficha.fornecedor}"></td>
                     <td th:text="${ficha.marca}"></td>
                     <td th:text="${ficha.cor}"></td>
-                    <td th:text="${ficha.refFornecedor}"></td>
                     <td th:text="${ficha.refTexcotton}"></td>
+                    <td th:text="${ficha.refFornecedor}"></td>
                     <td th:text="${ficha.composicao}"></td>
                     <td th:text="${ficha.gramatura}"></td>
                     <td th:text="${ficha.largura}"></td>

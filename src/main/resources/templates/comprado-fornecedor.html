@@ -33,54 +33,37 @@
             <h5 class="text-uppercase fw-bold mb-3" style="letter-spacing:0.08em; color:#1a1a2e;">
                 <i class="bi bi-snow me-2"></i>Inverno
             </h5>
-            <div class="row g-3">
-                <div th:each="card : ${invernos}" class="col-md-3 col-sm-6">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-dark text-white text-center py-2">
-                            <strong th:text="${card.colecao}" style="font-size:0.9rem"></strong>
-                        </div>
-                        <div class="card-body py-3">
-                            <div class="row g-2 text-center">
-                                <div class="col-4">
-                                    <div class="p-2 rounded" style="background:#e3f2fd">
-                                        <div class="fw-bold text-primary" style="font-size:1.2rem"
-                                             th:text="${#numbers.formatDecimal(card.tecido, 1, 'POINT', 0, 'COMMA')}">0</div>
-                                        <div style="font-size:0.7rem; color:#888">Tecido</div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="p-2 rounded" style="background:#e8f5e9">
-                                        <div class="fw-bold text-success" style="font-size:1.2rem"
-                                             th:text="${#numbers.formatDecimal(card.avioMetro, 1, 'POINT', 0, 'COMMA')}">0</div>
-                                        <div style="font-size:0.7rem; color:#888">Avio. Metro</div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="p-2 rounded" style="background:#fff8e1">
-                                        <div class="fw-bold text-warning" style="font-size:1.2rem"
-                                             th:text="${#numbers.formatDecimal(card.avioUnid, 1, 'POINT', 0, 'COMMA')}">0</div>
-                                        <div style="font-size:0.7rem; color:#888">Avio. Unid.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Por Fornecedor -->
-                        <div class="card-body py-2 px-3 border-top">
-                            <table class="table table-sm mb-0" style="font-size:0.75rem;">
-                                <tbody>
-                                    <tr th:each="forn : ${card.fornecedores}">
-                                        <td class="text-muted" th:text="${forn.nome}"></td>
-                                        <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(forn.qty, 1, 'POINT', 0, 'COMMA')}"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="card-footer bg-white border-top-0 text-center pb-3">
-                            <a th:href="@{/comprado-fornecedor(aba='quadro', colecao=${card.colecao})}"
-                               class="btn btn-sm btn-outline-dark px-3">
-                                <i class="bi bi-table me-1"></i> Ver Quadro
-                            </a>
-                        </div>
+            <div th:each="card : ${invernos}" class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-dark text-white py-2 d-flex justify-content-between align-items-center">
+                    <strong th:text="${card.colecao}" style="font-size:0.9rem"></strong>
+                    <a th:href="@{/comprado-fornecedor(aba='quadro', colecao=${card.colecao})}"
+                       class="btn btn-sm btn-outline-light">
+                        <i class="bi bi-table me-1"></i> Ver Quadro
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(card.fornecedores)}" class="text-center py-3 text-muted" style="font-size:0.82rem">
+                        Nenhum fornecedor com quantidade comprada.
+                    </div>
+                    <div th:if="${!#lists.isEmpty(card.fornecedores)}" class="table-responsive">
+                        <table class="table table-sm table-bordered mb-0 text-center" style="font-size:0.8rem;">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th class="text-start ps-3">Fornecedor</th>
+                                    <th th:each="ins : ${insumos}" th:text="${ins}"></th>
+                                    <th class="fw-bold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="forn : ${card.fornecedores}">
+                                    <td class="text-start ps-3 fw-semibold" th:text="${forn.nome}"></td>
+                                    <td th:each="ins : ${insumos}"
+                                        th:text="${forn.get(ins) != null and forn.get(ins) != 0 ? #numbers.formatDecimal(forn.get(ins), 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+                                    <td class="fw-bold text-primary"
+                                        th:text="${#numbers.formatDecimal(forn.total, 1, 'POINT', 2, 'COMMA')}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -91,54 +74,37 @@
             <h5 class="text-uppercase fw-bold mb-3" style="letter-spacing:0.08em; color:#1a1a2e;">
                 <i class="bi bi-sun me-2"></i>Verão
             </h5>
-            <div class="row g-3">
-                <div th:each="card : ${veraos}" class="col-md-3 col-sm-6">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header text-white text-center py-2" style="background:#e65100">
-                            <strong th:text="${card.colecao}" style="font-size:0.9rem"></strong>
-                        </div>
-                        <div class="card-body py-3">
-                            <div class="row g-2 text-center">
-                                <div class="col-4">
-                                    <div class="p-2 rounded" style="background:#e3f2fd">
-                                        <div class="fw-bold text-primary" style="font-size:1.2rem"
-                                             th:text="${#numbers.formatDecimal(card.tecido, 1, 'POINT', 0, 'COMMA')}">0</div>
-                                        <div style="font-size:0.7rem; color:#888">Tecido</div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="p-2 rounded" style="background:#e8f5e9">
-                                        <div class="fw-bold text-success" style="font-size:1.2rem"
-                                             th:text="${#numbers.formatDecimal(card.avioMetro, 1, 'POINT', 0, 'COMMA')}">0</div>
-                                        <div style="font-size:0.7rem; color:#888">Avio. Metro</div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="p-2 rounded" style="background:#fff8e1">
-                                        <div class="fw-bold text-warning" style="font-size:1.2rem"
-                                             th:text="${#numbers.formatDecimal(card.avioUnid, 1, 'POINT', 0, 'COMMA')}">0</div>
-                                        <div style="font-size:0.7rem; color:#888">Avio. Unid.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Por Fornecedor -->
-                        <div class="card-body py-2 px-3 border-top">
-                            <table class="table table-sm mb-0" style="font-size:0.75rem;">
-                                <tbody>
-                                    <tr th:each="forn : ${card.fornecedores}">
-                                        <td class="text-muted" th:text="${forn.nome}"></td>
-                                        <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(forn.qty, 1, 'POINT', 0, 'COMMA')}"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="card-footer bg-white border-top-0 text-center pb-3">
-                            <a th:href="@{/comprado-fornecedor(aba='quadro', colecao=${card.colecao})}"
-                               class="btn btn-sm btn-outline-dark px-3">
-                                <i class="bi bi-table me-1"></i> Ver Quadro
-                            </a>
-                        </div>
+            <div th:each="card : ${veraos}" class="card border-0 shadow-sm mb-3">
+                <div class="card-header text-white py-2 d-flex justify-content-between align-items-center" style="background:#e65100">
+                    <strong th:text="${card.colecao}" style="font-size:0.9rem"></strong>
+                    <a th:href="@{/comprado-fornecedor(aba='quadro', colecao=${card.colecao})}"
+                       class="btn btn-sm btn-outline-light">
+                        <i class="bi bi-table me-1"></i> Ver Quadro
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(card.fornecedores)}" class="text-center py-3 text-muted" style="font-size:0.82rem">
+                        Nenhum fornecedor com quantidade comprada.
+                    </div>
+                    <div th:if="${!#lists.isEmpty(card.fornecedores)}" class="table-responsive">
+                        <table class="table table-sm table-bordered mb-0 text-center" style="font-size:0.8rem;">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th class="text-start ps-3">Fornecedor</th>
+                                    <th th:each="ins : ${insumos}" th:text="${ins}"></th>
+                                    <th class="fw-bold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="forn : ${card.fornecedores}">
+                                    <td class="text-start ps-3 fw-semibold" th:text="${forn.nome}"></td>
+                                    <td th:each="ins : ${insumos}"
+                                        th:text="${forn.get(ins) != null and forn.get(ins) != 0 ? #numbers.formatDecimal(forn.get(ins), 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+                                    <td class="fw-bold text-primary"
+                                        th:text="${#numbers.formatDecimal(forn.total, 1, 'POINT', 2, 'COMMA')}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

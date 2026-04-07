@@ -2,6 +2,7 @@ package com.example.projeto.controller;
 
 import com.example.projeto.model.FichaTecnica;
 import com.example.projeto.model.StatusPedido;
+import com.example.projeto.repository.ColecaoRepository;
 import com.example.projeto.service.FichaTecnicaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,11 @@ import java.util.List;
 public class PedidosController {
 
     private final FichaTecnicaService service;
+    private final ColecaoRepository colecaoRepo;
 
-    public PedidosController(FichaTecnicaService service) {
+    public PedidosController(FichaTecnicaService service, ColecaoRepository colecaoRepo) {
         this.service = service;
+        this.colecaoRepo = colecaoRepo;
     }
 
     @GetMapping
@@ -37,13 +40,14 @@ public class PedidosController {
                 || statusPedido != null || dataInicio != null || dataFim != null;
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null);
         } else {
             fichas = service.listarTodas();
         }
 
         model.addAttribute("fichas", fichas);
         model.addAttribute("statusPedidoList", StatusPedido.values());
+        model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());
         model.addAttribute("colecaoFiltro", colecao);
         model.addAttribute("tipoSelecionado", tipo);
         model.addAttribute("statusPedidoSelecionado", statusPedido);
