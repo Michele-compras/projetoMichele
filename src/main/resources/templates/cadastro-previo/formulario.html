@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Cadastro Prévio')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: sidebar}"></nav>
+
+<div class="main-content">
+<div class="container-fluid p-4">
+    <h2 th:text="${cadastro.id != null ? 'Editar Cadastro Prévio' : 'Novo Cadastro Prévio'}"></h2>
+
+    <form th:action="@{/cadastro-previo/salvar}" th:object="${cadastro}" method="post">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="card mb-3">
+            <div class="card-header"><strong>Informações</strong></div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="marca" class="form-label">Marca</label>
+                        <input type="text" id="marca" class="form-control" th:field="*{marca}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="colecao" class="form-label">Coleção</label>
+                        <input type="text" id="colecao" class="form-control" th:field="*{colecao}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="insumo" class="form-label">Insumo</label>
+                        <select id="insumo" class="form-select" th:field="*{insumo}">
+                            <option value="">Selecione...</option>
+                            <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a th:href="@{/cadastro-previo}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
