@@ -41,8 +41,8 @@
                         <label class="form-label">Insumo</label>
                         <select class="form-select form-select-sm" name="tipo">
                             <option value="">Todos</option>
-                            <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}"
-                                    th:selected="${tipoSelecionado != null and tipoSelecionado == t}"></option>
+                            <option th:each="i : ${insumosCadastrados}" th:value="${i.nome}" th:text="${i.nome}"
+                                    th:selected="${tipoSelecionado != null and tipoSelecionado == i.nome}"></option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -133,7 +133,7 @@
                         <span th:if="${ficha.fotoPath == null}" class="text-muted">-</span>
                     </td>
                     <td th:text="${ficha.colecao}"></td>
-                    <td th:text="${ficha.tipo.descricao}"></td>
+                    <td th:text="${ficha.tipo}"></td>
                     <td th:text="${ficha.categoriaProduto}"></td>
                     <td th:text="${ficha.fornecedor}"></td>
                     <td th:text="${ficha.marca}"></td>

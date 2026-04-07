@@ -2,7 +2,6 @@ package com.example.projeto.controller;
 
 import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
-import com.example.projeto.model.TipoItem;
 import com.example.projeto.repository.FichaTecnicaRepository;
 import com.example.projeto.repository.QuadroPlanejamentoRepository;
 import org.springframework.stereotype.Controller;
@@ -29,10 +28,17 @@ public class DashboardController {
     public String dashboard(Model model) {
         long total = repository.count();
 
-        // Totais gerais
-        long qtdTecido    = repository.countByTipo(TipoItem.TECIDO);
-        long qtdAcessorioMetro   = repository.countByTipo(TipoItem.ACESSORIO_METRO);
-        long qtdAcessorioUnidade = repository.countByTipo(TipoItem.ACESSORIO_UNIDADE);
+        // Totais por insumo (dinâmico)
+        List<Object[]> tipoData = repository.countByTipoAll();
+        List<String> tipoLabels = new ArrayList<>();
+        List<Long> tipoValues = new ArrayList<>();
+        for (Object[] row : tipoData) {
+            tipoLabels.add((String) row[0]);
+            tipoValues.add((Long) row[1]);
+        }
+        model.addAttribute("tipoLabels", tipoLabels);
+        model.addAttribute("tipoValues", tipoValues);
+
         long qtdEmAndamento = repository.countByStatusPedido(StatusPedido.EM_ANDAMENTO);
         long qtdEmbarcado   = repository.countByStatusPedido(StatusPedido.EMBARCADO);
         long qtdRecebido    = repository.countByStatusPedido(StatusPedido.RECEBIDO);
@@ -45,9 +51,6 @@ public class DashboardController {
         long prodReprovado = repository.countByStatusAmostraProducao(StatusAmostra.REPROVADO);
 
         model.addAttribute("total", total);
-        model.addAttribute("qtdTecido", qtdTecido);
-        model.addAttribute("qtdAcessorioMetro", qtdAcessorioMetro);
-        model.addAttribute("qtdAcessorioUnidade", qtdAcessorioUnidade);
         model.addAttribute("qtdEmAndamento", qtdEmAndamento);
         model.addAttribute("qtdEmbarcado", qtdEmbarcado);
         model.addAttribute("qtdRecebido", qtdRecebido);
@@ -81,21 +84,15 @@ public class DashboardController {
         model.addAttribute("colecaoLabels", colecaoLabels);
         model.addAttribute("colecaoValues", colecaoValues);
 
-        // ── Por coleção: tipo ────────────────────────────────────────
-        Map<String, Long> tecidoPorColecao          = initMap(colecaoLabels);
-        Map<String, Long> acessorioMetroPorColecao   = initMap(colecaoLabels);
-        Map<String, Long> acessorioUnidadePorColecao = initMap(colecaoLabels);
+        // ── Por coleção: tipo (dinâmico) ────────────────────────────────────────
+        Map<String, Map<String, Long>> tipoPorColecaoMap = new LinkedHashMap<>();
         for (Object[] row : repository.countByColecaoAndTipo()) {
-            String col = (String) row[0];
-            TipoItem tipo = (TipoItem) row[1];
-            Long cnt = (Long) row[2];
-            if (tipo == TipoItem.TECIDO)            tecidoPorColecao.put(col, cnt);
-            else if (tipo == TipoItem.ACESSORIO_METRO)   acessorioMetroPorColecao.put(col, cnt);
-            else if (tipo == TipoItem.ACESSORIO_UNIDADE) acessorioUnidadePorColecao.put(col, cnt);
+            String col  = (String) row[0];
+            String tipo = (String) row[1];
+            Long   cnt  = (Long)   row[2];
+            tipoPorColecaoMap.computeIfAbsent(tipo, k -> initMap(colecaoLabels)).put(col, cnt);
         }
-        model.addAttribute("colecaoTecidoValues",          new ArrayList<>(tecidoPorColecao.values()));
-        model.addAttribute("colecaoAcessorioMetroValues",   new ArrayList<>(acessorioMetroPorColecao.values()));
-        model.addAttribute("colecaoAcessorioUnidadeValues", new ArrayList<>(acessorioUnidadePorColecao.values()));
+        model.addAttribute("tipoPorColecaoMap", tipoPorColecaoMap);
 
         // ── Por coleção: status pedido ───────────────────────────────
         Map<String, Long> pedidoEmAndamento = initMap(colecaoLabels);

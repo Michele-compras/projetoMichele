@@ -1,8 +1,8 @@
 package com.example.projeto.repository;
 
 import com.example.projeto.model.FichaTecnica;
+import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
-import com.example.projeto.model.TipoItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +21,7 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Long
          + "ORDER BY f.id DESC")
     List<FichaTecnica> buscarComFiltros(
             @Param("colecao") String colecao,
-            @Param("tipo") TipoItem tipo,
+            @Param("tipo") String tipo,
             @Param("statusPedido") StatusPedido statusPedido,
             @Param("dataInicio") LocalDate dataInicio,
             @Param("dataFim") LocalDate dataFim);
@@ -41,13 +41,16 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Long
     @Query("SELECT f.colecao, f.statusPedido, COUNT(f) FROM FichaTecnica f WHERE f.colecao IS NOT NULL AND f.colecao <> '' GROUP BY f.colecao, f.statusPedido ORDER BY f.colecao ASC")
     List<Object[]> countByColecaoAndStatusPedido();
 
-    long countByTipo(TipoItem tipo);
+    long countByTipo(String tipo);
 
     long countByStatusPedido(StatusPedido statusPedido);
 
-    long countByStatusAmostraCor(com.example.projeto.model.StatusAmostra status);
+    long countByStatusAmostraCor(StatusAmostra status);
 
-    long countByStatusAmostraProducao(com.example.projeto.model.StatusAmostra status);
+    long countByStatusAmostraProducao(StatusAmostra status);
+
+    @Query("SELECT f.tipo, COUNT(f) FROM FichaTecnica f WHERE f.tipo IS NOT NULL GROUP BY f.tipo ORDER BY COUNT(f) DESC")
+    List<Object[]> countByTipoAll();
 
     @Query("SELECT f.marca, COUNT(f) FROM FichaTecnica f WHERE f.marca IS NOT NULL GROUP BY f.marca ORDER BY COUNT(f) DESC")
     List<Object[]> countByMarca();

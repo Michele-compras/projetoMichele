@@ -36,7 +36,7 @@
                 </tr>
                 <tr>
                     <th>Insumo:</th>
-                    <td th:text="${ficha.tipo.descricao}"></td>
+                    <td th:text="${ficha.tipo}"></td>
                 </tr>
                 <tr>
                     <th>Código:</th>
@@ -45,6 +45,18 @@
                 <tr>
                     <th>Descrição:</th>
                     <td th:text="${ficha.descricao}"></td>
+                </tr>
+                <tr>
+                    <th>NCM:</th>
+                    <td th:text="${ficha.ncm ?: '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Código SISCOMEX:</th>
+                    <td th:text="${ficha.codigoSiscomex ?: '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Descrição do Produto:</th>
+                    <td th:text="${ficha.descricaoProduto ?: '-'}"></td>
                 </tr>
                 <tr>
                     <th>Fornecedor:</th>
@@ -74,7 +86,7 @@
                     <th>Composição detalhada:</th>
                     <td th:text="${ficha.composicao ?: '-'}"></td>
                 </tr>
-                <tr th:if="${ficha.tipo.name() == 'TECIDO'}">
+                <tr>
                     <th>Gramatura(G/M2):</th>
                     <td th:text="${ficha.gramatura ?: '-'}"></td>
                 </tr>

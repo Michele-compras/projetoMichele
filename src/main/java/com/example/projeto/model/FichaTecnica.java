@@ -11,9 +11,8 @@ public class FichaTecnica {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TipoItem tipo;
+    private String tipo;
 
     private String descricao;
 
@@ -99,6 +98,13 @@ public class FichaTecnica {
     @Lob
     private String observacaoAmostraProducao;
 
+    private String ncm;
+
+    @Lob
+    private String descricaoProduto;
+
+    private String codigoSiscomex;
+
     @PrePersist
     public void prePersist() {
         if (statusAmostraCor == null) {
@@ -120,11 +126,11 @@ public class FichaTecnica {
         this.id = id;
     }
 
-    public TipoItem getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(TipoItem tipo) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
@@ -438,5 +444,29 @@ public class FichaTecnica {
 
     public void setMarcaQueUtiliza(String marcaQueUtiliza) {
         this.marcaQueUtiliza = marcaQueUtiliza;
+    }
+
+    public String getNcm() {
+        return ncm;
+    }
+
+    public void setNcm(String ncm) {
+        this.ncm = ncm;
+    }
+
+    public String getDescricaoProduto() {
+        return descricaoProduto;
+    }
+
+    public void setDescricaoProduto(String descricaoProduto) {
+        this.descricaoProduto = descricaoProduto;
+    }
+
+    public String getCodigoSiscomex() {
+        return codigoSiscomex;
+    }
+
+    public void setCodigoSiscomex(String codigoSiscomex) {
+        this.codigoSiscomex = codigoSiscomex;
     }
 }

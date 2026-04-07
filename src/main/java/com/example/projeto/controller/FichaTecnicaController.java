@@ -3,7 +3,9 @@ package com.example.projeto.controller;
 import com.example.projeto.model.FichaTecnica;
 import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
-import com.example.projeto.model.TipoItem;
+import com.example.projeto.repository.ColecaoRepository;
+import com.example.projeto.repository.InsumoRepository;
+import com.example.projeto.repository.MarcaRepository;
 import com.example.projeto.service.FichaTecnicaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -21,15 +23,22 @@ import java.util.List;
 public class FichaTecnicaController {
 
     private final FichaTecnicaService service;
+    private final MarcaRepository marcaRepo;
+    private final ColecaoRepository colecaoRepo;
+    private final InsumoRepository insumoRepo;
 
-    public FichaTecnicaController(FichaTecnicaService service) {
+    public FichaTecnicaController(FichaTecnicaService service, MarcaRepository marcaRepo,
+                                   ColecaoRepository colecaoRepo, InsumoRepository insumoRepo) {
         this.service = service;
+        this.marcaRepo = marcaRepo;
+        this.colecaoRepo = colecaoRepo;
+        this.insumoRepo = insumoRepo;
     }
 
     @GetMapping
     public String listar(
             @RequestParam(required = false) String colecao,
-            @RequestParam(required = false) TipoItem tipo,
+            @RequestParam(required = false) String tipo,
             @RequestParam(required = false) StatusPedido statusPedido,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataInicio,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataFim,
@@ -46,7 +55,6 @@ public class FichaTecnicaController {
         }
 
         model.addAttribute("fichas", fichas);
-        model.addAttribute("tipos", TipoItem.values());
         model.addAttribute("statusPedidoList", StatusPedido.values());
         model.addAttribute("colecaoFiltro", colecao);
         model.addAttribute("tipoSelecionado", tipo);
@@ -121,8 +129,9 @@ public class FichaTecnicaController {
 
     private void addFormAttributes(Model model, FichaTecnica ficha) {
         model.addAttribute("ficha", ficha);
-        model.addAttribute("tipos", TipoItem.values());
         model.addAttribute("statusList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.APROVADO});
         model.addAttribute("statusPedidoList", StatusPedido.values());
+        model.addAttribute("marcasCadastradas", marcaRepo.findAll());
+        model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());
     }
 }

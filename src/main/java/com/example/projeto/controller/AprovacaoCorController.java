@@ -3,7 +3,6 @@ package com.example.projeto.controller;
 import com.example.projeto.model.FichaTecnica;
 import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
-import com.example.projeto.model.TipoItem;
 import com.example.projeto.service.FichaTecnicaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -30,7 +29,7 @@ public class AprovacaoCorController {
     @GetMapping
     public String listar(
             @RequestParam(required = false) String colecao,
-            @RequestParam(required = false) TipoItem tipo,
+            @RequestParam(required = false) String tipo,
             @RequestParam(required = false) StatusPedido statusPedido,
             @RequestParam(required = false) StatusAmostra statusAmostra,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataInicio,
@@ -55,7 +54,6 @@ public class AprovacaoCorController {
         }
 
         model.addAttribute("fichas", fichas);
-        model.addAttribute("tipos", TipoItem.values());
         model.addAttribute("statusPedidoList", StatusPedido.values());
         model.addAttribute("statusAmostraList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.APROVADO});
         model.addAttribute("colecaoFiltro", colecao);

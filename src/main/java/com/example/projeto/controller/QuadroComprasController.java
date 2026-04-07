@@ -1,7 +1,6 @@
 package com.example.projeto.controller;
 
 import com.example.projeto.model.FichaTecnica;
-import com.example.projeto.model.TipoItem;
 import com.example.projeto.repository.FichaTecnicaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -141,8 +140,6 @@ public class QuadroComprasController {
     }
 
     private int tipoIndex(FichaTecnica f) {
-        if (f.getTipo() == TipoItem.TECIDO) return 0;
-        if (f.getTipo() == TipoItem.ACESSORIO_METRO) return 1;
-        return 2;
+        return 0;
     }
 }

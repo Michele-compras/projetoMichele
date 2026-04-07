@@ -1,7 +1,6 @@
 package com.example.projeto.service;
 
 import com.example.projeto.model.FichaTecnica;
-import com.example.projeto.model.TipoItem;
 import com.example.projeto.repository.FichaTecnicaRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -72,14 +71,14 @@ public class ImportacaoService {
                 if (colTipo >= 0) {
                     String tipoStr = getCellString(row.getCell(colTipo)).toUpperCase().trim();
                     if (tipoStr.contains("METRO")) {
-                        ficha.setTipo(TipoItem.ACESSORIO_METRO);
+                        ficha.setTipo("Aviamento em Metro");
                     } else if (tipoStr.contains("ACESS") || tipoStr.contains("UNID") || tipoStr.contains("AVIAM")) {
-                        ficha.setTipo(TipoItem.ACESSORIO_UNIDADE);
+                        ficha.setTipo("Aviamento em Unidade");
                     } else {
-                        ficha.setTipo(TipoItem.TECIDO);
+                        ficha.setTipo("Tecido");
                     }
                 } else {
-                    ficha.setTipo(TipoItem.TECIDO);
+                    ficha.setTipo("Tecido");
                 }
 
                 // Descrição (obrigatório) - tenta coluna descrição ou referência

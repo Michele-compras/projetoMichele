@@ -2,7 +2,6 @@ package com.example.projeto.service;
 
 import com.example.projeto.model.FichaTecnica;
 import com.example.projeto.model.StatusPedido;
-import com.example.projeto.model.TipoItem;
 import com.example.projeto.repository.FichaTecnicaRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -48,9 +47,7 @@ public class FichaTecnicaService {
     }
 
     public FichaTecnica salvar(FichaTecnica ficha, MultipartFile foto) {
-        if (ficha.getTipo() == TipoItem.ACESSORIO_METRO || ficha.getTipo() == TipoItem.ACESSORIO_UNIDADE) {
-            ficha.setGramatura(null);
-        }
+        // gramatura é opcional, não há restrição por tipo
         if (foto != null && !foto.isEmpty()) {
             String filename = UUID.randomUUID() + "_" + foto.getOriginalFilename();
             try {
@@ -68,7 +65,7 @@ public class FichaTecnicaService {
     }
 
     public List<FichaTecnica> buscarComFiltros(String colecao,
-                                                TipoItem tipo, StatusPedido statusPedido,
+                                                String tipo, StatusPedido statusPedido,
                                                 LocalDate dataInicio, LocalDate dataFim) {
         return repository.buscarComFiltros(
                 emptyToNull(colecao),
@@ -90,7 +87,7 @@ public class FichaTecnicaService {
         java.util.Map<String, java.util.Map<String, Long>> resultado = new java.util.LinkedHashMap<>();
         for (Object[] row : repository.countByColecaoAndTipo()) {
             String colecao = (String) row[0];
-            String tipo = ((com.example.projeto.model.TipoItem) row[1]).name();
+            String tipo = (String) row[1];
             Long count = (Long) row[2];
             resultado.computeIfAbsent(colecao, k -> new java.util.LinkedHashMap<>()).put(tipo, count);
         }
