@@ -13,10 +13,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class FichaTecnicaService {
@@ -69,7 +72,7 @@ public class FichaTecnicaService {
                                                 String duimpDi, String contratoCambio) {
         return repository.buscarComFiltros(
                 emptyToNull(colecao),
-                tipo,
+                emptyToNull(tipo),
                 statusPedido,
                 dataInicio,
                 dataFim,
@@ -78,11 +81,27 @@ public class FichaTecnicaService {
     }
 
     public java.util.Map<String, Long> qtdPorColecao() {
+        List<Object[]> rows = new ArrayList<>(repository.countByColecao());
+        rows.sort((a, b) -> {
+            int yearA = normalizeYear(extractTrailingNumber((String) a[0]));
+            int yearB = normalizeYear(extractTrailingNumber((String) b[0]));
+            if (yearA != yearB) return Integer.compare(yearB, yearA);
+            return ((String) a[0]).compareToIgnoreCase((String) b[0]);
+        });
         java.util.Map<String, Long> resultado = new java.util.LinkedHashMap<>();
-        for (Object[] row : repository.countByColecao()) {
+        for (Object[] row : rows) {
             resultado.put((String) row[0], (Long) row[1]);
         }
         return resultado;
+    }
+
+    private static int extractTrailingNumber(String s) {
+        Matcher m = Pattern.compile("(\\d+)\\s*$").matcher(s.trim());
+        return m.find() ? Integer.parseInt(m.group(1)) : -1;
+    }
+
+    private static int normalizeYear(int y) {
+        return (y >= 0 && y < 100) ? 2000 + y : y;
     }
 
     public java.util.Map<String, java.util.Map<String, Long>> qtdTipoPorColecao() {
@@ -92,6 +111,61 @@ public class FichaTecnicaService {
             String tipo = (String) row[1];
             Long count = (Long) row[2];
             resultado.computeIfAbsent(colecao, k -> new java.util.LinkedHashMap<>()).put(tipo, count);
+        }
+        return resultado;
+    }
+
+    /**
+     * Retorna Map<colecao, Map<tipo, Map<status, count>>> para o resumo de amostras cor/qualidade.
+     * Ordenado por ano decrescente (mais recente primeiro), depois por tipo.
+     */
+    public Map<String, Map<String, Map<String, Long>>> resumoStatusProducaoPorColecaoETipo() {
+        List<Object[]> rows = new ArrayList<>(repository.countByColecaoAndTipoAndStatusAmostraProducao());
+        rows.sort((a, b) -> {
+            String ca = (String) a[0], cb = (String) b[0];
+            int ya = normalizeYear(extractTrailingNumber(ca));
+            int yb = normalizeYear(extractTrailingNumber(cb));
+            if (ya != yb) return Integer.compare(yb, ya);
+            int cmp = ca.compareToIgnoreCase(cb);
+            if (cmp != 0) return cmp;
+            return ((String) a[1]).compareToIgnoreCase((String) b[1]);
+        });
+        Map<String, Map<String, Map<String, Long>>> resultado = new LinkedHashMap<>();
+        for (Object[] row : rows) {
+            String colecao = (String) row[0];
+            String tipo    = (String) row[1];
+            String status  = ((com.example.projeto.model.StatusAmostra) row[2]).name();
+            Long   count   = (Long) row[3];
+            resultado
+                .computeIfAbsent(colecao, k -> new LinkedHashMap<>())
+                .computeIfAbsent(tipo,    k -> new LinkedHashMap<>())
+                .put(status, count);
+        }
+        return resultado;
+    }
+
+    public Map<String, Map<String, Map<String, Long>>> resumoStatusCorPorColecaoETipo() {
+        List<Object[]> rows = new ArrayList<>(repository.countByColecaoAndTipoAndStatusAmostraCor());
+        // Ordena: ano decrescente, depois colecao alfabético, depois tipo
+        rows.sort((a, b) -> {
+            String ca = (String) a[0], cb = (String) b[0];
+            int ya = normalizeYear(extractTrailingNumber(ca));
+            int yb = normalizeYear(extractTrailingNumber(cb));
+            if (ya != yb) return Integer.compare(yb, ya);
+            int cmp = ca.compareToIgnoreCase(cb);
+            if (cmp != 0) return cmp;
+            return ((String) a[1]).compareToIgnoreCase((String) b[1]);
+        });
+        Map<String, Map<String, Map<String, Long>>> resultado = new LinkedHashMap<>();
+        for (Object[] row : rows) {
+            String colecao = (String) row[0];
+            String tipo    = (String) row[1];
+            String status  = ((com.example.projeto.model.StatusAmostra) row[2]).name();
+            Long   count   = (Long) row[3];
+            resultado
+                .computeIfAbsent(colecao, k -> new LinkedHashMap<>())
+                .computeIfAbsent(tipo,    k -> new LinkedHashMap<>())
+                .put(status, count);
         }
         return resultado;
     }

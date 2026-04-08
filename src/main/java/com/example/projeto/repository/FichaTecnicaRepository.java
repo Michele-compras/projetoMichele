@@ -36,6 +36,12 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Long
     @Query("SELECT f.colecao, f.statusAmostraCor, COUNT(f) FROM FichaTecnica f WHERE f.colecao IS NOT NULL AND f.colecao <> '' GROUP BY f.colecao, f.statusAmostraCor ORDER BY f.colecao ASC")
     List<Object[]> countByColecaoAndStatusAmostraCor();
 
+    @Query("SELECT f.colecao, f.tipo, f.statusAmostraCor, COUNT(f) FROM FichaTecnica f WHERE f.colecao IS NOT NULL AND f.colecao <> '' AND f.tipo IS NOT NULL GROUP BY f.colecao, f.tipo, f.statusAmostraCor ORDER BY f.colecao ASC, f.tipo ASC")
+    List<Object[]> countByColecaoAndTipoAndStatusAmostraCor();
+
+    @Query("SELECT f.colecao, f.tipo, f.statusAmostraProducao, COUNT(f) FROM FichaTecnica f WHERE f.colecao IS NOT NULL AND f.colecao <> '' AND f.tipo IS NOT NULL GROUP BY f.colecao, f.tipo, f.statusAmostraProducao ORDER BY f.colecao ASC, f.tipo ASC")
+    List<Object[]> countByColecaoAndTipoAndStatusAmostraProducao();
+
     @Query("SELECT f.colecao, f.statusAmostraProducao, COUNT(f) FROM FichaTecnica f WHERE f.colecao IS NOT NULL AND f.colecao <> '' GROUP BY f.colecao, f.statusAmostraProducao ORDER BY f.colecao ASC")
     List<Object[]> countByColecaoAndStatusAmostraProducao();
 
