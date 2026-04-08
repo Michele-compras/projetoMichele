@@ -82,7 +82,7 @@
 
     <!-- Quantidade por Coleção + Status -->
     <div class="card mb-3 no-print" th:if="${!#maps.isEmpty(qtdPorColecao)}">
-        <div class="card-header"><strong>Quantidade total por Coleção</strong></div>
+        <div class="card-header"><strong>Quantidade total de Itens por Coleção</strong></div>
         <div class="card-body p-0">
             <table class="table table-sm table-bordered mb-0">
                 <thead class="table-secondary">
@@ -109,7 +109,7 @@
 
     <!-- Quantidade por Fornecedor x Coleção -->
     <div class="card mb-3 no-print" th:if="${!#maps.isEmpty(qtdFornecedorPorColecao)}">
-        <div class="card-header"><strong>Quantidade por Fornecedor e Coleção</strong></div>
+        <div class="card-header"><strong>Quantidade de Itens por Fornecedor e Coleção</strong></div>
         <div class="card-body p-0">
             <table class="table table-sm table-bordered mb-0" style="font-size:0.82rem;">
                 <thead class="table-secondary">
@@ -176,7 +176,7 @@
                     <th>Fornecedor</th>
                     <th>Marca</th>
                     <th>Cor</th>
-                    <th>Ref. Tex.</th>
+                    <th>Código</th>
                     <th>Ref. Forn.</th>
                     <th>Nº Pedido</th>
                     <th>Dt. Pedido</th>
@@ -201,7 +201,7 @@
                     <td th:text="${ficha.fornecedor}"></td>
                     <td th:text="${ficha.marca}"></td>
                     <td th:text="${ficha.cor}"></td>
-                    <td th:text="${ficha.referencia}"></td>
+                    <td th:title="${ficha.refTexcotton}" th:text="${ficha.refTexcotton != null && ficha.refTexcotton.length() > 16 ? #strings.substring(ficha.refTexcotton, 0, 16) : ficha.refTexcotton}"></td>
                     <td th:text="${ficha.refFornecedor}"></td>
                     <td th:text="${ficha.numeroPedido}"></td>
                     <td th:text="${ficha.dataColocacaoPedido != null ? #temporals.format(ficha.dataColocacaoPedido, 'dd/MM/yyyy') : ''}"></td>

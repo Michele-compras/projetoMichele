@@ -184,7 +184,7 @@
                     <th>Fornecedor</th>
                     <th>Marca</th>
                     <th>Cor</th>
-                    <th>Ref. Tex.</th>
+                    <th>Código</th>
                     <th>Ref. Forn.</th>
                     <th>Nº Pedido</th>
                     <th>Dt. Pedido</th>
@@ -209,7 +209,7 @@
                     <td th:text="${ficha.fornecedor}"></td>
                     <td th:text="${ficha.marca}"></td>
                     <td th:text="${ficha.cor}"></td>
-                    <td th:text="${ficha.referencia}"></td>
+                    <td th:title="${ficha.refTexcotton}" th:text="${ficha.refTexcotton != null && ficha.refTexcotton.length() > 16 ? #strings.substring(ficha.refTexcotton, 0, 16) : ficha.refTexcotton}"></td>
                     <td th:text="${ficha.refFornecedor}"></td>
                     <td th:text="${ficha.numeroPedido}"></td>
                     <td th:text="${ficha.dataColocacaoPedido != null ? #temporals.format(ficha.dataColocacaoPedido, 'dd/MM/yyyy') : ''}"></td>

@@ -161,7 +161,7 @@
                     <td th:text="${ficha.composicao}"></td>
                     <td th:text="${ficha.gramatura}"></td>
                     <td th:text="${ficha.largura}"></td>
-                    <td th:text="${ficha.minimoCompra != null ? ficha.minimoCompra : ''}"></td>
+                    <td th:text="${ficha.minimoCompra != null ? #numbers.formatDecimal(ficha.minimoCompra, 1, 'POINT', 2, 'COMMA') : ''}"></td>
                     <td class="no-print">
                         <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id})}" class="btn btn-sm btn-info">Ver</a>
                         <a th:href="@{/fichas/editar/{id}(id=${ficha.id})}" class="btn btn-sm btn-warning">Editar</a>

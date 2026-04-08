@@ -121,7 +121,7 @@
                 </tr>
                 <tr>
                     <th>Mínimo de Compra:</th>
-                    <td th:text="${ficha.minimoCompra != null ? ficha.minimoCompra : '-'}"></td>
+                    <td th:text="${ficha.minimoCompra != null ? #numbers.formatDecimal(ficha.minimoCompra, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
                 </tr>
                 <tr>
                     <th>Mínimo:</th>
