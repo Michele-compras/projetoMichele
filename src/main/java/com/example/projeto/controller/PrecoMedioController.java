@@ -25,6 +25,7 @@ public class PrecoMedioController {
     public String precoMedio(
             @RequestParam(required = false) String colecao,
             @RequestParam(required = false) String fornecedor,
+            @RequestParam(required = false) String marca,
             Model model) {
 
         List<FichaTecnica> todas = repository.findAll();
@@ -39,12 +40,18 @@ public class PrecoMedioController {
                 .filter(f -> f != null && !f.isBlank())
                 .distinct().sorted().collect(Collectors.toList());
 
-        // Aplicar filtros (sem marca)
+        List<String> marcas = todas.stream()
+                .map(FichaTecnica::getMarca)
+                .filter(m -> m != null && !m.isBlank())
+                .distinct().sorted().collect(Collectors.toList());
+
         List<FichaTecnica> fichas = todas.stream()
                 .filter(f -> colecao == null || colecao.isBlank()
                         || colecao.equalsIgnoreCase(f.getColecao()))
                 .filter(f -> fornecedor == null || fornecedor.isBlank()
                         || fornecedor.equalsIgnoreCase(f.getFornecedor()))
+                .filter(f -> marca == null || marca.isBlank()
+                        || marca.equalsIgnoreCase(f.getMarca()))
                 .filter(f -> f.getPrecoUsd() != null || f.getPrecoReais() != null)
                 .collect(Collectors.toList());
 
@@ -90,8 +97,10 @@ public class PrecoMedioController {
 
         model.addAttribute("colecoes",       colecoes);
         model.addAttribute("fornecedores",   fornecedores);
+        model.addAttribute("marcas",         marcas);
         model.addAttribute("colecaoSel",     colecao);
         model.addAttribute("fornecedorSel",  fornecedor);
+        model.addAttribute("marcaSel",       marca);
         model.addAttribute("linhas",         linhas);
         model.addAttribute("totalFichas",    fichas.size());
         model.addAttribute("totalMediaUsd",  totalMediaUsd.isPresent()   ? totalMediaUsd.getAsDouble()   : null);

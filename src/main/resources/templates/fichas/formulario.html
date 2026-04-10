@@ -142,14 +142,20 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="minimoCompra" class="form-label">Mínimo de Compra</label>
-                        <input type="number" step="0.01" id="minimoCompra" class="form-control" th:field="*{minimoCompra}">
+                        <label for="minimoCompraDisplay" class="form-label">Mínimo de Compra</label>
+                        <input type="text" id="minimoCompraDisplay" class="form-control"
+                               th:value="${ficha.minimoCompra != null ? #numbers.formatDecimal(ficha.minimoCompra, 1, 'POINT', 2, 'COMMA') : ''}"
+                               oninput="formatarMilhares(this)" autocomplete="off" placeholder="1.000,00">
+                        <input type="hidden" id="minimoCompra" name="minimoCompra" th:value="${ficha.minimoCompra}">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-3">
-                        <label for="quantidadeComprada" class="form-label">Quantidade Comprada</label>
-                        <input type="number" step="0.01" id="quantidadeComprada" class="form-control" th:field="*{quantidadeComprada}">
+                        <label for="quantidadeCompradaDisplay" class="form-label">Quantidade Comprada</label>
+                        <input type="text" id="quantidadeCompradaDisplay" class="form-control"
+                               th:value="${ficha.quantidadeComprada != null ? #numbers.formatDecimal(ficha.quantidadeComprada, 1, 'POINT', 2, 'COMMA') : ''}"
+                               oninput="formatarMilhares(this)" autocomplete="off" placeholder="1.000,00">
+                        <input type="hidden" id="quantidadeComprada" name="quantidadeComprada" th:value="${ficha.quantidadeComprada}">
                     </div>
                     <div class="col-md-3">
                         <label for="precoUsd" class="form-label">Preço USD</label>
@@ -298,6 +304,25 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+function formatarMilhares(input) {
+    let val = input.value.replace(/\./g, '').replace(/[^\d,]/g, '');
+    let parts = val.split(',');
+    let intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    input.value = parts.length > 1 ? intPart + ',' + parts[1].substring(0, 2) : intPart;
+    let hiddenId = input.id.replace('Display', '');
+    let hidden = document.getElementById(hiddenId);
+    if (hidden) hidden.value = input.value.replace(/\./g, '').replace(',', '.');
+}
+
+document.querySelector('form[action*="salvar"]').addEventListener('submit', function() {
+    ['minimoCompra', 'quantidadeComprada'].forEach(function(field) {
+        let display = document.getElementById(field + 'Display');
+        let hidden = document.getElementById(field);
+        if (display && hidden && display.value) {
+            hidden.value = display.value.replace(/\./g, '').replace(',', '.');
+        }
+    });
+});
 </script>
 </body>
 </html>

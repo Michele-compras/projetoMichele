@@ -56,15 +56,10 @@
                                     th:selected="${statusPedidoSelecionado != null and statusPedidoSelecionado == s}"></option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Data Início</label>
-                        <input type="date" class="form-control form-control-sm" name="dataInicio"
-                               th:value="${dataInicio}">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Data Fim</label>
-                        <input type="date" class="form-control form-control-sm" name="dataFim"
-                               th:value="${dataFim}">
+                    <div class="col-md-3">
+                        <label class="form-label">Código / Ref. Forn.</label>
+                        <input type="text" class="form-control form-control-sm" name="codigo"
+                               th:value="${codigoFiltro}" placeholder="Buscar por código...">
                     </div>
                 </div>
                 <div class="row g-2 align-items-end">
@@ -139,7 +134,6 @@
                     <th>Composição detalhada</th>
                     <th>Gramatura(G/M2)</th>
                     <th>Largura(MT)</th>
-                    <th>Mín. Compra</th>
                     <th class="no-print">Ações</th>
                 </tr>
             </thead>
@@ -161,7 +155,6 @@
                     <td th:text="${ficha.composicao}"></td>
                     <td th:text="${ficha.gramatura}"></td>
                     <td th:text="${ficha.largura}"></td>
-                    <td th:text="${ficha.minimoCompra != null ? #numbers.formatDecimal(ficha.minimoCompra, 1, 'POINT', 2, 'COMMA') : ''}"></td>
                     <td class="no-print">
                         <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id})}" class="btn btn-sm btn-info">Ver</a>
                         <a th:href="@{/fichas/editar/{id}(id=${ficha.id})}" class="btn btn-sm btn-warning">Editar</a>
@@ -170,7 +163,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(fichas)}">
-                    <td colspan="14" class="text-center text-muted">Nenhuma ficha técnica encontrada.</td>
+                    <td colspan="13" class="text-center text-muted">Nenhuma ficha técnica encontrada.</td>
                 </tr>
             </tbody>
         </table>

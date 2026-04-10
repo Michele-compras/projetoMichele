@@ -14,7 +14,7 @@
         <div class="card-body">
             <form th:action="@{/preco-medio}" method="get">
                 <div class="row g-2 align-items-end">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Coleção</label>
                         <select class="form-select form-select-sm" name="colecao">
                             <option value="">Todas</option>
@@ -22,7 +22,7 @@
                                     th:selected="${colecaoSel != null and colecaoSel == c}"></option>
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Fornecedor</label>
                         <select class="form-select form-select-sm" name="fornecedor">
                             <option value="">Todos</option>
@@ -30,7 +30,15 @@
                                     th:selected="${fornecedorSel != null and fornecedorSel == f}"></option>
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Marca</label>
+                        <select class="form-select form-select-sm" name="marca">
+                            <option value="">Todas</option>
+                            <option th:each="m : ${marcas}" th:value="${m}" th:text="${m}"
+                                    th:selected="${marcaSel != null and marcaSel == m}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">
                             <i class="bi bi-search me-1"></i> Filtrar
                         </button>

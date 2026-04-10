@@ -61,15 +61,11 @@
                                     th:selected="${statusAmostraSelecionado != null and statusAmostraSelecionado == s}"></option>
                         </select>
                     </div>
+
                     <div class="col-md-2">
-                        <label class="form-label">Data Início</label>
-                        <input type="date" class="form-control form-control-sm" name="dataInicio"
-                               th:value="${dataInicio}">
-                    </div>
-                    <div class="col-md-1">
-                        <label class="form-label">Data Fim</label>
-                        <input type="date" class="form-control form-control-sm" name="dataFim"
-                               th:value="${dataFim}">
+                        <label class="form-label">Código / Ref. Forn.</label>
+                        <input type="text" class="form-control form-control-sm" name="codigo"
+                               th:value="${codigoFiltro}" placeholder="Buscar por código...">
                     </div>
                     <div class="col-md-auto d-flex gap-1 align-items-end">
                         <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>
@@ -145,7 +141,7 @@
     </div>
 
     <!-- Lead Time de Aprovação por Marca -->
-    <div class="card mb-3 no-print" th:if="${!#lists.isEmpty(leadtimePorMarca)}">
+    <div class="card mb-3 no-print">
         <div class="card-header"><strong>Lead Time de Aprovação por Marca</strong>
             <small class="text-muted ms-2">dias entre colocação do pedido e aprovação da amostra produção</small>
         </div>
@@ -167,6 +163,9 @@
                         <td class="text-center fw-bold text-primary" th:text="${row['mediaLeadtime']} + ' dias'"></td>
                         <td class="text-center text-success" th:text="${row['minLeadtime']} + ' dias'"></td>
                         <td class="text-center text-danger" th:text="${row['maxLeadtime']} + ' dias'"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(leadtimePorMarca)}">
+                        <td colspan="5" class="text-center text-muted">Nenhuma aprovação de amostra produção registrada.</td>
                     </tr>
                 </tbody>
             </table>

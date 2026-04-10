@@ -51,16 +51,18 @@ public class FichaTecnicaController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataFim,
             @RequestParam(required = false) String duimpDi,
             @RequestParam(required = false) String contratoCambio,
+            @RequestParam(required = false) String codigo,
             Model model) {
 
         List<FichaTecnica> fichas;
         boolean temFiltro = colecao != null || tipo != null
                 || statusPedido != null || dataInicio != null || dataFim != null
                 || (duimpDi != null && !duimpDi.isBlank())
-                || (contratoCambio != null && !contratoCambio.isBlank());
+                || (contratoCambio != null && !contratoCambio.isBlank())
+                || (codigo != null && !codigo.isBlank());
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, duimpDi, contratoCambio);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, duimpDi, contratoCambio, codigo);
         } else {
             fichas = service.listarTodas();
         }
@@ -75,6 +77,7 @@ public class FichaTecnicaController {
         model.addAttribute("dataFim", dataFim);
         model.addAttribute("duimpDiFiltro", duimpDi);
         model.addAttribute("contratoCambioFiltro", contratoCambio);
+        model.addAttribute("codigoFiltro", codigo);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
         model.addAttribute("qtdTipoPorColecao", service.qtdTipoPorColecao());
         return "fichas/lista";

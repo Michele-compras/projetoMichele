@@ -19,7 +19,8 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Long
          + "(:dataInicio IS NULL OR f.dataColocacaoPedido >= :dataInicio) AND "
          + "(:dataFim IS NULL OR f.dataColocacaoPedido <= :dataFim) AND "
          + "(:duimpDi IS NULL OR LOWER(f.duimpDi) LIKE LOWER(CONCAT('%', :duimpDi, '%'))) AND "
-         + "(:contratoCambio IS NULL OR LOWER(f.contratoCambioAdiant) LIKE LOWER(CONCAT('%', :contratoCambio, '%')) OR LOWER(f.contratoCambioPgtoFinal) LIKE LOWER(CONCAT('%', :contratoCambio, '%'))) "
+         + "(:contratoCambio IS NULL OR LOWER(f.contratoCambioAdiant) LIKE LOWER(CONCAT('%', :contratoCambio, '%')) OR LOWER(f.contratoCambioPgtoFinal) LIKE LOWER(CONCAT('%', :contratoCambio, '%'))) AND "
+         + "(:codigo IS NULL OR LOWER(f.refTexcotton) LIKE LOWER(CONCAT('%', :codigo, '%')) OR LOWER(f.codigo) LIKE LOWER(CONCAT('%', :codigo, '%')) OR LOWER(f.refFornecedor) LIKE LOWER(CONCAT('%', :codigo, '%'))) "
          + "ORDER BY f.id DESC")
     List<FichaTecnica> buscarComFiltros(
             @Param("colecao") String colecao,
@@ -28,7 +29,8 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Long
             @Param("dataInicio") LocalDate dataInicio,
             @Param("dataFim") LocalDate dataFim,
             @Param("duimpDi") String duimpDi,
-            @Param("contratoCambio") String contratoCambio);
+            @Param("contratoCambio") String contratoCambio,
+            @Param("codigo") String codigo);
 
     @Query("SELECT f.colecao, COUNT(f) FROM FichaTecnica f WHERE f.colecao IS NOT NULL AND f.colecao <> '' GROUP BY f.colecao ORDER BY f.colecao ASC")
     List<Object[]> countByColecao();

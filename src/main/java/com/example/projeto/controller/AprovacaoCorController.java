@@ -37,15 +37,17 @@ public class AprovacaoCorController {
             @RequestParam(required = false) StatusAmostra statusAmostra,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataInicio,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataFim,
+            @RequestParam(required = false) String codigo,
             Model model) {
 
         List<FichaTecnica> fichas;
         boolean temFiltro = colecao != null || tipo != null
                 || statusPedido != null || statusAmostra != null
-                || dataInicio != null || dataFim != null;
+                || dataInicio != null || dataFim != null
+                || (codigo != null && !codigo.isBlank());
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, codigo);
             if (statusAmostra != null) {
                 final StatusAmostra filtroStatus = statusAmostra;
                 fichas = fichas.stream()
@@ -66,6 +68,7 @@ public class AprovacaoCorController {
         model.addAttribute("statusAmostraSelecionado", statusAmostra);
         model.addAttribute("dataInicio", dataInicio);
         model.addAttribute("dataFim", dataFim);
+        model.addAttribute("codigoFiltro", codigo);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
         model.addAttribute("qtdStatusCorPorColecao", service.qtdStatusCorPorColecao());
         List<Map<String, Object>> leadtime = service.leadtimeAprovacaoCorPorMarca();

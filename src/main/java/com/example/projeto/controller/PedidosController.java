@@ -40,7 +40,7 @@ public class PedidosController {
                 || statusPedido != null || dataInicio != null || dataFim != null;
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, null);
         } else {
             fichas = service.listarTodas();
         }

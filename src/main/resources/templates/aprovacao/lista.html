@@ -62,14 +62,9 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Data Início</label>
-                        <input type="date" class="form-control form-control-sm" name="dataInicio"
-                               th:value="${dataInicio}">
-                    </div>
-                    <div class="col-md-1">
-                        <label class="form-label">Data Fim</label>
-                        <input type="date" class="form-control form-control-sm" name="dataFim"
-                               th:value="${dataFim}">
+                        <label class="form-label">Código / Ref. Forn.</label>
+                        <input type="text" class="form-control form-control-sm" name="codigo"
+                               th:value="${codigoFiltro}" placeholder="Buscar por código...">
                     </div>
                     <div class="col-md-auto d-flex gap-1 align-items-end">
                         <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>

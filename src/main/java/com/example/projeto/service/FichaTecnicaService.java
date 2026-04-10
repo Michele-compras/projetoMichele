@@ -69,7 +69,8 @@ public class FichaTecnicaService {
     public List<FichaTecnica> buscarComFiltros(String colecao,
                                                 String tipo, StatusPedido statusPedido,
                                                 LocalDate dataInicio, LocalDate dataFim,
-                                                String duimpDi, String contratoCambio) {
+                                                String duimpDi, String contratoCambio,
+                                                String codigo) {
         return repository.buscarComFiltros(
                 emptyToNull(colecao),
                 emptyToNull(tipo),
@@ -77,7 +78,8 @@ public class FichaTecnicaService {
                 dataInicio,
                 dataFim,
                 emptyToNull(duimpDi),
-                emptyToNull(contratoCambio));
+                emptyToNull(contratoCambio),
+                emptyToNull(codigo));
     }
 
     public java.util.Map<String, Long> qtdPorColecao() {
