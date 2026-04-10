@@ -20,8 +20,6 @@
                     <thead>
                         <tr class="table-secondary text-center">
                             <th rowspan="2" class="align-middle text-start ps-3" style="min-width:130px">Coleção</th>
-                            <!-- Fichas -->
-                            <th colspan="1" class="border-start border-2">Fichas</th>
                             <!-- Amostra Cor -->
                             <th colspan="2" class="border-start border-2">Amostra Cor/Qualidade</th>
                             <!-- Amostra Embarque -->
@@ -30,8 +28,6 @@
                             <th th:colspan="${fornecedores.size()}" class="border-start border-2">Por Fornecedor</th>
                         </tr>
                         <tr class="table-light text-center" style="font-size:0.75rem;">
-                            <!-- Fichas -->
-                            <th class="border-start border-2 fw-bold">Total</th>
                             <!-- Amostra Cor -->
                             <th class="border-start border-2 text-warning">Aguardando</th>
                             <th class="text-success">Aprovada</th>
@@ -46,8 +42,6 @@
                     <tbody>
                         <tr th:each="i : ${#numbers.sequence(0, colecaoLabels.size() - 1)}" class="text-center">
                             <td class="text-start ps-3 fw-bold" th:text="${colecaoLabels[i]}"></td>
-                            <!-- Fichas -->
-                            <td class="border-start border-2 fw-bold" th:text="${colecaoValues[i]}"></td>
                             <!-- Amostra Cor -->
                             <td class="border-start border-2 text-warning fw-bold" th:text="${colecaoCorPendente[i]}"></td>
                             <td class="text-success fw-bold" th:text="${colecaoCorAprovado[i]}"></td>
@@ -64,7 +58,6 @@
                     <tfoot class="table-secondary fw-bold text-center">
                         <tr>
                             <td class="text-start ps-3">TOTAL</td>
-                            <td class="border-start border-2" th:text="${total}"></td>
                             <td class="border-start border-2 text-warning" th:text="${corPendente}"></td>
                             <td class="text-success" th:text="${corAprovado}"></td>
                             <td class="border-start border-2 text-warning" th:text="${prodPendente}"></td>
