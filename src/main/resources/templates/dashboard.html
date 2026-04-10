@@ -8,6 +8,15 @@
 <div class="container-fluid p-4">
     <h2 class="mb-4">Resumo Status Amostras por Coleção</h2>
 
+    <form method="get" action="/dashboard" class="mb-3 d-flex align-items-end gap-2">
+        <div>
+            <label class="form-label mb-1">Filtrar coleções</label>
+            <input type="text" name="colecaoFiltro" class="form-control" style="min-width:220px"
+                   th:value="${colecaoFiltro}" placeholder="Ex: verão, inverno...">
+        </div>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a href="/dashboard" class="btn btn-outline-secondary">Limpar</a>
+    </form>
 
     <!-- Tabela comparativa por Coleção -->
     <div class="card border-0 shadow-sm mb-4" th:if="${!#lists.isEmpty(colecaoLabels)}">

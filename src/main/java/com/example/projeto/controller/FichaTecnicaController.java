@@ -146,7 +146,7 @@ public class FichaTecnicaController {
 
     private void addFormAttributes(Model model, FichaTecnica ficha) {
         model.addAttribute("ficha", ficha);
-        model.addAttribute("statusList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.APROVADO});
+        model.addAttribute("statusList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.APROVADO, StatusAmostra.REPROVADO, StatusAmostra.CANCELADO});
         model.addAttribute("statusPedidoList", StatusPedido.values());
         model.addAttribute("marcasCadastradas", marcaRepo.findAll());
         model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());

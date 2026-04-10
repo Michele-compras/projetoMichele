@@ -3,7 +3,8 @@ package com.example.projeto.model;
 public enum StatusAmostra {
     PENDENTE("Aguardando Amostra"),
     APROVADO("Aprovada"),
-    REPROVADO("Reprovada");
+    REPROVADO("Reprovada"),
+    CANCELADO("Cancelada");
 
     private final String descricao;
 

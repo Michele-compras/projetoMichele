@@ -35,12 +35,8 @@
                     <td th:text="${ficha.tipo}"></td>
                 </tr>
                 <tr>
-                    <th>Código:</th>
-                    <td th:text="${ficha.codigo ?: '-'}"></td>
-                </tr>
-                <tr>
-                    <th>Descrição:</th>
-                    <td th:text="${ficha.descricao}"></td>
+                    <th>Código Texcotton:</th>
+                    <td th:text="${ficha.refTexcotton ?: '-'}"></td>
                 </tr>
                 <tr>
                     <th>NCM:</th>
@@ -49,10 +45,6 @@
                 <tr>
                     <th>Código SISCOMEX:</th>
                     <td th:text="${ficha.codigoSiscomex ?: '-'}"></td>
-                </tr>
-                <tr>
-                    <th>Descrição do Produto:</th>
-                    <td th:text="${ficha.descricaoProduto ?: '-'}"></td>
                 </tr>
                 <tr>
                     <th>Fornecedor:</th>
@@ -66,11 +58,7 @@
                     <th>Marca solicitante:</th>
                     <td th:text="${ficha.marca ?: '-'}"></td>
                 </tr>
-                <tr>
-                    <th>Marca que Comprou:</th>
-                    <td th:text="${ficha.marcaQueComprou ?: '-'}"></td>
-                </tr>
-                <tr>
+<tr>
                     <th>Marca que Utiliza:</th>
                     <td th:text="${ficha.marcaQueUtiliza ?: '-'}"></td>
                 </tr>
@@ -170,14 +158,14 @@
 
     <!-- Amostra de Cor -->
     <div class="card mb-3">
-        <div class="card-header"><strong>Amostra de Cor</strong></div>
+        <div class="card-header"><strong>Amostra de Cor/Qualidade</strong></div>
         <div class="card-body">
             <table class="table table-borderless table-sm mb-0">
                 <tr>
                     <th style="width:200px">Status:</th>
                     <td>
                         <span th:text="${ficha.statusAmostraCor?.descricao}"
-                              th:classappend="${ficha.statusAmostraCor?.name() == 'APROVADO' ? 'text-success fw-bold' : (ficha.statusAmostraCor?.name() == 'REPROVADO' ? 'text-danger fw-bold' : 'text-warning fw-bold')}"></span>
+                              th:classappend="${ficha.statusAmostraCor?.name() == 'APROVADO' ? 'text-success fw-bold' : (ficha.statusAmostraCor?.name() == 'REPROVADO' ? 'text-danger fw-bold' : (ficha.statusAmostraCor?.name() == 'CANCELADO' ? 'text-secondary fw-bold' : 'text-warning fw-bold'))}"></span>
                     </td>
                 </tr>
                 <tr>
@@ -201,7 +189,7 @@
                     <th style="width:200px">Status:</th>
                     <td>
                         <span th:text="${ficha.statusAmostraProducao?.descricao}"
-                              th:classappend="${ficha.statusAmostraProducao?.name() == 'APROVADO' ? 'text-success fw-bold' : (ficha.statusAmostraProducao?.name() == 'REPROVADO' ? 'text-danger fw-bold' : 'text-warning fw-bold')}"></span>
+                              th:classappend="${ficha.statusAmostraProducao?.name() == 'APROVADO' ? 'text-success fw-bold' : (ficha.statusAmostraProducao?.name() == 'REPROVADO' ? 'text-danger fw-bold' : (ficha.statusAmostraProducao?.name() == 'CANCELADO' ? 'text-secondary fw-bold' : 'text-warning fw-bold'))}"></span>
                     </td>
                 </tr>
                 <tr>

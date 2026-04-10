@@ -29,7 +29,8 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(@org.springframework.web.bind.annotation.RequestParam(required = false) String colecaoFiltro,
+                            Model model) {
         long total = repository.count();
 
         // Totais por insumo (dinâmico)
@@ -78,10 +79,19 @@ public class DashboardController {
         model.addAttribute("marcaValues", marcaValues);
 
         // ── Por coleção: totais (usando Cadastro Prévio como lista mestre) ──
-        List<String> colecaoLabels = new ArrayList<>();
+        List<String> todasColecoes = new ArrayList<>();
         for (com.example.projeto.model.Colecao c : colecaoRepo.findAll()) {
-            colecaoLabels.add(c.getNome());
+            todasColecoes.add(c.getNome());
         }
+        List<String> colecaoLabels = new ArrayList<>();
+        if (colecaoFiltro != null && !colecaoFiltro.isBlank()) {
+            String busca = colecaoFiltro.trim().toLowerCase();
+            for (String c : todasColecoes) { if (c.toLowerCase().contains(busca)) colecaoLabels.add(c); }
+        } else {
+            colecaoLabels.addAll(todasColecoes);
+        }
+        model.addAttribute("todasColecoes", todasColecoes);
+        model.addAttribute("colecaoFiltro", colecaoFiltro != null ? colecaoFiltro : "");
         Map<String, Long> colecaoTotaisMap = new LinkedHashMap<>();
         for (String col : colecaoLabels) colecaoTotaisMap.put(col, 0L);
         for (Object[] row : repository.countByColecao()) {
