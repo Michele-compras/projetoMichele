@@ -78,6 +78,18 @@
                     <th>Largura(MT):</th>
                     <td th:text="${ficha.largura ?: '-'}"></td>
                 </tr>
+                <tr>
+                    <th>Rendimento:</th>
+                    <td th:text="${ficha.rendimento ?: '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Unidade de Medida:</th>
+                    <td>
+                        <span th:if="${ficha.unidadeMedida == 'Metro'}" class="badge bg-primary">Metro (MT)</span>
+                        <span th:if="${ficha.unidadeMedida == 'Quilo'}" class="badge bg-warning text-dark">Quilo (KG)</span>
+                        <span th:if="${ficha.unidadeMedida == null or ficha.unidadeMedida.isEmpty()}">-</span>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>

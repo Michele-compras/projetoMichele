@@ -98,6 +98,18 @@
                         <input type="text" id="largura" class="form-control" th:field="*{largura}">
                     </div>
                     <div class="col-md-2">
+                        <label for="rendimento" class="form-label">Rendimento</label>
+                        <input type="text" id="rendimento" class="form-control" th:field="*{rendimento}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="unidadeMedida" class="form-label">Unidade de Medida</label>
+                        <select id="unidadeMedida" class="form-select" th:field="*{unidadeMedida}">
+                            <option value="">Selecione...</option>
+                            <option value="Metro">Metro</option>
+                            <option value="Quilo">Quilo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <label for="colecao" class="form-label">Coleção</label>
                         <select id="colecao" class="form-select" th:field="*{colecao}">
                             <option value="">Selecione...</option>

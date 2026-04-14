@@ -14,6 +14,7 @@
     .tabela-aprovacao td {
         font-size: 0.78rem;
         vertical-align: middle;
+        text-align: center;
         padding: 3px 6px;
     }
 </style>
@@ -130,10 +131,12 @@
                     <th>Marca</th>
                     <th>Cor</th>
                     <th style="min-width:130px">Código</th>
+                    <th>Unid.</th>
                     <th>Ref. Forn.</th>
                     <th>Composição detalhada</th>
-                    <th>Gramatura(G/M2)</th>
-                    <th>Largura(MT)</th>
+                    <th>Gramatura<br>(G/M2)</th>
+                    <th>Largura<br>(MT)</th>
+                    <th>Rendimento</th>
                     <th class="no-print">Ações</th>
                 </tr>
             </thead>
@@ -151,10 +154,16 @@
                     <td th:text="${ficha.marca}"></td>
                     <td th:text="${ficha.cor}"></td>
                     <td th:text="${ficha.refTexcotton}"></td>
+                    <td class="text-center">
+                        <span th:if="${ficha.unidadeMedida == 'Metro'}" class="badge bg-primary">MT</span>
+                        <span th:if="${ficha.unidadeMedida == 'Quilo'}" class="badge bg-warning text-dark">KG</span>
+                        <span th:if="${ficha.unidadeMedida == null or ficha.unidadeMedida.isEmpty()}" class="text-muted">-</span>
+                    </td>
                     <td th:text="${ficha.refFornecedor}"></td>
                     <td th:text="${ficha.composicao}"></td>
                     <td th:text="${ficha.gramatura}"></td>
                     <td th:text="${ficha.largura}"></td>
+                    <td th:text="${ficha.rendimento}"></td>
                     <td class="no-print">
                         <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id})}" class="btn btn-sm btn-info">Ver</a>
                         <a th:href="@{/fichas/editar/{id}(id=${ficha.id})}" class="btn btn-sm btn-warning">Editar</a>
@@ -163,7 +172,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(fichas)}">
-                    <td colspan="13" class="text-center text-muted">Nenhuma ficha técnica encontrada.</td>
+                    <td colspan="15" class="text-center text-muted">Nenhuma ficha técnica encontrada.</td>
                 </tr>
             </tbody>
         </table>

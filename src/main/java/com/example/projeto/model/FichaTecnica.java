@@ -49,6 +49,10 @@ public class FichaTecnica {
 
     private String largura;
 
+    private String rendimento;
+
+    private String unidadeMedida;
+
     private Double minimoCompra;
 
     private Double precoUsd;
@@ -352,6 +356,22 @@ public class FichaTecnica {
 
     public void setLargura(String largura) {
         this.largura = largura;
+    }
+
+    public String getRendimento() {
+        return rendimento;
+    }
+
+    public void setRendimento(String rendimento) {
+        this.rendimento = rendimento;
+    }
+
+    public String getUnidadeMedida() {
+        return unidadeMedida;
+    }
+
+    public void setUnidadeMedida(String unidadeMedida) {
+        this.unidadeMedida = unidadeMedida;
     }
 
     public Double getMinimoCompra() {

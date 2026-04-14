@@ -1,7 +1,10 @@
 package com.example.projeto.controller;
 
+import com.example.projeto.model.BandeiraNovidade;
 import com.example.projeto.model.QuadroPlanejamento;
+import com.example.projeto.repository.BandeiraNovidadeRepository;
 import com.example.projeto.repository.ColecaoRepository;
+import com.example.projeto.repository.FornecedorRepository;
 import com.example.projeto.repository.InsumoRepository;
 import com.example.projeto.repository.QuadroPlanejamentoRepository;
 import org.springframework.stereotype.Controller;
@@ -10,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/quadro-planejamento")
@@ -19,13 +24,19 @@ public class QuadroPlanejamentoController {
     private final QuadroPlanejamentoRepository repository;
     private final ColecaoRepository colecaoRepo;
     private final InsumoRepository insumoRepo;
+    private final FornecedorRepository fornecedorRepo;
+    private final BandeiraNovidadeRepository bandeiraRepo;
 
     public QuadroPlanejamentoController(QuadroPlanejamentoRepository repository,
                                         ColecaoRepository colecaoRepo,
-                                        InsumoRepository insumoRepo) {
+                                        InsumoRepository insumoRepo,
+                                        FornecedorRepository fornecedorRepo,
+                                        BandeiraNovidadeRepository bandeiraRepo) {
         this.repository = repository;
         this.colecaoRepo = colecaoRepo;
         this.insumoRepo = insumoRepo;
+        this.fornecedorRepo = fornecedorRepo;
+        this.bandeiraRepo = bandeiraRepo;
     }
 
     @GetMapping
@@ -84,6 +95,23 @@ public class QuadroPlanejamentoController {
             else veraos.add(card);
         }
 
+        // Dados para a aba Bandeiras/Novidades
+        List<String> fornecedores = fornecedorRepo.findAll().stream().map(f -> f.getNome()).toList();
+
+        // Map plano: "colecao|insumo|fornecedor" -> quantidade
+        Map<String, Integer> bandeirasFlat = new LinkedHashMap<>();
+        for (String col : colecoes) {
+            for (String ins : insumos) {
+                for (String forn : fornecedores) {
+                    Integer qtd = bandeiraRepo.findByColecaoAndFornecedorAndInsumo(col, forn, ins)
+                            .map(BandeiraNovidade::getQuantidade).orElse(0);
+                    bandeirasFlat.put(col + "|" + ins + "|" + forn, qtd != null ? qtd : 0);
+                }
+            }
+        }
+
+        System.out.println("[GET] bandeirasFlat com qtd > 0:");
+        bandeirasFlat.forEach((k, v) -> { if (v != null && v > 0) System.out.println("[GET] " + k + " = " + v); });
         model.addAttribute("linhas", linhas);
         model.addAttribute("colecaoAtual", colecaoFinal);
         model.addAttribute("colecoes", colecoes);
@@ -91,6 +119,8 @@ public class QuadroPlanejamentoController {
         model.addAttribute("invernos", invernos);
         model.addAttribute("veraos", veraos);
         model.addAttribute("abaAtiva", aba);
+        model.addAttribute("fornecedores", fornecedores);
+        model.addAttribute("bandeirasFlat", bandeirasFlat);
         return "quadro-planejamento";
     }
 
@@ -141,6 +171,46 @@ public class QuadroPlanejamentoController {
         int s = 0;
         for (Integer v : vals) if (v != null) s += v;
         return s;
+    }
+
+    @PostMapping("/bandeiras")
+    public String salvarBandeiras(@RequestParam(required = false) List<String> bandColecao,
+                                   @RequestParam(required = false) List<String> bandInsumo,
+                                   @RequestParam(required = false) List<String> bandFornecedor,
+                                   @RequestParam(required = false) List<String> bandQtd,
+                                   RedirectAttributes redirectAttributes) {
+        System.out.println("[BANDEIRAS] bandColecao=" + bandColecao);
+        System.out.println("[BANDEIRAS] bandInsumo=" + bandInsumo);
+        System.out.println("[BANDEIRAS] bandFornecedor=" + bandFornecedor);
+        System.out.println("[BANDEIRAS] bandQtd=" + bandQtd);
+        if (bandColecao == null || bandColecao.isEmpty()) {
+            redirectAttributes.addAttribute("aba", "bandeiras");
+            return "redirect:/quadro-planejamento";
+        }
+        for (int i = 0; i < bandColecao.size(); i++) {
+            final String col  = bandColecao.get(i);
+            final String ins  = bandInsumo.get(i);
+            final String forn = bandFornecedor.get(i);
+            final String qtdStr = (bandQtd != null && i < bandQtd.size()) ? bandQtd.get(i) : "0";
+            int qtd = 0;
+            try { qtd = Integer.parseInt(qtdStr == null || qtdStr.isBlank() ? "0" : qtdStr.trim()); } catch (NumberFormatException ignored) {}
+            final int qtdFinal = qtd;
+            System.out.println("[BANDEIRAS] Salvando: col=" + col + " ins=" + ins + " forn=" + forn + " qtd=" + qtdFinal);
+            BandeiraNovidade bn = bandeiraRepo
+                    .findByColecaoAndFornecedorAndInsumo(col, forn, ins)
+                    .orElseGet(() -> {
+                        BandeiraNovidade novo = new BandeiraNovidade();
+                        novo.setColecao(col);
+                        novo.setFornecedor(forn);
+                        novo.setInsumo(ins);
+                        return novo;
+                    });
+            bn.setQuantidade(qtdFinal);
+            bandeiraRepo.save(bn);
+            System.out.println("[BANDEIRAS] Salvo id=" + bn.getId() + " qtd=" + bn.getQuantidade());
+        }
+        redirectAttributes.addAttribute("aba", "bandeiras");
+        return "redirect:/quadro-planejamento";
     }
 
     @PostMapping

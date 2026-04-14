@@ -18,9 +18,15 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:classappend="${abaAtiva != 'resumo'} ? ' active' : ''"
+            <a class="nav-link" th:classappend="${abaAtiva == 'quadro'} ? ' active' : ''"
                th:href="@{/quadro-planejamento(aba='quadro', colecao=${colecaoAtual})}">
                 <i class="bi bi-table me-1"></i> Quadro por Coleção
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${abaAtiva == 'bandeiras'} ? ' active' : ''"
+               th:href="@{/quadro-planejamento(aba='bandeiras')}">
+                <i class="bi bi-flag me-1"></i> Bandeiras/Novidades
             </a>
         </li>
     </ul>
@@ -124,7 +130,7 @@
     </div>
 
     <!-- ABA: QUADRO POR COLEÇÃO -->
-    <div th:if="${abaAtiva != 'resumo'}">
+    <div th:if="${abaAtiva == 'quadro' || (abaAtiva != 'resumo' && abaAtiva != 'bandeiras')}">
         <div class="row g-3">
 
             <!-- Painel esquerdo -->
@@ -245,6 +251,77 @@
         </div>
     </div>
 
+    <!-- ABA: BANDEIRAS/NOVIDADES POR COLEÇÃO -->
+    <div th:class="${abaAtiva != 'bandeiras'} ? 'd-none' : ''">
+
+        <div th:if="${#lists.isEmpty(colecoes) || #lists.isEmpty(fornecedores) || #lists.isEmpty(insumos)}"
+             class="text-center py-5 text-muted">
+            <i class="bi bi-inbox" style="font-size:3rem"></i>
+            <p class="mt-3">Cadastre Coleções, Fornecedores e Insumos no Cadastro Prévio para usar este quadro.</p>
+            <a th:href="@{/cadastro-previo}" class="btn btn-primary">Ir para Cadastro Prévio</a>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(colecoes) && !#lists.isEmpty(fornecedores) && !#lists.isEmpty(insumos)}">
+            <form method="post" th:action="@{/quadro-planejamento/bandeiras}">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <strong><i class="bi bi-flag me-2"></i>Bandeiras/Novidades por Coleção</strong>
+                        <button type="submit" class="btn btn-sm btn-success px-3">
+                            <i class="bi bi-save me-1"></i> Salvar
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered mb-0" style="font-size:0.82rem;">
+                                <thead>
+                                    <tr class="table-secondary text-center">
+                                        <th class="align-middle text-start ps-3" style="min-width:130px">Coleção</th>
+                                        <th class="align-middle text-start ps-2" style="min-width:140px">Insumo</th>
+                                        <th th:each="forn : ${fornecedores}"
+                                            th:text="${forn}"
+                                            class="border-start border-2" style="min-width:90px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <th:block th:each="col,colStat : ${colecoes}">
+                                        <tr th:each="ins,insStat : ${insumos}">
+                                            <td th:if="${insStat.index == 0}"
+                                                th:rowspan="${#lists.size(insumos) + 1}"
+                                                class="fw-bold align-middle ps-3"
+                                                th:text="${col}"
+                                                style="background:#f8f9fa; vertical-align:middle;"></td>
+                                            <td class="ps-2" th:text="${ins}"></td>
+                                            <th:block th:each="forn,fornStat : ${fornecedores}">
+                                                <td class="border-start border-2 text-center p-1">
+                                                    <input type="hidden" name="bandColecao" th:value="${col}">
+                                                    <input type="hidden" name="bandInsumo"  th:value="${ins}">
+                                                    <input type="hidden" name="bandFornecedor" th:value="${forn}">
+                                                    <input type="number" name="bandQtd"
+                                                           class="form-control form-control-sm text-center p-1 band-qty"
+                                                           style="width:75px;margin:auto" min="0"
+                                                           th:attr="data-col=${colStat.index},data-forn=${fornStat.index}"
+                                                           th:value="${bandeirasFlat.get(col + '|' + ins + '|' + forn) ?: 0}">
+                                                </td>
+                                            </th:block>
+                                        </tr>
+                                        <!-- Linha de total por coleção -->
+                                        <tr class="table-warning fw-bold text-center border-top border-2">
+                                            <td class="text-start ps-2" style="font-size:0.8rem;">TOTAL</td>
+                                            <th:block th:each="forn,fornStat : ${fornecedores}">
+                                                <td class="border-start border-2"
+                                                    th:id="'band-tot-' + ${colStat.index} + '-' + ${fornStat.index}">0</td>
+                                            </th:block>
+                                        </tr>
+                                    </th:block>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 </div>
 
@@ -270,6 +347,20 @@ function calcularTotais() {
 }
 document.querySelectorAll('input[type="number"]').forEach(inp => inp.addEventListener('input', calcularTotais));
 calcularTotais();
+
+function calcularTotaisBandeiras() {
+    const sums = {};
+    document.querySelectorAll('.band-qty').forEach(inp => {
+        const key = inp.getAttribute('data-col') + '-' + inp.getAttribute('data-forn');
+        sums[key] = (sums[key] || 0) + (parseInt(inp.value) || 0);
+    });
+    for (const [key, val] of Object.entries(sums)) {
+        const cell = document.getElementById('band-tot-' + key);
+        if (cell) cell.textContent = val;
+    }
+}
+document.querySelectorAll('.band-qty').forEach(inp => inp.addEventListener('input', calcularTotaisBandeiras));
+calcularTotaisBandeiras();
 </script>
 </body>
 </html>
