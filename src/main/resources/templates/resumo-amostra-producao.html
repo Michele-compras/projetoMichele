@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Resumo Status Amostras de Produção')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: sidebar}"></nav>
+
+<div class="main-content">
+<div class="container-fluid p-4">
+
+    <h2 class="mb-4">Resumo Status Amostras de Produção</h2>
+
+    <form method="get" action="/resumo-amostra-producao" class="mb-3 d-flex align-items-end gap-2">
+        <div>
+            <label class="form-label mb-1">Coleção</label>
+            <select name="colecaoFiltro" class="form-select" style="min-width:200px">
+                <option value="">Todas</option>
+                <option th:each="c : ${colecoes}" th:value="${c}" th:text="${c}"
+                        th:selected="${c == colecaoFiltro}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a href="/resumo-amostra-producao" class="btn btn-outline-secondary">Limpar</a>
+    </form>
+
+    <div th:if="${#maps.isEmpty(resumo)}" class="alert alert-info">
+        Nenhuma ficha técnica com coleção cadastrada.
+    </div>
+
+    <div th:if="${!#maps.isEmpty(resumo)}" class="card">
+        <div class="card-body p-0">
+            <table class="table table-sm table-bordered mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width:160px">Coleção</th>
+                        <th>Insumo</th>
+                        <th class="text-center" style="width:130px">
+                            <span class="badge bg-warning text-dark">Aguardando</span>
+                        </th>
+                        <th class="text-center" style="width:110px">
+                            <span class="badge bg-success">Aprovada</span>
+                        </th>
+                        <th class="text-center" style="width:80px">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th:block th:each="colEntry : ${resumo}">
+                        <th:block th:each="tipoEntry, tipoStat : ${colEntry.value}">
+                            <tr>
+                                <td th:if="${tipoStat.first}"
+                                    th:rowspan="${colEntry.value.size() + 1}"
+                                    class="fw-bold align-middle"
+                                    th:text="${colEntry.key}"></td>
+                                <td th:text="${tipoEntry.key}"></td>
+                                <td class="text-center text-warning fw-bold"
+                                    th:text="${tipoEntry.value['PENDENTE'] != null ? tipoEntry.value['PENDENTE'] : 0}"></td>
+                                <td class="text-center text-success fw-bold"
+                                    th:text="${tipoEntry.value['APROVADO'] != null ? tipoEntry.value['APROVADO'] : 0}"></td>
+                                <td class="text-center fw-bold"
+                                    th:text="${(tipoEntry.value['PENDENTE'] != null ? tipoEntry.value['PENDENTE'] : 0)
+                                             + (tipoEntry.value['APROVADO'] != null ? tipoEntry.value['APROVADO'] : 0)
+                                             + (tipoEntry.value['REPROVADO'] != null ? tipoEntry.value['REPROVADO'] : 0)}"></td>
+                            </tr>
+                        </th:block>
+                        <tr class="table-secondary">
+                            <td class="fst-italic text-muted">Total</td>
+                            <td class="text-center fw-bold text-warning"
+                                th:text="${subtotais[colEntry.key]['PENDENTE']}"></td>
+                            <td class="text-center fw-bold text-success"
+                                th:text="${subtotais[colEntry.key]['APROVADO']}"></td>
+                            <td class="text-center fw-bold"
+                                th:text="${subtotais[colEntry.key]['PENDENTE']
+                                         + subtotais[colEntry.key]['APROVADO']
+                                         + subtotais[colEntry.key]['REPROVADO']}"></td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

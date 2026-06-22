@@ -1,0 +1,283 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.example:projeto >-------------------------
+[INFO] Building projeto 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:4.0.3:run (default-cli) > test-compile @ projeto >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ projeto ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 19 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ projeto ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ projeto ---
+[INFO] skip non existing resourceDirectory C:\Users\sabrina.00858\IdeaProjects\projetoMichele\projeto\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ projeto ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:4.0.3:run (default-cli) < test-compile @ projeto <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:4.0.3:run (default-cli) @ projeto ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.3)
+
+2026-04-14T16:24:54.454-03:00  INFO 4632 --- [projeto] [  restartedMain] com.example.projeto.ProjetoApplication   : Starting ProjetoApplication using Java 25.0.2 with PID 4632 (C:\Users\sabrina.00858\IdeaProjects\projetoMichele\projeto\target\classes started by sabrina.00858 in C:\Users\sabrina.00858\IdeaProjects\projetoMichele\projeto)
+2026-04-14T16:24:54.460-03:00  INFO 4632 --- [projeto] [  restartedMain] com.example.projeto.ProjetoApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-04-14T16:24:54.555-03:00  INFO 4632 --- [projeto] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-14T16:24:54.555-03:00  INFO 4632 --- [projeto] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-14T16:24:55.662-03:00  INFO 4632 --- [projeto] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-14T16:24:55.799-03:00  INFO 4632 --- [projeto] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 118 ms. Found 9 JPA repository interfaces.
+2026-04-14T16:24:56.589-03:00  INFO 4632 --- [projeto] [  restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-04-14T16:24:56.610-03:00  INFO 4632 --- [projeto] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-14T16:24:56.611-03:00  INFO 4632 --- [projeto] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.18]
+2026-04-14T16:24:56.679-03:00  INFO 4632 --- [projeto] [  restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2124 ms
+2026-04-14T16:24:56.906-03:00  INFO 4632 --- [projeto] [  restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-14T16:24:56.970-03:00  INFO 4632 --- [projeto] [  restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.4.Final
+2026-04-14T16:24:57.672-03:00  INFO 4632 --- [projeto] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-14T16:24:57.712-03:00  INFO 4632 --- [projeto] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-14T16:25:02.168-03:00  INFO 4632 --- [projeto] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn1: url=jdbc:h2:file:./data/fichatecnica user=SA
+2026-04-14T16:25:02.171-03:00  INFO 4632 --- [projeto] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-14T16:25:02.210-03:00  WARN 4632 --- [projeto] [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-14T16:25:02.239-03:00  INFO 4632 --- [projeto] [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:file:./data/fichatecnica]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: FICHATECNICA/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-14T16:25:03.556-03:00  INFO 4632 --- [projeto] [  restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: alter table if exists bandeira_novidade drop constraint if exists UKetc6d16nj79sbjrmo7u9xqqe8
+Hibernate: alter table if exists bandeira_novidade add constraint UKetc6d16nj79sbjrmo7u9xqqe8 unique (colecao, fornecedor, insumo)
+Hibernate: alter table if exists quadro_planejamento drop constraint if exists UKh1daplshg0w4l5q3sn1570ag
+Hibernate: alter table if exists quadro_planejamento add constraint UKh1daplshg0w4l5q3sn1570ag unique (colecao, tipo_solicitacao)
+2026-04-14T16:25:03.641-03:00  INFO 4632 --- [projeto] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-14T16:25:03.762-03:00  INFO 4632 --- [projeto] [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-14T16:25:06.446-03:00  WARN 4632 --- [projeto] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-14T16:25:07.137-03:00  INFO 4632 --- [projeto] [  restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-04-14T16:25:07.145-03:00  INFO 4632 --- [projeto] [  restartedMain] com.example.projeto.ProjetoApplication   : Started ProjetoApplication in 13.305 seconds (process running for 14.223)
+2026-04-14T16:25:19.750-03:00  INFO 4632 --- [projeto] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-14T16:25:19.750-03:00  INFO 4632 --- [projeto] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-04-14T16:25:19.751-03:00  INFO 4632 --- [projeto] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select c1_0.id,c1_0.nome from colecao c1_0
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select f1_0.id,f1_0.nome from fornecedor f1_0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[GET] bandeirasFlat com qtd > 0:
+[GET] VERÃO 28|TECIDO|CHATLEE = 8
+[GET] VERÃO 28|AVIAMENTO METRO|CHATLEE = 7
+[GET] VERÃO 28|AVIAMENTO METRO|JINBI = 10
+[GET] VERÃO 28|AVIAMENTO UNIDADE|CHATLEE = 8
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select c1_0.id,c1_0.nome from colecao c1_0
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select f1_0.id,f1_0.nome from fornecedor f1_0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[GET] bandeirasFlat com qtd > 0:
+[GET] VERÃO 28|TECIDO|CHATLEE = 8
+[GET] VERÃO 28|AVIAMENTO METRO|CHATLEE = 7
+[GET] VERÃO 28|AVIAMENTO METRO|JINBI = 10
+[GET] VERÃO 28|AVIAMENTO UNIDADE|CHATLEE = 8
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select c1_0.id,c1_0.nome from colecao c1_0
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select f1_0.id,f1_0.nome from fornecedor f1_0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[GET] bandeirasFlat com qtd > 0:
+[GET] VERÃO 28|TECIDO|CHATLEE = 8
+[GET] VERÃO 28|AVIAMENTO METRO|CHATLEE = 7
+[GET] VERÃO 28|AVIAMENTO METRO|JINBI = 10
+[GET] VERÃO 28|AVIAMENTO UNIDADE|CHATLEE = 8
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select c1_0.id,c1_0.nome from colecao c1_0
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select f1_0.id,f1_0.nome from fornecedor f1_0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[GET] bandeirasFlat com qtd > 0:
+[GET] VERÃO 28|TECIDO|CHATLEE = 8
+[GET] VERÃO 28|AVIAMENTO METRO|CHATLEE = 7
+[GET] VERÃO 28|AVIAMENTO METRO|JINBI = 10
+[GET] VERÃO 28|AVIAMENTO UNIDADE|CHATLEE = 8
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select c1_0.id,c1_0.nome from colecao c1_0
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select f1_0.id,f1_0.nome from fornecedor f1_0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[GET] bandeirasFlat com qtd > 0:
+[GET] VERÃO 28|TECIDO|CHATLEE = 8
+[GET] VERÃO 28|AVIAMENTO METRO|CHATLEE = 7
+[GET] VERÃO 28|AVIAMENTO METRO|JINBI = 10
+[GET] VERÃO 28|AVIAMENTO UNIDADE|CHATLEE = 8
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+[BANDEIRAS] bandColecao=[VERÃO 28, VERÃO 28, VERÃO 28, VERÃO 28, VERÃO 28, VERÃO 28, INVERNO 28, INVERNO 28, INVERNO 28, INVERNO 28, INVERNO 28, INVERNO 28]
+[BANDEIRAS] bandInsumo=[TECIDO, TECIDO, AVIAMENTO METRO, AVIAMENTO METRO, AVIAMENTO UNIDADE, AVIAMENTO UNIDADE, TECIDO, TECIDO, AVIAMENTO METRO, AVIAMENTO METRO, AVIAMENTO UNIDADE, AVIAMENTO UNIDADE]
+[BANDEIRAS] bandFornecedor=[CHATLEE, JINBI, CHATLEE, JINBI, CHATLEE, JINBI, CHATLEE, JINBI, CHATLEE, JINBI, CHATLEE, JINBI]
+[BANDEIRAS] bandQtd=[8, 0, 11, 10, 8, 0, 0, 0, 0, 0, 0, 0]
+[BANDEIRAS] Salvando: col=VERÃO 28 ins=TECIDO forn=CHATLEE qtd=8
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=1 qtd=8
+[BANDEIRAS] Salvando: col=VERÃO 28 ins=TECIDO forn=JINBI qtd=0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=2 qtd=0
+[BANDEIRAS] Salvando: col=VERÃO 28 ins=AVIAMENTO METRO forn=CHATLEE qtd=11
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: update bandeira_novidade set colecao=?,fornecedor=?,insumo=?,quantidade=? where id=?
+[BANDEIRAS] Salvo id=3 qtd=11
+[BANDEIRAS] Salvando: col=VERÃO 28 ins=AVIAMENTO METRO forn=JINBI qtd=10
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=4 qtd=10
+[BANDEIRAS] Salvando: col=VERÃO 28 ins=AVIAMENTO UNIDADE forn=CHATLEE qtd=8
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=5 qtd=8
+[BANDEIRAS] Salvando: col=VERÃO 28 ins=AVIAMENTO UNIDADE forn=JINBI qtd=0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=6 qtd=0
+[BANDEIRAS] Salvando: col=INVERNO 28 ins=TECIDO forn=CHATLEE qtd=0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=7 qtd=0
+[BANDEIRAS] Salvando: col=INVERNO 28 ins=TECIDO forn=JINBI qtd=0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=8 qtd=0
+[BANDEIRAS] Salvando: col=INVERNO 28 ins=AVIAMENTO METRO forn=CHATLEE qtd=0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=9 qtd=0
+[BANDEIRAS] Salvando: col=INVERNO 28 ins=AVIAMENTO METRO forn=JINBI qtd=0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=10 qtd=0
+[BANDEIRAS] Salvando: col=INVERNO 28 ins=AVIAMENTO UNIDADE forn=CHATLEE qtd=0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=11 qtd=0
+[BANDEIRAS] Salvando: col=INVERNO 28 ins=AVIAMENTO UNIDADE forn=JINBI qtd=0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[BANDEIRAS] Salvo id=12 qtd=0
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select c1_0.id,c1_0.nome from colecao c1_0
+Hibernate: select i1_0.id,i1_0.nome from insumo i1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? and qp1_0.tipo_solicitacao=?
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select qp1_0.id,qp1_0.anime_aprovado,qp1_0.anime_cancelado,qp1_0.anime_cotado,qp1_0.authoria_aprovado,qp1_0.authoria_cancelado,qp1_0.authoria_cotado,qp1_0.bimbi_aprovado,qp1_0.bimbi_cancelado,qp1_0.bimbi_cotado,qp1_0.colecao,qp1_0.momi_aprovado,qp1_0.momi_cancelado,qp1_0.momi_cotado,qp1_0.tipo_solicitacao,qp1_0.youcciecancelado,qp1_0.youcciecotado,qp1_0.youcciee_aprovado from quadro_planejamento qp1_0 where qp1_0.colecao=? order by qp1_0.tipo_solicitacao
+Hibernate: select f1_0.id,f1_0.nome from fornecedor f1_0
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+Hibernate: select bn1_0.id,bn1_0.colecao,bn1_0.fornecedor,bn1_0.insumo,bn1_0.quantidade from bandeira_novidade bn1_0 where bn1_0.colecao=? and bn1_0.fornecedor=? and bn1_0.insumo=?
+[GET] bandeirasFlat com qtd > 0:
+[GET] VERÃO 28|TECIDO|CHATLEE = 8
+[GET] VERÃO 28|AVIAMENTO METRO|CHATLEE = 11
+[GET] VERÃO 28|AVIAMENTO METRO|JINBI = 10
+[GET] VERÃO 28|AVIAMENTO UNIDADE|CHATLEE = 8
