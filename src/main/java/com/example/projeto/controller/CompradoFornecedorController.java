@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CompradoFornecedorController {
 
     private static final String[] TIPO_ROWS = {
-        "Tecido", "Aviamento em Metro", "Aviamento em Unidade"
+        "Tecido em Metro", "Tecido em Quilo", "Aviamento em Metro", "Aviamento em Unidade"
     };
 
     private final FichaTecnicaRepository repository;
@@ -118,7 +118,9 @@ public class CompradoFornecedorController {
                 String forn = f.getFornecedor().trim();
                 int fornIdx = fornecedores.indexOf(forn);
                 if (fornIdx < 0) continue;
-                pivot.get(TIPO_ROWS[tipoIndex(f)])[fornIdx] += f.getQuantidadeComprada();
+                int tipoIdx = tipoIndex(f);
+                if (tipoIdx < 0) continue; // ficha não classificável em nenhuma das 4 categorias
+                pivot.get(TIPO_ROWS[tipoIdx])[fornIdx] += f.getQuantidadeComprada();
             }
 
             // Inicializar totais de coluna
@@ -155,7 +157,26 @@ public class CompradoFornecedorController {
         return "comprado-fornecedor";
     }
 
+    /**
+     * Classifica a ficha em uma das 4 categorias do quadro (índice em TIPO_ROWS),
+     * com base no Insumo (campo {@code tipo}) e, como apoio, na unidade de medida.
+     * Insumos atuais: "TECIDO METRO", "TECIDO QUILO", "AVIAMENTO METRO", "AVIAMENTO UNIDADE".
+     * Também trata dados antigos: "TECIDO", "AVIAMENTO", "ACESSORIO_*".
+     * Retorna -1 quando não é classificável.
+     */
     private int tipoIndex(FichaTecnica f) {
-        return 0;
+        String t = f.getTipo() == null ? "" : f.getTipo().toUpperCase();
+        String u = f.getUnidadeMedida() == null ? "" : f.getUnidadeMedida().toUpperCase();
+
+        boolean tecido    = t.contains("TECIDO");
+        boolean aviamento = t.contains("AVIAMENTO") || t.contains("ACESSORIO");
+
+        boolean quilo   = t.contains("QUILO")   || u.contains("QUILO");
+        boolean unidade = t.contains("UNIDADE") || u.contains("UNIDADE");
+        // Metro é o padrão quando não há indicação de Quilo/Unidade.
+
+        if (tecido)    return quilo   ? 1 : 0;  // 1=Tecido em Quilo, 0=Tecido em Metro
+        if (aviamento) return unidade ? 3 : 2;  // 3=Aviamento em Unidade, 2=Aviamento em Metro
+        return -1;
     }
 }

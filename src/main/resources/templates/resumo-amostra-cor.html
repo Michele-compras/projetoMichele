@@ -36,6 +36,9 @@
                         <th class="text-center" style="width:130px">
                             <span class="badge bg-warning text-dark">Aguardando</span>
                         </th>
+                        <th class="text-center" style="width:120px">
+                            <span class="badge bg-info text-dark">Em Análise</span>
+                        </th>
                         <th class="text-center" style="width:110px">
                             <span class="badge bg-success">Aprovada</span>
                         </th>
@@ -53,10 +56,13 @@
                                 <td th:text="${tipoEntry.key}"></td>
                                 <td class="text-center text-warning fw-bold"
                                     th:text="${tipoEntry.value['PENDENTE'] != null ? tipoEntry.value['PENDENTE'] : 0}"></td>
+                                <td class="text-center text-info fw-bold"
+                                    th:text="${tipoEntry.value['EM_ANALISE'] != null ? tipoEntry.value['EM_ANALISE'] : 0}"></td>
                                 <td class="text-center text-success fw-bold"
                                     th:text="${tipoEntry.value['APROVADO'] != null ? tipoEntry.value['APROVADO'] : 0}"></td>
                                 <td class="text-center fw-bold"
                                     th:text="${(tipoEntry.value['PENDENTE'] != null ? tipoEntry.value['PENDENTE'] : 0)
+                                             + (tipoEntry.value['EM_ANALISE'] != null ? tipoEntry.value['EM_ANALISE'] : 0)
                                              + (tipoEntry.value['APROVADO'] != null ? tipoEntry.value['APROVADO'] : 0)
                                              + (tipoEntry.value['REPROVADO'] != null ? tipoEntry.value['REPROVADO'] : 0)}"></td>
                             </tr>
@@ -66,10 +72,13 @@
                             <td class="fst-italic text-muted">Total</td>
                             <td class="text-center fw-bold text-warning"
                                 th:text="${subtotais[colEntry.key]['PENDENTE']}"></td>
+                            <td class="text-center fw-bold text-info"
+                                th:text="${subtotais[colEntry.key]['EM_ANALISE']}"></td>
                             <td class="text-center fw-bold text-success"
                                 th:text="${subtotais[colEntry.key]['APROVADO']}"></td>
                             <td class="text-center fw-bold"
                                 th:text="${subtotais[colEntry.key]['PENDENTE']
+                                         + subtotais[colEntry.key]['EM_ANALISE']
                                          + subtotais[colEntry.key]['APROVADO']
                                          + subtotais[colEntry.key]['REPROVADO']}"></td>
                         </tr>

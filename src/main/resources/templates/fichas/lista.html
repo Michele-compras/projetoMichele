@@ -17,6 +17,13 @@
         text-align: center;
         padding: 3px 6px;
     }
+    /* Posiciona/realça a ficha recém-editada ao voltar para a lista */
+    tr[id^="ficha-"] { scroll-margin-top: 90px; }
+    tr.ficha-destacada > td { animation: flashFicha 2.6s ease-out; }
+    @keyframes flashFicha {
+        0%, 30% { background-color: #fff3cd; }
+        100%    { background-color: transparent; }
+    }
 </style>
 
 <div class="main-content">
@@ -141,7 +148,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="ficha : ${fichas}">
+                <tr th:each="ficha : ${fichas}" th:id="'ficha-' + ${ficha.id}">
                     <td>
                         <img th:if="${ficha.fotoPath != null}" th:src="@{'/uploads/' + ${ficha.fotoPath}}"
                              alt="Foto" style="width:64px; height:64px; object-fit:cover; border-radius:4px;">
@@ -165,8 +172,8 @@
                     <td th:text="${ficha.largura}"></td>
                     <td th:text="${ficha.rendimento}"></td>
                     <td class="no-print">
-                        <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id})}" class="btn btn-sm btn-info">Ver</a>
-                        <a th:href="@{/fichas/editar/{id}(id=${ficha.id})}" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id}, fColecao=${colecaoFiltro}, fTipo=${tipoSelecionado}, fStatus=${statusPedidoSelecionado}, fCodigo=${codigoFiltro}, fDuimp=${duimpDiFiltro}, fContrato=${contratoCambioFiltro})}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="@{/fichas/editar/{id}(id=${ficha.id}, fColecao=${colecaoFiltro}, fTipo=${tipoSelecionado}, fStatus=${statusPedidoSelecionado}, fCodigo=${codigoFiltro}, fDuimp=${duimpDiFiltro}, fContrato=${contratoCambioFiltro})}" class="btn btn-sm btn-warning">Editar</a>
                         <a th:href="@{/fichas/excluir/{id}(id=${ficha.id})}" class="btn btn-sm btn-danger"
                            onclick="return confirm('Deseja realmente excluir esta ficha?')">Excluir</a>
                     </td>
@@ -181,5 +188,18 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Ao voltar da edição, rola até a ficha alterada e a destaca brevemente.
+    document.addEventListener('DOMContentLoaded', function () {
+        var hash = window.location.hash;
+        if (hash && hash.indexOf('#ficha-') === 0) {
+            var linha = document.getElementById(hash.substring(1));
+            if (linha) {
+                linha.scrollIntoView({ block: 'center' });
+                linha.classList.add('ficha-destacada');
+            }
+        }
+    });
+</script>
 </body>
 </html>

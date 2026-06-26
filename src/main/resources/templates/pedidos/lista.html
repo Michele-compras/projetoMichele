@@ -135,7 +135,7 @@
                     <td th:text="${ficha.dataColocacaoPedido != null ? #temporals.format(ficha.dataColocacaoPedido, 'dd/MM/yyyy') : ''}"></td>
                     <td th:text="${ficha.quantidadeComprada != null ? #numbers.formatDecimal(ficha.quantidadeComprada, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
                     <td th:text="${ficha.minimoCompra != null ? #numbers.formatDecimal(ficha.minimoCompra, 1, 'POINT', 2, 'COMMA') : ''}"></td>
-                    <td th:text="${ficha.precoUsd != null ? '$ ' + #numbers.formatDecimal(ficha.precoUsd, 1, 'POINT', 2, 'COMMA') : ''}"></td>
+                    <td th:text="${ficha.precoUsd != null ? '$ ' + #numbers.formatDecimal(ficha.precoUsd, 1, 'POINT', 4, 'COMMA') : ''}"></td>
                     <td th:text="${ficha.precoReais != null ? 'R$ ' + #numbers.formatDecimal(ficha.precoReais, 1, 'POINT', 2, 'COMMA') : ''}"></td>
                     <td>
                         <span th:if="${ficha.statusPedido != null}"

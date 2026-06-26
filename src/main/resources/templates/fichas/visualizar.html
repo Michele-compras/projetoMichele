@@ -10,7 +10,8 @@
         <h2>Ficha Técnica <span th:text="'#' + ${ficha.id}"></span></h2>
         <div>
             <button onclick="window.print()" class="btn btn-outline-primary">Imprimir</button>
-            <a th:href="@{/fichas}" class="btn btn-secondary">Voltar</a>
+            <a th:href="'/fichas' + ${filtrosQuery} + ${ficha.id != null ? '#ficha-' + ficha.id : ''}"
+               class="btn btn-secondary">Voltar</a>
         </div>
     </div>
 
@@ -125,7 +126,7 @@
                 </tr>
                 <tr>
                     <th>Preço USD:</th>
-                    <td th:text="${ficha.precoUsd != null ? '$ ' + #numbers.formatDecimal(ficha.precoUsd, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+                    <td th:text="${ficha.precoUsd != null ? '$ ' + #numbers.formatDecimal(ficha.precoUsd, 1, 'POINT', 4, 'COMMA') : '-'}"></td>
                 </tr>
                 <tr>
                     <th>Preço R$:</th>

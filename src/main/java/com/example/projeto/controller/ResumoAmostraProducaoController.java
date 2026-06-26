@@ -39,9 +39,9 @@ public class ResumoAmostraProducaoController {
         Map<String, Map<String, Long>> subtotais = new LinkedHashMap<>();
         for (Map.Entry<String, Map<String, Map<String, Long>>> colEntry : resumo.entrySet()) {
             Map<String, Long> sub = new LinkedHashMap<>();
-            for (String s : List.of("PENDENTE", "APROVADO", "REPROVADO")) sub.put(s, 0L);
+            for (String s : List.of("PENDENTE", "EM_ANALISE", "APROVADO", "REPROVADO")) sub.put(s, 0L);
             for (Map<String, Long> statusMap : colEntry.getValue().values()) {
-                for (String s : List.of("PENDENTE", "APROVADO", "REPROVADO")) {
+                for (String s : List.of("PENDENTE", "EM_ANALISE", "APROVADO", "REPROVADO")) {
                     sub.merge(s, statusMap.getOrDefault(s, 0L), Long::sum);
                 }
             }

@@ -85,6 +85,7 @@
                         <th>Coleção</th>
                         <th class="text-center" style="width:80px">Total</th>
                         <th class="text-center text-warning" style="width:120px">Aguardando Amostra</th>
+                        <th class="text-center text-info" style="width:120px">Em Análise</th>
                         <th class="text-center text-success" style="width:120px">Aprovada</th>
                     </tr>
                 </thead>
@@ -94,6 +95,8 @@
                         <td class="text-center fw-bold" th:text="${entry.value}"></td>
                         <td class="text-center text-warning fw-bold"
                             th:text="${qtdStatusCorPorColecao[entry.key] != null and qtdStatusCorPorColecao[entry.key]['PENDENTE'] != null ? qtdStatusCorPorColecao[entry.key]['PENDENTE'] : 0}"></td>
+                        <td class="text-center text-info fw-bold"
+                            th:text="${qtdStatusCorPorColecao[entry.key] != null and qtdStatusCorPorColecao[entry.key]['EM_ANALISE'] != null ? qtdStatusCorPorColecao[entry.key]['EM_ANALISE'] : 0}"></td>
                         <td class="text-center text-success fw-bold"
                             th:text="${qtdStatusCorPorColecao[entry.key] != null and qtdStatusCorPorColecao[entry.key]['APROVADO'] != null ? qtdStatusCorPorColecao[entry.key]['APROVADO'] : 0}"></td>
                     </tr>

@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -86,6 +89,7 @@ public class FichaTecnicaController {
     @GetMapping("/nova")
     public String nova(Model model) {
         addFormAttributes(model, new FichaTecnica());
+        addFiltroAttributes(model, null, null, null, null, null, null);
         return "fichas/formulario";
     }
 
@@ -93,27 +97,46 @@ public class FichaTecnicaController {
     public String salvar(@ModelAttribute("ficha") FichaTecnica ficha,
                          BindingResult bindingResult,
                          @RequestParam(value = "foto", required = false) MultipartFile foto,
+                         @RequestParam(required = false) String fColecao,
+                         @RequestParam(required = false) String fTipo,
+                         @RequestParam(required = false) String fStatus,
+                         @RequestParam(required = false) String fCodigo,
+                         @RequestParam(required = false) String fDuimp,
+                         @RequestParam(required = false) String fContrato,
                          Model model,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             addFormAttributes(model, ficha);
+            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato);
             model.addAttribute("erro", "Verifique os campos obrigatórios.");
             return "fichas/formulario";
         }
         try {
-            service.salvar(ficha, foto);
+            FichaTecnica salva = service.salvar(ficha, foto);
             redirectAttributes.addFlashAttribute("mensagem", "Ficha técnica salva com sucesso!");
-            return "redirect:/fichas";
+            // Volta para a lista mantendo o filtro selecionado e posicionando na ficha editada.
+            return "redirect:/fichas"
+                    + montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato)
+                    + "#ficha-" + salva.getId();
         } catch (Exception e) {
             addFormAttributes(model, ficha);
+            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato);
             model.addAttribute("erro", "Erro ao salvar: " + e.getMessage());
             return "fichas/formulario";
         }
     }
 
     @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Long id, Model model) {
+    public String editar(@PathVariable Long id,
+                         @RequestParam(required = false) String fColecao,
+                         @RequestParam(required = false) String fTipo,
+                         @RequestParam(required = false) String fStatus,
+                         @RequestParam(required = false) String fCodigo,
+                         @RequestParam(required = false) String fDuimp,
+                         @RequestParam(required = false) String fContrato,
+                         Model model) {
         addFormAttributes(model, service.buscarPorId(id));
+        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato);
         return "fichas/formulario";
     }
 
@@ -139,18 +162,58 @@ public class FichaTecnicaController {
     }
 
     @GetMapping("/visualizar/{id}")
-    public String visualizar(@PathVariable Long id, Model model) {
+    public String visualizar(@PathVariable Long id,
+                            @RequestParam(required = false) String fColecao,
+                            @RequestParam(required = false) String fTipo,
+                            @RequestParam(required = false) String fStatus,
+                            @RequestParam(required = false) String fCodigo,
+                            @RequestParam(required = false) String fDuimp,
+                            @RequestParam(required = false) String fContrato,
+                            Model model) {
         model.addAttribute("ficha", service.buscarPorId(id));
+        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato);
         return "fichas/visualizar";
     }
 
     private void addFormAttributes(Model model, FichaTecnica ficha) {
         model.addAttribute("ficha", ficha);
-        model.addAttribute("statusList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.APROVADO, StatusAmostra.REPROVADO, StatusAmostra.CANCELADO});
+        model.addAttribute("statusList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.EM_ANALISE, StatusAmostra.APROVADO, StatusAmostra.REPROVADO, StatusAmostra.CANCELADO});
         model.addAttribute("statusPedidoList", StatusPedido.values());
         model.addAttribute("marcasCadastradas", marcaRepo.findAll());
         model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());
         model.addAttribute("fornecedoresCadastrados", fornecedorRepo.findAll());
         model.addAttribute("categoriasCadastradas", categoriaRepo.findAll());
+    }
+
+    /** Mantém os filtros da listagem disponíveis no formulário (campos ocultos e link Cancelar). */
+    private void addFiltroAttributes(Model model, String fColecao, String fTipo, String fStatus,
+                                     String fCodigo, String fDuimp, String fContrato) {
+        model.addAttribute("fColecao", fColecao);
+        model.addAttribute("fTipo", fTipo);
+        model.addAttribute("fStatus", fStatus);
+        model.addAttribute("fCodigo", fCodigo);
+        model.addAttribute("fDuimp", fDuimp);
+        model.addAttribute("fContrato", fContrato);
+        // Query string pronta de /fichas (sem os filtros vazios), usada no link "Cancelar".
+        model.addAttribute("filtrosQuery", montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato));
+    }
+
+    /** Monta a query string de /fichas a partir dos filtros, ignorando os vazios. */
+    private String montarQueryFiltros(String fColecao, String fTipo, String fStatus,
+                                      String fCodigo, String fDuimp, String fContrato) {
+        List<String> partes = new ArrayList<>();
+        adicionarFiltro(partes, "colecao", fColecao);
+        adicionarFiltro(partes, "tipo", fTipo);
+        adicionarFiltro(partes, "statusPedido", fStatus);
+        adicionarFiltro(partes, "codigo", fCodigo);
+        adicionarFiltro(partes, "duimpDi", fDuimp);
+        adicionarFiltro(partes, "contratoCambio", fContrato);
+        return partes.isEmpty() ? "" : "?" + String.join("&", partes);
+    }
+
+    private void adicionarFiltro(List<String> partes, String nome, String valor) {
+        if (valor != null && !valor.isBlank()) {
+            partes.add(nome + "=" + URLEncoder.encode(valor, StandardCharsets.UTF_8));
+        }
     }
 }

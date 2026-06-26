@@ -84,7 +84,7 @@
                             <td class="text-center text-muted" th:text="${linha.qtd}"></td>
                             <td class="text-end text-primary fw-bold">
                                 <span th:if="${linha.mediaUsd != null}"
-                                      th:text="'$ ' + ${#numbers.formatDecimal(linha.mediaUsd, 1, 'POINT', 2, 'COMMA')}"></span>
+                                      th:text="'$ ' + ${#numbers.formatDecimal(linha.mediaUsd, 1, 'POINT', 4, 'COMMA')}"></span>
                                 <span th:if="${linha.mediaUsd == null}" class="text-muted">—</span>
                             </td>
                             <td class="text-end text-success fw-bold">
@@ -100,7 +100,7 @@
                             <td class="text-center" th:text="${totalFichas}"></td>
                             <td class="text-end text-primary">
                                 <span th:if="${totalMediaUsd != null}"
-                                      th:text="'$ ' + ${#numbers.formatDecimal(totalMediaUsd, 1, 'POINT', 2, 'COMMA')}"></span>
+                                      th:text="'$ ' + ${#numbers.formatDecimal(totalMediaUsd, 1, 'POINT', 4, 'COMMA')}"></span>
                                 <span th:if="${totalMediaUsd == null}" class="text-muted">—</span>
                             </td>
                             <td class="text-end text-success">
