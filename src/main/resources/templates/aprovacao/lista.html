@@ -17,7 +17,7 @@
         padding: 3px 6px;
     }
     .tabela-aprovacao th.col-comentario,
-    .tabela-aprovacao td.col-comentario { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tabela-aprovacao td.col-comentario { max-width: 220px; white-space: normal; word-break: break-word; vertical-align: top; }
 </style>
 
 <div class="main-content">
@@ -175,9 +175,7 @@
                     <th>Marca</th>
                     <th>Cor</th>
                     <th>Código</th>
-                    <th>Ref. Forn.</th>
                     <th>Nº Pedido</th>
-                    <th>Dt. Pedido</th>
                     <th>Qtd.</th>
                     <th class="col-comentario">Receb. / Comentário</th>
                     <th>Dt. Recebimento</th>
@@ -200,9 +198,7 @@
                     <td th:text="${ficha.marca}"></td>
                     <td th:text="${ficha.cor}"></td>
                     <td th:title="${ficha.refTexcotton}" th:text="${ficha.refTexcotton != null && ficha.refTexcotton.length() > 16 ? #strings.substring(ficha.refTexcotton, 0, 16) : ficha.refTexcotton}"></td>
-                    <td th:text="${ficha.refFornecedor}"></td>
                     <td th:text="${ficha.numeroPedido}"></td>
-                    <td th:text="${ficha.dataColocacaoPedido != null ? #temporals.format(ficha.dataColocacaoPedido, 'dd/MM/yyyy') : ''}"></td>
                     <td th:text="${ficha.quantidadeComprada != null ? ficha.quantidadeComprada : ''}"></td>
                     <td class="col-comentario" th:text="${ficha.observacaoAmostraCor}" th:title="${ficha.observacaoAmostraCor}"></td>
                     <td th:text="${ficha.dataAmostraCor != null ? #temporals.format(ficha.dataAmostraCor, 'dd/MM/yyyy') : ''}"></td>
@@ -220,7 +216,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(fichas)}">
-                    <td colspan="17" class="text-center text-muted">Nenhum registro encontrado.</td>
+                    <td colspan="15" class="text-center text-muted">Nenhum registro encontrado.</td>
                 </tr>
             </tbody>
         </table>
