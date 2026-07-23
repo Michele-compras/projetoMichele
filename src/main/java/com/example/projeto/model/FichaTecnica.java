@@ -53,6 +53,8 @@ public class FichaTecnica {
 
     private String unidadeMedida;
 
+    private String qtiPct;
+
     private Double minimoCompra;
 
     private Double precoUsd;
@@ -372,6 +374,14 @@ public class FichaTecnica {
 
     public void setUnidadeMedida(String unidadeMedida) {
         this.unidadeMedida = unidadeMedida;
+    }
+
+    public String getQtiPct() {
+        return qtiPct;
+    }
+
+    public void setQtiPct(String qtiPct) {
+        this.qtiPct = qtiPct;
     }
 
     public Double getMinimoCompra() {

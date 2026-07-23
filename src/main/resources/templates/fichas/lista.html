@@ -164,6 +164,9 @@
                     <td class="text-center">
                         <span th:if="${ficha.unidadeMedida == 'Metro'}" class="badge bg-primary">MT</span>
                         <span th:if="${ficha.unidadeMedida == 'Quilo'}" class="badge bg-warning text-dark">KG</span>
+                        <span th:if="${ficha.unidadeMedida == 'Unidade'}" class="badge bg-success">UN</span>
+                        <span th:if="${ficha.unidadeMedida != null and !ficha.unidadeMedida.isEmpty() and ficha.unidadeMedida != 'Metro' and ficha.unidadeMedida != 'Quilo' and ficha.unidadeMedida != 'Unidade'}"
+                              class="badge bg-secondary" th:text="${ficha.unidadeMedida}"></span>
                         <span th:if="${ficha.unidadeMedida == null or ficha.unidadeMedida.isEmpty()}" class="text-muted">-</span>
                     </td>
                     <td th:text="${ficha.refFornecedor}"></td>
