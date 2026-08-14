@@ -128,6 +128,35 @@ public class FichaTecnica {
         }
     }
 
+    /**
+     * Item cancelado: pedido cancelado OU amostra de cor/produção cancelada.
+     * Usado pelas listagens (fichas, pedidos, aprovações) para destacar a linha em vermelho.
+     */
+    @Transient
+    public boolean isCancelado() {
+        return statusPedido == StatusPedido.CANCELADO
+                || statusAmostraCor == StatusAmostra.CANCELADO
+                || statusAmostraProducao == StatusAmostra.CANCELADO;
+    }
+
+    /** Texto do tooltip da linha cancelada, indicando o que foi cancelado. */
+    @Transient
+    public String getMotivoCancelamento() {
+        StringBuilder sb = new StringBuilder();
+        if (statusPedido == StatusPedido.CANCELADO) {
+            sb.append("Pedido cancelado");
+        }
+        if (statusAmostraCor == StatusAmostra.CANCELADO) {
+            if (sb.length() > 0) sb.append(" | ");
+            sb.append("Amostra de cor cancelada");
+        }
+        if (statusAmostraProducao == StatusAmostra.CANCELADO) {
+            if (sb.length() > 0) sb.append(" | ");
+            sb.append("Amostra de produção cancelada");
+        }
+        return sb.toString();
+    }
+
     public Long getId() {
         return id;
     }

@@ -197,13 +197,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="ficha : ${fichas}">
+                <tr th:each="ficha : ${fichas}"
+                    th:classappend="${ficha.cancelado} ? 'linha-cancelada'"
+                    th:title="${ficha.cancelado} ? ${ficha.motivoCancelamento} : null">
                     <td>
                         <img th:if="${ficha.fotoPath != null}" th:src="@{'/uploads/' + ${ficha.fotoPath}}"
                              alt="Foto" style="width:36px; height:36px; object-fit:cover; border-radius:4px;">
                         <span th:if="${ficha.fotoPath == null}" class="text-muted">-</span>
                     </td>
-                    <td th:text="${ficha.colecao}"></td>
+                    <td>
+                        <span th:text="${ficha.colecao}"></span>
+                        <span th:if="${ficha.cancelado}" class="tag-cancelado d-block mt-1">CANCELADO</span>
+                    </td>
                     <td th:text="${ficha.tipo}"></td>
                     <td th:text="${ficha.categoriaProduto}"></td>
                     <td th:text="${ficha.fornecedor}"></td>
@@ -219,7 +224,7 @@
                         <span th:if="${ficha.statusAmostraProducao != null}"
                               th:text="${ficha.statusAmostraProducao.descricao}"
                               th:classappend="${ficha.statusAmostraProducao.name() == 'APROVADO' ? 'text-success fw-bold' :
-                                              (ficha.statusAmostraProducao.name() == 'REPROVADO' ? 'text-danger fw-bold' : 'text-warning fw-bold')}">
+                                              (ficha.statusAmostraProducao.name() == 'REPROVADO' or ficha.statusAmostraProducao.name() == 'CANCELADO' ? 'text-danger fw-bold' : 'text-warning fw-bold')}">
                         </span>
                     </td>
                     <td class="no-print">

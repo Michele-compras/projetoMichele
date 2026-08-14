@@ -16,6 +16,48 @@
         .campo-gramatura { transition: all 0.3s; }
         .table th { white-space: nowrap; }
 
+        /* ---- Itens cancelados ----
+           Linha inteira em vermelho claro com texto riscado, para dar ênfase de que o
+           item está cancelado. As variáveis --bs-table-* são necessárias porque o
+           Bootstrap 5.3 pinta o fundo das linhas com box-shadow inset: um
+           background-color comum seria coberto pelo zebrado do .table-striped. */
+        tr.linha-cancelada > * {
+            --bs-table-bg-type: #f8d7da;
+            --bs-table-accent-bg: #f8d7da;
+            color: #842029 !important;
+            text-decoration: line-through;
+        }
+        tr.linha-cancelada:hover > * {
+            --bs-table-bg-state: #f1aeb5;
+        }
+        /* Riscar só o texto dos dados: botões, badges e fotos continuam legíveis. */
+        tr.linha-cancelada .badge,
+        tr.linha-cancelada .btn,
+        tr.linha-cancelada a,
+        tr.linha-cancelada img {
+            text-decoration: none;
+        }
+        tr.linha-cancelada img { opacity: 0.55; }
+        /* Etiqueta CANCELADO nas listagens que não têm coluna de status. */
+        .tag-cancelado {
+            display: inline-block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #fff;
+            background-color: #b02a37;
+            border-radius: 3px;
+            padding: 1px 5px;
+            text-decoration: none;
+        }
+        @media print {
+            /* Na impressão o fundo colorido costuma sair branco: mantém o risco e a borda. */
+            tr.linha-cancelada > * {
+                border-top: 1px solid #842029;
+                border-bottom: 1px solid #842029;
+            }
+        }
+
         /* Sidebar */
         #sidebar {
             width: 230px;

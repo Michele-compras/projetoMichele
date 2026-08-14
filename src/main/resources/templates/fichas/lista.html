@@ -148,13 +148,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="ficha : ${fichas}" th:id="'ficha-' + ${ficha.id}">
+                <tr th:each="ficha : ${fichas}" th:id="'ficha-' + ${ficha.id}"
+                    th:classappend="${ficha.cancelado} ? 'linha-cancelada'"
+                    th:title="${ficha.cancelado} ? ${ficha.motivoCancelamento} : null">
                     <td>
                         <img th:if="${ficha.fotoPath != null}" th:src="@{'/uploads/' + ${ficha.fotoPath}}"
                              alt="Foto" style="width:64px; height:64px; object-fit:cover; border-radius:4px;">
                         <span th:if="${ficha.fotoPath == null}" class="text-muted">-</span>
                     </td>
-                    <td th:text="${ficha.colecao}"></td>
+                    <td>
+                        <span th:text="${ficha.colecao}"></span>
+                        <span th:if="${ficha.cancelado}" class="tag-cancelado d-block mt-1">CANCELADO</span>
+                    </td>
                     <td th:text="${ficha.tipo}"></td>
                     <td th:text="${ficha.categoriaProduto}"></td>
                     <td th:text="${ficha.fornecedor}"></td>
