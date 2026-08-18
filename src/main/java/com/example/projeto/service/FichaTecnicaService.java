@@ -109,6 +109,31 @@ public class FichaTecnicaService {
         return (y >= 0 && y < 100) ? 2000 + y : y;
     }
 
+
+    /**
+     * Mesma informação de {@link #qtdTipoPorColecao()}, mas em mapa plano com chave "colecao|tipo".
+     * O Thymeleaf não resolve acesso aninhado (mapa[var][var]) quando as chaves vêm de variáveis
+     * do th:each, então a listagem usa esta versão para montar as colunas por insumo.
+     */
+    public java.util.Map<String, Long> qtdPorColecaoETipoPlano() {
+        java.util.Map<String, Long> resultado = new java.util.LinkedHashMap<>();
+        for (Object[] row : repository.countByColecaoAndTipo()) {
+            resultado.put(row[0] + "|" + row[1], (Long) row[2]);
+        }
+        return resultado;
+    }
+
+    /** Insumos distintos realmente usados pelas fichas (usado como colunas da listagem). */
+    public java.util.List<String> tiposUsados() {
+        java.util.List<String> tipos = new ArrayList<>();
+        for (Object[] row : repository.countByColecaoAndTipo()) {
+            String tipo = (String) row[1];
+            if (tipo != null && !tipo.isBlank() && !tipos.contains(tipo)) tipos.add(tipo);
+        }
+        java.util.Collections.sort(tipos);
+        return tipos;
+    }
+
     public java.util.Map<String, java.util.Map<String, Long>> qtdTipoPorColecao() {
         java.util.Map<String, java.util.Map<String, Long>> resultado = new java.util.LinkedHashMap<>();
         for (Object[] row : repository.countByColecaoAndTipo()) {

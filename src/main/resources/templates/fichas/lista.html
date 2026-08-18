@@ -109,21 +109,20 @@
                     <tr>
                         <th>Coleção</th>
                         <th class="text-center" style="width:80px">Total</th>
-                        <th class="text-center text-primary" style="width:100px">Tecido</th>
-                        <th class="text-center text-info" style="width:130px">Aviamento Metro</th>
-                        <th class="text-center text-success" style="width:140px">Aviamento Unidade</th>
+                        <!-- Uma coluna por insumo realmente usado nas fichas: acompanha o cadastro,
+                             em vez de nomes fixos que ficavam zerados quando o insumo era renomeado. -->
+                        <th th:each="ins,st : ${tiposColunas}" class="text-center" style="width:140px"
+                            th:classappend="${st.index % 3 == 0} ? 'text-primary' : (${st.index % 3 == 1} ? 'text-info' : 'text-success')"
+                            th:text="${ins}"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="entry : ${qtdPorColecao}">
                         <td th:text="${entry.key}"></td>
                         <td class="text-center fw-bold" th:text="${entry.value}"></td>
-                        <td class="text-center text-primary fw-bold"
-                            th:text="${qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['Tecido'] != null ? qtdTipoPorColecao[entry.key]['Tecido'] : 0}"></td>
-                        <td class="text-center text-info fw-bold"
-                            th:text="${qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['Aviamento em Metro'] != null ? qtdTipoPorColecao[entry.key]['Aviamento em Metro'] : 0}"></td>
-                        <td class="text-center text-success fw-bold"
-                            th:text="${qtdTipoPorColecao[entry.key] != null and qtdTipoPorColecao[entry.key]['Aviamento em Unidade'] != null ? qtdTipoPorColecao[entry.key]['Aviamento em Unidade'] : 0}"></td>
+                        <td th:each="ins,st : ${tiposColunas}" class="text-center fw-bold"
+                            th:classappend="${st.index % 3 == 0} ? 'text-primary' : (${st.index % 3 == 1} ? 'text-info' : 'text-success')"
+                            th:text="${qtdPorColecaoETipo[entry.key + '|' + ins] != null ? qtdPorColecaoETipo[entry.key + '|' + ins] : 0}"></td>
                     </tr>
                 </tbody>
             </table>

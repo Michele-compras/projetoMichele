@@ -87,6 +87,8 @@ public class FichaTecnicaController {
         model.addAttribute("fornecedorFiltro", fornecedor);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
         model.addAttribute("qtdTipoPorColecao", service.qtdTipoPorColecao());
+        model.addAttribute("qtdPorColecaoETipo", service.qtdPorColecaoETipoPlano());
+        model.addAttribute("tiposColunas", service.tiposUsados());
         return "fichas/lista";
     }
 
