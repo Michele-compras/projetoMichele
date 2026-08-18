@@ -37,7 +37,11 @@ public class CompradoFornecedorController {
                                      @RequestParam(required = false, defaultValue = "resumo") String aba,
                                      Model model) {
 
-        List<FichaTecnica> fichas = repository.findAll();
+        // Itens cancelados (pedido cancelado ou amostra de cor/produção cancelada) não entram
+        // em nenhum total de quantidade comprada: os quadros mostram só o que foi realmente comprado.
+        List<FichaTecnica> fichas = repository.findAll().stream()
+                .filter(f -> !f.isCancelado())
+                .collect(Collectors.toList());
 
         List<String> colecoes = colecaoRepo.findAll().stream()
                 .map(c -> c.getNome())

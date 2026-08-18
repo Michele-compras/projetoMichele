@@ -47,7 +47,7 @@ public class AprovacaoEmbarqueController {
                 || (codigo != null && !codigo.isBlank());
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, codigo);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, codigo, null, null);
             if (statusAmostra != null) {
                 final StatusAmostra filtroStatus = statusAmostra;
                 fichas = fichas.stream()

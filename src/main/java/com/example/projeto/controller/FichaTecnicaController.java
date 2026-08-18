@@ -55,6 +55,7 @@ public class FichaTecnicaController {
             @RequestParam(required = false) String duimpDi,
             @RequestParam(required = false) String contratoCambio,
             @RequestParam(required = false) String codigo,
+            @RequestParam(required = false) String fornecedor,
             Model model) {
 
         List<FichaTecnica> fichas;
@@ -62,10 +63,11 @@ public class FichaTecnicaController {
                 || statusPedido != null || dataInicio != null || dataFim != null
                 || (duimpDi != null && !duimpDi.isBlank())
                 || (contratoCambio != null && !contratoCambio.isBlank())
-                || (codigo != null && !codigo.isBlank());
+                || (codigo != null && !codigo.isBlank())
+                || (fornecedor != null && !fornecedor.isBlank());
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, duimpDi, contratoCambio, codigo);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, duimpDi, contratoCambio, codigo, null, fornecedor);
         } else {
             fichas = service.listarTodas();
         }
@@ -73,6 +75,7 @@ public class FichaTecnicaController {
         model.addAttribute("fichas", fichas);
         model.addAttribute("statusPedidoList", StatusPedido.values());
         model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());
+        model.addAttribute("fornecedoresCadastrados", fornecedorRepo.findAll());
         model.addAttribute("colecaoFiltro", colecao);
         model.addAttribute("tipoSelecionado", tipo);
         model.addAttribute("statusPedidoSelecionado", statusPedido);
@@ -81,6 +84,7 @@ public class FichaTecnicaController {
         model.addAttribute("duimpDiFiltro", duimpDi);
         model.addAttribute("contratoCambioFiltro", contratoCambio);
         model.addAttribute("codigoFiltro", codigo);
+        model.addAttribute("fornecedorFiltro", fornecedor);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
         model.addAttribute("qtdTipoPorColecao", service.qtdTipoPorColecao());
         return "fichas/lista";
@@ -89,7 +93,7 @@ public class FichaTecnicaController {
     @GetMapping("/nova")
     public String nova(Model model) {
         addFormAttributes(model, new FichaTecnica());
-        addFiltroAttributes(model, null, null, null, null, null, null);
+        addFiltroAttributes(model, null, null, null, null, null, null, null);
         return "fichas/formulario";
     }
 
@@ -103,11 +107,12 @@ public class FichaTecnicaController {
                          @RequestParam(required = false) String fCodigo,
                          @RequestParam(required = false) String fDuimp,
                          @RequestParam(required = false) String fContrato,
+                         @RequestParam(required = false) String fFornecedor,
                          Model model,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             addFormAttributes(model, ficha);
-            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato);
+            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
             model.addAttribute("erro", "Verifique os campos obrigatórios.");
             return "fichas/formulario";
         }
@@ -116,11 +121,11 @@ public class FichaTecnicaController {
             redirectAttributes.addFlashAttribute("mensagem", "Ficha técnica salva com sucesso!");
             // Volta para a lista mantendo o filtro selecionado e posicionando na ficha editada.
             return "redirect:/fichas"
-                    + montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato)
+                    + montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor)
                     + "#ficha-" + salva.getId();
         } catch (Exception e) {
             addFormAttributes(model, ficha);
-            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato);
+            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
             model.addAttribute("erro", "Erro ao salvar: " + e.getMessage());
             return "fichas/formulario";
         }
@@ -134,9 +139,10 @@ public class FichaTecnicaController {
                          @RequestParam(required = false) String fCodigo,
                          @RequestParam(required = false) String fDuimp,
                          @RequestParam(required = false) String fContrato,
+                         @RequestParam(required = false) String fFornecedor,
                          Model model) {
         addFormAttributes(model, service.buscarPorId(id));
-        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato);
+        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
         return "fichas/formulario";
     }
 
@@ -169,9 +175,10 @@ public class FichaTecnicaController {
                             @RequestParam(required = false) String fCodigo,
                             @RequestParam(required = false) String fDuimp,
                             @RequestParam(required = false) String fContrato,
+                            @RequestParam(required = false) String fFornecedor,
                             Model model) {
         model.addAttribute("ficha", service.buscarPorId(id));
-        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato);
+        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
         return "fichas/visualizar";
     }
 
@@ -187,20 +194,23 @@ public class FichaTecnicaController {
 
     /** Mantém os filtros da listagem disponíveis no formulário (campos ocultos e link Cancelar). */
     private void addFiltroAttributes(Model model, String fColecao, String fTipo, String fStatus,
-                                     String fCodigo, String fDuimp, String fContrato) {
+                                     String fCodigo, String fDuimp, String fContrato,
+                                     String fFornecedor) {
         model.addAttribute("fColecao", fColecao);
         model.addAttribute("fTipo", fTipo);
         model.addAttribute("fStatus", fStatus);
         model.addAttribute("fCodigo", fCodigo);
         model.addAttribute("fDuimp", fDuimp);
         model.addAttribute("fContrato", fContrato);
+        model.addAttribute("fFornecedor", fFornecedor);
         // Query string pronta de /fichas (sem os filtros vazios), usada no link "Cancelar".
-        model.addAttribute("filtrosQuery", montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato));
+        model.addAttribute("filtrosQuery", montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor));
     }
 
     /** Monta a query string de /fichas a partir dos filtros, ignorando os vazios. */
     private String montarQueryFiltros(String fColecao, String fTipo, String fStatus,
-                                      String fCodigo, String fDuimp, String fContrato) {
+                                      String fCodigo, String fDuimp, String fContrato,
+                                      String fFornecedor) {
         List<String> partes = new ArrayList<>();
         adicionarFiltro(partes, "colecao", fColecao);
         adicionarFiltro(partes, "tipo", fTipo);
@@ -208,6 +218,7 @@ public class FichaTecnicaController {
         adicionarFiltro(partes, "codigo", fCodigo);
         adicionarFiltro(partes, "duimpDi", fDuimp);
         adicionarFiltro(partes, "contratoCambio", fContrato);
+        adicionarFiltro(partes, "fornecedor", fFornecedor);
         return partes.isEmpty() ? "" : "?" + String.join("&", partes);
     }
 

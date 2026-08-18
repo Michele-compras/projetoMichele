@@ -27,7 +27,7 @@
     <div class="card mb-3 no-print">
         <div class="card-body">
             <form th:action="@{/pedidos}" method="get">
-                <div class="row g-2 align-items-end">
+                <div class="row g-2 align-items-end mb-2">
                     <div class="col-md-3">
                         <label class="form-label">Coleção</label>
                         <select class="form-select form-select-sm" name="colecao">
@@ -44,6 +44,19 @@
                                     th:selected="${tipoSelecionado != null and tipoSelecionado == i.nome}"></option>
                         </select>
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fornecedor</label>
+                        <select class="form-select form-select-sm" name="fornecedor">
+                            <option value="">Todos</option>
+                            <option th:each="f : ${fornecedoresCadastrados}" th:value="${f.nome}" th:text="${f.nome}"
+                                    th:selected="${fornecedorFiltro != null and fornecedorFiltro == f.nome}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Nº Pedido</label>
+                        <input type="text" class="form-control form-control-sm" name="numeroPedido"
+                               th:value="${numeroPedidoFiltro}" placeholder="Ex: 1234">
+                    </div>
                     <div class="col-md-2">
                         <label class="form-label">Status Pedido</label>
                         <select class="form-select form-select-sm" name="statusPedido">
@@ -52,6 +65,8 @@
                                     th:selected="${statusPedidoSelecionado != null and statusPedidoSelecionado == s}"></option>
                         </select>
                     </div>
+                </div>
+                <div class="row g-2 align-items-end">
                     <div class="col-md-2">
                         <label class="form-label">Data Início</label>
                         <input type="date" class="form-control form-control-sm" name="dataInicio"
@@ -133,6 +148,9 @@
                     <td class="text-center">
                         <span th:if="${ficha.unidadeMedida == 'Metro'}" class="badge bg-primary">MT</span>
                         <span th:if="${ficha.unidadeMedida == 'Quilo'}" class="badge bg-warning text-dark">KG</span>
+                        <span th:if="${ficha.unidadeMedida == 'Unidade'}" class="badge bg-success">UN</span>
+                        <span th:if="${ficha.unidadeMedida != null and !ficha.unidadeMedida.isEmpty() and ficha.unidadeMedida != 'Metro' and ficha.unidadeMedida != 'Quilo' and ficha.unidadeMedida != 'Unidade'}"
+                              class="badge bg-secondary" th:text="${ficha.unidadeMedida}"></span>
                         <span th:if="${ficha.unidadeMedida == null or ficha.unidadeMedida.isEmpty()}" class="text-muted">-</span>
                     </td>
                     <td th:text="${ficha.refFornecedor}"></td>

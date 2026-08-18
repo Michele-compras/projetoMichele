@@ -38,7 +38,11 @@ public class QuadroComprasController {
                                 @RequestParam(required = false, defaultValue = "resumo") String aba,
                                 Model model) {
 
-        List<FichaTecnica> fichas = repository.findAll();
+        // Itens cancelados (pedido cancelado ou amostra de cor/produção cancelada) não entram
+        // em nenhum total de quantidade comprada: os quadros mostram só o que foi realmente comprado.
+        List<FichaTecnica> fichas = repository.findAll().stream()
+                .filter(f -> !f.isCancelado())
+                .collect(Collectors.toList());
 
         List<String> colecoes = colecaoRepo.findAll().stream()
                 .map(c -> c.getNome())
@@ -99,7 +103,9 @@ public class QuadroComprasController {
                     if (mUpper.equals(MARCA_KEYS[i]) || mUpper.startsWith(MARCA_KEYS[i])) { marcaIdx = i; break; }
                 }
                 if (marcaIdx < 0) continue;
-                pivot.get(TIPO_ROWS[tipoIndex(f)])[marcaIdx] += f.getQuantidadeComprada();
+                int tipoIdx = tipoIndex(f);
+                if (tipoIdx < 0) continue; // ficha não classificável em nenhuma das 3 linhas
+                pivot.get(TIPO_ROWS[tipoIdx])[marcaIdx] += f.getQuantidadeComprada();
             }
             for (String t : TIPO_ROWS) {
                 List<Object> row = new ArrayList<>();
@@ -133,7 +139,26 @@ public class QuadroComprasController {
         return "quadro-compras";
     }
 
+    /**
+     * Classifica a ficha em uma das 3 linhas do quadro (índice em TIPO_ROWS), a partir do
+     * Insumo (campo {@code tipo}) e, como apoio, da unidade de medida.
+     * Insumos atuais: "TECIDO METRO", "TECIDO QUILO", "AVIAMENTO METRO", "AVIAMENTO UNIDADE".
+     * Também trata dados antigos: "TECIDO", "AVIAMENTO", "ACESSORIO_*".
+     * Diferente do quadro por fornecedor, aqui tecido em metro e em quilo somam na mesma linha.
+     * Retorna -1 quando não é classificável.
+     */
     private int tipoIndex(FichaTecnica f) {
-        return 0;
+        String t = f.getTipo() == null ? "" : f.getTipo().toUpperCase();
+        String u = f.getUnidadeMedida() == null ? "" : f.getUnidadeMedida().toUpperCase();
+
+        boolean tecido    = t.contains("TECIDO");
+        boolean aviamento = t.contains("AVIAMENTO") || t.contains("ACESSORIO");
+
+        boolean unidade = t.contains("UNIDADE") || u.contains("UNIDADE");
+        // Metro é o padrão do aviamento quando não há indicação de Unidade.
+
+        if (tecido)    return 0;               // 0=Tecido (metro ou quilo)
+        if (aviamento) return unidade ? 2 : 1; // 2=Aviamento unidade, 1=Aviamento metro
+        return -1;
     }
 }

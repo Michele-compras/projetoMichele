@@ -81,6 +81,14 @@
                         <input type="text" class="form-control form-control-sm" name="contratoCambio"
                                th:value="${contratoCambioFiltro}" placeholder="Buscar por contrato...">
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fornecedor</label>
+                        <select class="form-select form-select-sm" name="fornecedor">
+                            <option value="">Todos</option>
+                            <option th:each="f : ${fornecedoresCadastrados}" th:value="${f.nome}" th:text="${f.nome}"
+                                    th:selected="${fornecedorFiltro != null and fornecedorFiltro == f.nome}"></option>
+                        </select>
+                    </div>
                     <div class="col-md-1">
                         <button type="submit" class="btn btn-sm btn-primary w-100">Filtrar</button>
                     </div>
@@ -180,8 +188,8 @@
                     <td th:text="${ficha.largura}"></td>
                     <td th:text="${ficha.rendimento}"></td>
                     <td class="no-print">
-                        <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id}, fColecao=${colecaoFiltro}, fTipo=${tipoSelecionado}, fStatus=${statusPedidoSelecionado}, fCodigo=${codigoFiltro}, fDuimp=${duimpDiFiltro}, fContrato=${contratoCambioFiltro})}" class="btn btn-sm btn-info">Ver</a>
-                        <a th:href="@{/fichas/editar/{id}(id=${ficha.id}, fColecao=${colecaoFiltro}, fTipo=${tipoSelecionado}, fStatus=${statusPedidoSelecionado}, fCodigo=${codigoFiltro}, fDuimp=${duimpDiFiltro}, fContrato=${contratoCambioFiltro})}" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id}, fColecao=${colecaoFiltro}, fTipo=${tipoSelecionado}, fStatus=${statusPedidoSelecionado}, fCodigo=${codigoFiltro}, fDuimp=${duimpDiFiltro}, fContrato=${contratoCambioFiltro}, fFornecedor=${fornecedorFiltro})}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="@{/fichas/editar/{id}(id=${ficha.id}, fColecao=${colecaoFiltro}, fTipo=${tipoSelecionado}, fStatus=${statusPedidoSelecionado}, fCodigo=${codigoFiltro}, fDuimp=${duimpDiFiltro}, fContrato=${contratoCambioFiltro}, fFornecedor=${fornecedorFiltro})}" class="btn btn-sm btn-warning">Editar</a>
                         <a th:href="@{/fichas/excluir/{id}(id=${ficha.id})}" class="btn btn-sm btn-danger"
                            onclick="return confirm('Deseja realmente excluir esta ficha?')">Excluir</a>
                     </td>

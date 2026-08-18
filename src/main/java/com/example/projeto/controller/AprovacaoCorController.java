@@ -4,6 +4,7 @@ import com.example.projeto.model.FichaTecnica;
 import com.example.projeto.model.StatusAmostra;
 import com.example.projeto.model.StatusPedido;
 import com.example.projeto.repository.ColecaoRepository;
+import com.example.projeto.repository.FornecedorRepository;
 import com.example.projeto.service.FichaTecnicaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -23,10 +24,13 @@ public class AprovacaoCorController {
 
     private final FichaTecnicaService service;
     private final ColecaoRepository colecaoRepo;
+    private final FornecedorRepository fornecedorRepo;
 
-    public AprovacaoCorController(FichaTecnicaService service, ColecaoRepository colecaoRepo) {
+    public AprovacaoCorController(FichaTecnicaService service, ColecaoRepository colecaoRepo,
+                                  FornecedorRepository fornecedorRepo) {
         this.service = service;
         this.colecaoRepo = colecaoRepo;
+        this.fornecedorRepo = fornecedorRepo;
     }
 
     @GetMapping
@@ -38,16 +42,18 @@ public class AprovacaoCorController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataInicio,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataFim,
             @RequestParam(required = false) String codigo,
+            @RequestParam(required = false) String fornecedor,
             Model model) {
 
         List<FichaTecnica> fichas;
         boolean temFiltro = colecao != null || tipo != null
                 || statusPedido != null || statusAmostra != null
                 || dataInicio != null || dataFim != null
-                || (codigo != null && !codigo.isBlank());
+                || (codigo != null && !codigo.isBlank())
+                || (fornecedor != null && !fornecedor.isBlank());
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, codigo);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, codigo, null, fornecedor);
             if (statusAmostra != null) {
                 final StatusAmostra filtroStatus = statusAmostra;
                 fichas = fichas.stream()
@@ -62,6 +68,7 @@ public class AprovacaoCorController {
         model.addAttribute("statusPedidoList", StatusPedido.values());
         model.addAttribute("statusAmostraList", new StatusAmostra[]{StatusAmostra.PENDENTE, StatusAmostra.EM_ANALISE, StatusAmostra.APROVADO, StatusAmostra.CANCELADO});
         model.addAttribute("colecoesCadastradas", colecaoRepo.findAll());
+        model.addAttribute("fornecedoresCadastrados", fornecedorRepo.findAll());
         model.addAttribute("colecaoFiltro", colecao);
         model.addAttribute("tipoSelecionado", tipo);
         model.addAttribute("statusPedidoSelecionado", statusPedido);
@@ -69,6 +76,7 @@ public class AprovacaoCorController {
         model.addAttribute("dataInicio", dataInicio);
         model.addAttribute("dataFim", dataFim);
         model.addAttribute("codigoFiltro", codigo);
+        model.addAttribute("fornecedorFiltro", fornecedor);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
         model.addAttribute("qtdStatusCorPorColecao", service.qtdStatusCorPorColecao());
         List<Map<String, Object>> leadtime = service.leadtimeAprovacaoCorPorMarca();

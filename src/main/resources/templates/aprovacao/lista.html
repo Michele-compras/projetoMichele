@@ -46,6 +46,14 @@
                         </select>
                     </div>
                     <div class="col-md-2">
+                        <label class="form-label">Fornecedor</label>
+                        <select class="form-select form-select-sm" name="fornecedor">
+                            <option value="">Todos</option>
+                            <option th:each="f : ${fornecedoresCadastrados}" th:value="${f.nome}" th:text="${f.nome}"
+                                    th:selected="${fornecedorFiltro != null and fornecedorFiltro == f.nome}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <label class="form-label">Status Pedido</label>
                         <select class="form-select form-select-sm" name="statusPedido">
                             <option value="">Todos</option>
