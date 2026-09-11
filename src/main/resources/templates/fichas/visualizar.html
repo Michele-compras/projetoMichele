@@ -10,7 +10,7 @@
         <h2>Ficha Técnica <span th:text="'#' + ${ficha.id}"></span></h2>
         <div>
             <button onclick="window.print()" class="btn btn-outline-primary">Imprimir</button>
-            <a th:href="'/fichas' + ${filtrosQuery} + ${ficha.id != null ? '#ficha-' + ficha.id : ''}"
+            <a th:href="${urlVoltar} + ${ficha.id != null ? '#ficha-' + ficha.id : ''}"
                class="btn btn-secondary">Voltar</a>
         </div>
     </div>

@@ -48,10 +48,14 @@ public class DashboardController {
         long qtdEmbarcado   = repository.countByStatusPedido(StatusPedido.EMBARCADO);
         long qtdRecebido    = repository.countByStatusPedido(StatusPedido.RECEBIDO);
         long qtdCancelado   = repository.countByStatusPedido(StatusPedido.CANCELADO);
-        long corPendente  = repository.countByStatusAmostraCor(StatusAmostra.PENDENTE);
+        // "Aguardando" = ainda não resolvida (Aguardando Amostra + Em Análise).
+        // Cancelada NÃO entra: amostra cancelada não está aguardando nada.
+        long corPendente  = repository.countByStatusAmostraCor(StatusAmostra.PENDENTE)
+                          + repository.countByStatusAmostraCor(StatusAmostra.EM_ANALISE);
         long corAprovado  = repository.countByStatusAmostraCor(StatusAmostra.APROVADO);
         long corReprovado = repository.countByStatusAmostraCor(StatusAmostra.REPROVADO);
-        long prodPendente  = repository.countByStatusAmostraProducao(StatusAmostra.PENDENTE);
+        long prodPendente  = repository.countByStatusAmostraProducao(StatusAmostra.PENDENTE)
+                           + repository.countByStatusAmostraProducao(StatusAmostra.EM_ANALISE);
         long prodAprovado  = repository.countByStatusAmostraProducao(StatusAmostra.APROVADO);
         long prodReprovado = repository.countByStatusAmostraProducao(StatusAmostra.REPROVADO);
 
@@ -142,9 +146,13 @@ public class DashboardController {
             if (!colecaoLabels.contains(col)) continue;
             StatusAmostra st = (StatusAmostra) row[1];
             Long cnt = (Long) row[2];
-            if (st == StatusAmostra.APROVADO)       corAprovadoMap.put(col, cnt);
-            else if (st == StatusAmostra.REPROVADO) corReprovadoMap.put(col, cnt);
-            else                                    corPendenteMap.put(col, cnt);
+            // Cada status vai para a sua coluna. O "else" genérico anterior jogava
+            // CANCELADO (e Em Análise) dentro de "Aguardando" e, por usar put em vez de
+            // soma, ainda sobrescrevia a contagem anterior da mesma coleção.
+            if (st == StatusAmostra.APROVADO)       corAprovadoMap.merge(col, cnt, Long::sum);
+            else if (st == StatusAmostra.REPROVADO) corReprovadoMap.merge(col, cnt, Long::sum);
+            else if (st == StatusAmostra.PENDENTE
+                  || st == StatusAmostra.EM_ANALISE) corPendenteMap.merge(col, cnt, Long::sum);
         }
         model.addAttribute("colecaoCorAprovado",  new ArrayList<>(corAprovadoMap.values()));
         model.addAttribute("colecaoCorReprovado", new ArrayList<>(corReprovadoMap.values()));
@@ -159,9 +167,11 @@ public class DashboardController {
             if (!colecaoLabels.contains(col)) continue;
             StatusAmostra st = (StatusAmostra) row[1];
             Long cnt = (Long) row[2];
-            if (st == StatusAmostra.APROVADO)       prodAprovadoMap.put(col, cnt);
-            else if (st == StatusAmostra.REPROVADO) prodReprovadoMap.put(col, cnt);
-            else                                    prodPendenteMap.put(col, cnt);
+            // Mesmo ajuste da amostra cor: CANCELADO não conta como "Aguardando".
+            if (st == StatusAmostra.APROVADO)       prodAprovadoMap.merge(col, cnt, Long::sum);
+            else if (st == StatusAmostra.REPROVADO) prodReprovadoMap.merge(col, cnt, Long::sum);
+            else if (st == StatusAmostra.PENDENTE
+                  || st == StatusAmostra.EM_ANALISE) prodPendenteMap.merge(col, cnt, Long::sum);
         }
         model.addAttribute("colecaoProdAprovado",  new ArrayList<>(prodAprovadoMap.values()));
         model.addAttribute("colecaoProdReprovado", new ArrayList<>(prodReprovadoMap.values()));

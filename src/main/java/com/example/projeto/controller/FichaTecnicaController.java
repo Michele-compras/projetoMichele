@@ -95,7 +95,7 @@ public class FichaTecnicaController {
     @GetMapping("/nova")
     public String nova(Model model) {
         addFormAttributes(model, new FichaTecnica());
-        addFiltroAttributes(model, null, null, null, null, null, null, null);
+        addFiltroAttributes(model, null, null, null, null, null, null, null, null);
         return "fichas/formulario";
     }
 
@@ -110,24 +110,28 @@ public class FichaTecnicaController {
                          @RequestParam(required = false) String fDuimp,
                          @RequestParam(required = false) String fContrato,
                          @RequestParam(required = false) String fFornecedor,
+                         @RequestParam(required = false) String retorno,
                          Model model,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             addFormAttributes(model, ficha);
-            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
+            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor, retorno);
             model.addAttribute("erro", "Verifique os campos obrigatórios.");
             return "fichas/formulario";
         }
         try {
             FichaTecnica salva = service.salvar(ficha, foto);
             redirectAttributes.addFlashAttribute("mensagem", "Ficha técnica salva com sucesso!");
-            // Volta para a lista mantendo o filtro selecionado e posicionando na ficha editada.
-            return "redirect:/fichas"
-                    + montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor)
-                    + "#ficha-" + salva.getId();
+            // Quando a edição veio de outra tela (ex.: Aprovação Amostra Produção), volta para ela
+            // com os filtros que estavam aplicados. Caso contrário, volta para /fichas como antes.
+            String destino = retornoSeguro(retorno);
+            if (destino == null) {
+                destino = "/fichas" + montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
+            }
+            return "redirect:" + destino + "#ficha-" + salva.getId();
         } catch (Exception e) {
             addFormAttributes(model, ficha);
-            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
+            addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor, retorno);
             model.addAttribute("erro", "Erro ao salvar: " + e.getMessage());
             return "fichas/formulario";
         }
@@ -142,15 +146,17 @@ public class FichaTecnicaController {
                          @RequestParam(required = false) String fDuimp,
                          @RequestParam(required = false) String fContrato,
                          @RequestParam(required = false) String fFornecedor,
+                         @RequestParam(required = false) String retorno,
                          Model model) {
         addFormAttributes(model, service.buscarPorId(id));
-        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
+        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor, retorno);
         return "fichas/formulario";
     }
 
     @PostMapping("/foto/{id}")
     public String uploadFoto(@PathVariable Long id,
                              @RequestParam("foto") MultipartFile foto,
+                             @RequestParam(required = false) String retorno,
                              RedirectAttributes redirectAttributes) {
         try {
             FichaTecnica ficha = service.buscarPorId(id);
@@ -159,7 +165,10 @@ public class FichaTecnicaController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao salvar foto: " + e.getMessage());
         }
-        return "redirect:/fichas/editar/" + id;
+        // Mantém a tela de origem para que o "Salvar" seguinte ainda saiba para onde voltar.
+        String destino = retornoSeguro(retorno);
+        return "redirect:/fichas/editar/" + id
+                + (destino != null ? "?retorno=" + URLEncoder.encode(destino, StandardCharsets.UTF_8) : "");
     }
 
     @GetMapping("/excluir/{id}")
@@ -178,9 +187,10 @@ public class FichaTecnicaController {
                             @RequestParam(required = false) String fDuimp,
                             @RequestParam(required = false) String fContrato,
                             @RequestParam(required = false) String fFornecedor,
+                            @RequestParam(required = false) String retorno,
                             Model model) {
         model.addAttribute("ficha", service.buscarPorId(id));
-        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
+        addFiltroAttributes(model, fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor, retorno);
         return "fichas/visualizar";
     }
 
@@ -197,7 +207,7 @@ public class FichaTecnicaController {
     /** Mantém os filtros da listagem disponíveis no formulário (campos ocultos e link Cancelar). */
     private void addFiltroAttributes(Model model, String fColecao, String fTipo, String fStatus,
                                      String fCodigo, String fDuimp, String fContrato,
-                                     String fFornecedor) {
+                                     String fFornecedor, String retorno) {
         model.addAttribute("fColecao", fColecao);
         model.addAttribute("fTipo", fTipo);
         model.addAttribute("fStatus", fStatus);
@@ -206,7 +216,23 @@ public class FichaTecnicaController {
         model.addAttribute("fContrato", fContrato);
         model.addAttribute("fFornecedor", fFornecedor);
         // Query string pronta de /fichas (sem os filtros vazios), usada no link "Cancelar".
-        model.addAttribute("filtrosQuery", montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor));
+        String filtrosQuery = montarQueryFiltros(fColecao, fTipo, fStatus, fCodigo, fDuimp, fContrato, fFornecedor);
+        model.addAttribute("filtrosQuery", filtrosQuery);
+        String destino = retornoSeguro(retorno);
+        model.addAttribute("retorno", destino);
+        // Destino dos botões "Cancelar"/"Voltar": a tela de origem, quando houver.
+        model.addAttribute("urlVoltar", destino != null ? destino : "/fichas" + filtrosQuery);
+    }
+
+    /**
+     * Aceita apenas retorno para uma URL interna (começa com "/", sem "//" nem "\"),
+     * evitando redirecionamento para fora da aplicação. Devolve null quando inválido.
+     */
+    private String retornoSeguro(String retorno) {
+        if (retorno == null || retorno.isBlank()) return null;
+        String r = retorno.trim();
+        if (!r.startsWith("/") || r.startsWith("//") || r.contains("\\")) return null;
+        return r;
     }
 
     /** Monta a query string de /fichas a partir dos filtros, ignorando os vazios. */

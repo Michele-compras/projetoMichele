@@ -24,6 +24,8 @@
         <input type="hidden" name="fDuimp"    th:value="${fDuimp}">
         <input type="hidden" name="fContrato" th:value="${fContrato}">
         <input type="hidden" name="fFornecedor" th:value="${fFornecedor}">
+        <!-- Tela de origem (ex.: Aprovação Amostra Produção) para onde voltar após salvar -->
+        <input type="hidden" name="retorno" th:value="${retorno}">
 
         <!-- Informações Gerais -->
         <div class="card mb-3">
@@ -294,7 +296,7 @@
 
         <div class="mb-4">
             <button type="submit" class="btn btn-primary">Salvar</button>
-            <a th:href="'/fichas' + ${filtrosQuery} + ${ficha.id != null ? '#ficha-' + ficha.id : ''}"
+            <a th:href="${urlVoltar} + ${ficha.id != null ? '#ficha-' + ficha.id : ''}"
                class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
@@ -303,7 +305,7 @@
     <div class="card mb-3" th:if="${ficha.id != null}">
         <div class="card-header"><strong>Foto do Item</strong></div>
         <div class="card-body">
-            <form th:action="@{/fichas/foto/{id}(id=${ficha.id})}" method="post" enctype="multipart/form-data">
+            <form th:action="@{/fichas/foto/{id}(id=${ficha.id},retorno=${retorno})}" method="post" enctype="multipart/form-data">
                 <div class="row align-items-end">
                     <div class="col-md-5">
                         <input type="file" name="foto" class="form-control" accept="image/*">
