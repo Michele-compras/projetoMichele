@@ -45,36 +45,43 @@ public class GraficosController {
         // precisa mudar junto.
         List<String> insumos = insumoRepo.findAll().stream().map(i -> i.getNome()).toList();
 
-        List<String> cotAprLabels   = new ArrayList<>();
-        List<Integer> cotAprCotado   = new ArrayList<>();
-        List<Integer> cotAprAprovado = new ArrayList<>();
-        int totalCotado = 0, totalAprovado = 0;
+        List<String> cotAprLabels    = new ArrayList<>();
+        List<Integer> cotAprCotado    = new ArrayList<>();
+        List<Integer> cotAprAprovado  = new ArrayList<>();
+        List<Integer> cotAprCancelado = new ArrayList<>();
+        int totalCotado = 0, totalAprovado = 0, totalCancelado = 0;
 
         for (var colecao : colecaoRepo.findAll()) {
             String col = colecao.getNome();
             if (col == null) continue;
             if (!busca.isBlank() && !col.toLowerCase().contains(busca)) continue;
 
-            int cotado = 0, aprovado = 0;
+            int cotado = 0, aprovado = 0, cancelado = 0;
             for (QuadroPlanejamento q : quadroRepo.findByColecaoOrderByTipoSolicitacaoAsc(col)) {
                 if (!insumos.contains(q.getTipoSolicitacao())) continue;
-                cotado   += soma(q.getAnimeCotado(), q.getMomiCotado(), q.getAuthoriaCotado(),
-                                 q.getBimbiCotado(), q.getYoucciecotado());
-                aprovado += soma(q.getAnimeAprovado(), q.getMomiAprovado(), q.getAuthoriaAprovado(),
-                                 q.getBimbiAprovado(), q.getYouccieeAprovado());
+                cotado    += soma(q.getAnimeCotado(), q.getMomiCotado(), q.getAuthoriaCotado(),
+                                  q.getBimbiCotado(), q.getYoucciecotado());
+                aprovado  += soma(q.getAnimeAprovado(), q.getMomiAprovado(), q.getAuthoriaAprovado(),
+                                  q.getBimbiAprovado(), q.getYouccieeAprovado());
+                cancelado += soma(q.getAnimeCancelado(), q.getMomiCancelado(), q.getAuthoriaCancelado(),
+                                  q.getBimbiCancelado(), q.getYoucciecancelado());
             }
             cotAprLabels.add(col);
             cotAprCotado.add(cotado);
             cotAprAprovado.add(aprovado);
-            totalCotado   += cotado;
-            totalAprovado += aprovado;
+            cotAprCancelado.add(cancelado);
+            totalCotado    += cotado;
+            totalAprovado  += aprovado;
+            totalCancelado += cancelado;
         }
 
         model.addAttribute("cotAprLabels", cotAprLabels);
         model.addAttribute("cotAprCotado", cotAprCotado);
         model.addAttribute("cotAprAprovado", cotAprAprovado);
+        model.addAttribute("cotAprCancelado", cotAprCancelado);
         model.addAttribute("cotAprTotalCotado", totalCotado);
         model.addAttribute("cotAprTotalAprovado", totalAprovado);
+        model.addAttribute("cotAprTotalCancelado", totalCancelado);
 
         return "graficos";
     }
