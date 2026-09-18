@@ -11,87 +11,100 @@
 
     <form method="get" action="/graficos" class="mb-4 d-flex align-items-end gap-2 no-print">
         <div>
-            <label class="form-label mb-1">Filtrar coleções</label>
-            <input type="text" name="colecaoFiltro" class="form-control" style="min-width:220px"
-                   th:value="${colecaoFiltro}" placeholder="Ex: verão, inverno...">
+            <label class="form-label mb-1">Coleção</label>
+            <select name="colecaoFiltro" class="form-select" style="min-width:220px">
+                <option value="">Todas</option>
+                <option th:each="c : ${colecoesCadastradas}" th:value="${c.nome}" th:text="${c.nome}"
+                        th:selected="${colecaoFiltro != null and colecaoFiltro == c.nome}"></option>
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Filtrar</button>
         <a href="/graficos" class="btn btn-outline-secondary">Limpar</a>
     </form>
 
-    <!-- ── Gráfico 1: Cotado x Aprovado por Coleção ──────────────────────────
+    <!-- ── Gráfico 1: Cotado x Aprovado x Cancelado por Coleção ──────────────
          Dados do Quadro de Planejamento (soma das cinco marcas).
-         Colunas agrupadas: duas medidas na mesma unidade, poucas coleções. -->
-    <div class="card border-0 shadow-sm mb-4">
+         Uma linha por estação: Verão em cima, Inverno embaixo. Estação sem
+         nenhuma coleção no filtro atual nem aparece. -->
+    <div th:each="bloco, it : ${blocos}" th:if="${!#lists.isEmpty(bloco.labels)}"
+         class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <strong>Cotado x Aprovado x Cancelado por Coleção</strong>
+            <strong th:text="'Cotado x Aprovado x Cancelado — ' + ${bloco.titulo}">Cotado x Aprovado x Cancelado</strong>
             <span class="small text-white-50">Quadro de Planejamento</span>
         </div>
         <div class="card-body">
-            <div th:if="${#lists.isEmpty(cotAprLabels)}" class="text-center text-muted py-4">
-                Nenhuma coleção encontrada para este filtro.
+            <!-- Números de topo: o resumo que se lê antes do gráfico -->
+            <div class="d-flex flex-wrap gap-4 mb-3">
+                <div>
+                    <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Total cotado</div>
+                    <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${bloco.totCotado}">0</div>
+                </div>
+                <div>
+                    <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Total aprovado</div>
+                    <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${bloco.totAprovado}">0</div>
+                </div>
+                <div>
+                    <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Total cancelado</div>
+                    <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${bloco.totCancelado}">0</div>
+                </div>
+                <div>
+                    <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Aproveitamento</div>
+                    <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;"
+                         th:text="${bloco.totCotado > 0
+                             ? #numbers.formatDecimal(bloco.totAprovado * 100.0 / bloco.totCotado, 1, 'POINT', 1, 'COMMA') + '%'
+                             : '—'}">—</div>
+                </div>
             </div>
 
-            <div th:if="${!#lists.isEmpty(cotAprLabels)}">
-                <!-- Números de topo: o resumo que se lê antes do gráfico -->
-                <div class="d-flex flex-wrap gap-4 mb-3">
-                    <div>
-                        <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Total cotado</div>
-                        <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${cotAprTotalCotado}">0</div>
-                    </div>
-                    <div>
-                        <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Total aprovado</div>
-                        <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${cotAprTotalAprovado}">0</div>
-                    </div>
-                    <div>
-                        <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Total cancelado</div>
-                        <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${cotAprTotalCancelado}">0</div>
-                    </div>
-                    <div>
-                        <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Aproveitamento</div>
-                        <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;"
-                             th:text="${cotAprTotalCotado > 0
-                                 ? #numbers.formatDecimal(cotAprTotalAprovado * 100.0 / cotAprTotalCotado, 1, 'POINT', 1, 'COMMA') + '%'
-                                 : '—'}">—</div>
-                    </div>
-                </div>
-
-                <!-- A largura é limitada por JS conforme o nº de coleções: com poucas
-                     coleções um canvas de largura total espalharia as colunas pela tela. -->
-                <div id="wrapCotAprv" style="position:relative; height:340px;">
-                    <canvas id="graficoCotAprv"></canvas>
-                </div>
-
-                <!-- Mesma informação em tabela: acessibilidade e conferência rápida. -->
-                <details class="mt-3">
-                    <summary class="small text-muted" style="cursor:pointer;">Ver os números em tabela</summary>
-                    <div class="table-responsive mt-2">
-                        <table class="table table-sm table-bordered mb-0" style="font-size:0.82rem; max-width:520px;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Coleção</th>
-                                    <th class="text-end">Cotado</th>
-                                    <th class="text-end">Aprovado</th>
-                                    <th class="text-end">Cancelado</th>
-                                    <th class="text-end">Aproveitamento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="i : ${#numbers.sequence(0, cotAprLabels.size() - 1)}">
-                                    <td th:text="${cotAprLabels[i]}"></td>
-                                    <td class="text-end" th:text="${cotAprCotado[i]}"></td>
-                                    <td class="text-end" th:text="${cotAprAprovado[i]}"></td>
-                                    <td class="text-end" th:text="${cotAprCancelado[i]}"></td>
-                                    <td class="text-end" th:text="${cotAprCotado[i] > 0
-                                        ? #numbers.formatDecimal(cotAprAprovado[i] * 100.0 / cotAprCotado[i], 1, 'POINT', 1, 'COMMA') + '%'
-                                        : '—'}"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </details>
+            <!-- Estação cadastrada mas ainda sem nenhum lançamento: um gráfico só de
+                 zeros ocuparia 340px sem dizer nada. Melhor escrever o que está havendo. -->
+            <div th:if="${bloco.totCotado + bloco.totAprovado + bloco.totCancelado == 0}"
+                 class="text-muted py-3" style="font-size:0.9rem;">
+                Nenhuma cotação lançada ainda no Quadro de Planejamento para
+                <span th:text="${#strings.listJoin(bloco.labels, ', ')}">—</span>.
             </div>
+
+            <!-- A largura é limitada por JS conforme o nº de coleções: com poucas
+                 coleções um canvas de largura total espalharia as colunas pela tela. -->
+            <div th:if="${bloco.totCotado + bloco.totAprovado + bloco.totCancelado > 0}"
+                 th:id="'wrapEstacao' + ${it.index}" style="position:relative; height:340px;">
+                <canvas th:id="'graficoEstacao' + ${it.index}"></canvas>
+            </div>
+
+            <!-- Mesma informação em tabela: acessibilidade e conferência rápida. -->
+            <details class="mt-3" th:if="${bloco.totCotado + bloco.totAprovado + bloco.totCancelado > 0}">
+                <summary class="small text-muted" style="cursor:pointer;">Ver os números em tabela</summary>
+                <div class="table-responsive mt-2">
+                    <table class="table table-sm table-bordered mb-0" style="font-size:0.82rem; max-width:520px;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Coleção</th>
+                                <th class="text-end">Cotado</th>
+                                <th class="text-end">Aprovado</th>
+                                <th class="text-end">Cancelado</th>
+                                <th class="text-end">Aproveitamento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="i : ${#numbers.sequence(0, bloco.labels.size() - 1)}">
+                                <td th:text="${bloco.labels[i]}"></td>
+                                <td class="text-end" th:text="${bloco.cotado[i]}"></td>
+                                <td class="text-end" th:text="${bloco.aprovado[i]}"></td>
+                                <td class="text-end" th:text="${bloco.cancelado[i]}"></td>
+                                <td class="text-end" th:text="${bloco.cotado[i] > 0
+                                    ? #numbers.formatDecimal(bloco.aprovado[i] * 100.0 / bloco.cotado[i], 1, 'POINT', 1, 'COMMA') + '%'
+                                    : '—'}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
         </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(blocos[0].labels) and #lists.isEmpty(blocos[1].labels)}"
+         class="text-center text-muted py-4">
+        Nenhuma coleção encontrada para este filtro.
     </div>
 
     <!-- Próximos gráficos entram como novos cards a partir daqui. -->
@@ -184,45 +197,53 @@ function estiloColuna(cor) {
     };
 }
 
-// ── Gráfico 1: Cotado x Aprovado por Coleção ──────────────────────────────
+// ── Gráfico 1: Cotado x Aprovado x Cancelado por Coleção ──────────────────
+// Um gráfico por estação: Verão em cima, Inverno embaixo. Estação sem coleção
+// não tem card, por isso o canvas pode nao existir e o laço checa antes.
 (function () {
-    var canvas = document.getElementById('graficoCotAprv');
-    if (!canvas || typeof Chart === 'undefined') return;
+    if (typeof Chart === 'undefined') return;
 
-    var labels    = /*[[${cotAprLabels}]]*/ [];
-    var cotado    = /*[[${cotAprCotado}]]*/ [];
-    var aprovado  = /*[[${cotAprAprovado}]]*/ [];
-    var cancelado = /*[[${cotAprCancelado}]]*/ [];
+    var blocos = /*[[${blocos}]]*/ [];
 
-    // Sem isto, uma única coleção joga as colunas para cantos opostos da tela.
-    // São três colunas por coleção, daí a folga maior.
-    var wrap = document.getElementById('wrapCotAprv');
-    if (wrap) wrap.style.maxWidth = Math.max(420, 110 + labels.length * 300) + 'px';
+    blocos.forEach(function (bloco, indice) {
+        var canvas = document.getElementById('graficoEstacao' + indice);
+        if (!canvas) return;
 
-    new Chart(canvas, {
-        type: 'bar',
-        plugins: [rotulosNoTopo],
-        data: {
-            labels: labels,
-            datasets: [
-                Object.assign({ label: 'Cotado',    data: cotado    }, estiloColuna(COR_A)),
-                Object.assign({ label: 'Aprovado',  data: aprovado  }, estiloColuna(COR_B)),
-                Object.assign({ label: 'Cancelado', data: cancelado }, estiloColuna(COR_C))
-            ]
-        },
-        options: opcoesColunas({
-            tooltip: {
-                callbacks: {
-                    // Mostra o aproveitamento junto: é a leitura que interessa.
-                    afterBody: function (itens) {
-                        var i = itens[0].dataIndex;
-                        if (!cotado[i]) return '';
-                        var pct = (aprovado[i] * 100 / cotado[i]).toFixed(1).replace('.', ',');
-                        return 'Aproveitamento: ' + pct + '%';
+        var labels    = bloco.labels    || [];
+        var cotado    = bloco.cotado    || [];
+        var aprovado  = bloco.aprovado  || [];
+        var cancelado = bloco.cancelado || [];
+
+        // Sem isto, uma única coleção joga as colunas para cantos opostos da tela.
+        // São três colunas por coleção, daí a folga maior.
+        var wrap = document.getElementById('wrapEstacao' + indice);
+        if (wrap) wrap.style.maxWidth = Math.max(420, 110 + labels.length * 300) + 'px';
+
+        new Chart(canvas, {
+            type: 'bar',
+            plugins: [rotulosNoTopo],
+            data: {
+                labels: labels,
+                datasets: [
+                    Object.assign({ label: 'Cotado',    data: cotado    }, estiloColuna(COR_A)),
+                    Object.assign({ label: 'Aprovado',  data: aprovado  }, estiloColuna(COR_B)),
+                    Object.assign({ label: 'Cancelado', data: cancelado }, estiloColuna(COR_C))
+                ]
+            },
+            options: opcoesColunas({
+                tooltip: {
+                    callbacks: {
+                        // Mostra o aproveitamento junto: é a leitura que interessa.
+                        afterBody: function (itens) {
+                            var i = itens[0].dataIndex;
+                            if (!cotado[i]) return '';
+                            var pct = (aprovado[i] * 100 / cotado[i]).toFixed(1).replace('.', ',');
+                            return 'Aproveitamento: ' + pct + '%';
+                        }
                     }
                 }
-            }
-        })
+            })
+        });
     });
 })();
 /*]]>*/
