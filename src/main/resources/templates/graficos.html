@@ -40,10 +40,7 @@
         </li>
     </ul>
 
-    <!-- Escondido na aba de protótipo: lá os dados são fictícios e não têm coleção,
-         então um filtro que não muda nada só confundiria. -->
-    <form method="get" action="/graficos" th:if="${abaAtiva != 'pecas'}"
-          class="mb-4 d-flex align-items-end gap-2 no-print">
+    <form method="get" action="/graficos" class="mb-4 d-flex align-items-end gap-2 no-print">
         <!-- Mantém a aba aberta ao filtrar. -->
         <input type="hidden" name="aba" th:value="${abaAtiva}">
         <div>
@@ -72,6 +69,11 @@
             <span class="small text-white-50">Quadro de Planejamento</span>
         </div>
         <div class="card-body">
+            <!-- A que coleção este gráfico se refere -->
+            <div class="text-muted small mb-2">
+                <i class="bi bi-collection me-1"></i>
+                Coleção: <span class="fw-semibold" th:text="${bloco.colecoesTexto}">—</span>
+            </div>
             <!-- Números de topo: o resumo que se lê antes do gráfico -->
             <div class="d-flex flex-wrap gap-4 mb-3">
                 <div>
@@ -163,6 +165,10 @@
             <span class="small text-white-50">Fichas Técnicas</span>
         </div>
         <div class="card-body">
+            <div class="text-muted small mb-2">
+                <i class="bi bi-collection me-1"></i>
+                Coleção: <span class="fw-semibold" th:text="${bloco.colecoesTexto}">—</span>
+            </div>
             <!-- Total por insumo. Cada um na sua unidade: metro, quilo e unidade
                  não se somam, por isso não existe um "total geral" aqui. -->
             <div class="d-flex flex-wrap gap-4 mb-3">
@@ -228,6 +234,12 @@
             <span class="small text-white-50">Dias úteis, do pedido à aprovação</span>
         </div>
         <div class="card-body">
+            <!-- Aqui o eixo mostra marcas, então sem esta linha o gráfico não diria
+                 de que coleção são os números. -->
+            <div class="text-muted small mb-2">
+                <i class="bi bi-collection me-1"></i>
+                Coleção: <span class="fw-semibold" th:text="${bloco.colecoesTexto}">—</span>
+            </div>
             <div class="d-flex flex-wrap gap-4 mb-3">
                 <div>
                     <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Coleção/marca medidas</div>
@@ -304,7 +316,15 @@
                 <span class="small text-white-50">Tecido x Aviamento · dados de exemplo</span>
             </div>
             <div class="card-body">
-                <div id="wrapPecas" style="position:relative; height:340px;">
+                <div class="text-muted small mb-2">
+                    <i class="bi bi-collection me-1"></i>
+                    Coleção: <span class="fw-semibold" th:text="${pecasColecoesTexto}">—</span>
+                </div>
+                <div th:if="${#lists.isEmpty(pecasDemo)}" class="text-muted py-3" style="font-size:0.9rem;">
+                    Os dados de exemplo são todos da coleção VERÃO 28. Nada a mostrar para este filtro.
+                </div>
+                <div th:if="${!#lists.isEmpty(pecasDemo)}"
+                     id="wrapPecas" style="position:relative; height:340px;">
                     <canvas id="graficoPecas"></canvas>
                 </div>
             </div>
@@ -320,6 +340,7 @@
                     <table class="table table-sm table-bordered table-hover mb-0" style="font-size:0.85rem;">
                         <thead class="table-light">
                             <tr>
+                                <th>Coleção</th>
                                 <th>Código do material</th>
                                 <th>Insumo</th>
                                 <th>Marca</th>
@@ -328,6 +349,7 @@
                         </thead>
                         <tbody>
                             <tr th:each="l : ${pecasDemo}">
+                                <td th:text="${l.colecao}"></td>
                                 <td th:text="${l.codigo}"></td>
                                 <td th:text="${l.insumo}"></td>
                                 <td th:text="${l.marca}"></td>
@@ -675,7 +697,13 @@ function estiloColuna(cor) {
     });
 
     var wrap = document.getElementById('wrapPecas');
-    if (wrap) wrap.style.maxWidth = Math.max(420, 110 + marcas.length * 150) + 'px';
+    // Colunas mais juntas: menos espaço reservado por marca e grupo mais largo
+    // dentro da categoria.
+    if (wrap) wrap.style.maxWidth = Math.max(380, 90 + marcas.length * 105) + 'px';
+
+    // Sobrepõe o espaçamento padrão de estiloColuna(), que é feito para gráficos
+    // com mais folga entre grupos.
+    var juntas = { categoryPercentage: 0.82, barPercentage: 0.92, maxBarThickness: 44 };
 
     new Chart(canvas, {
         type: 'bar',
@@ -683,8 +711,8 @@ function estiloColuna(cor) {
         data: {
             labels: marcas,
             datasets: [
-                Object.assign({ label: 'Tecido',    data: marcas.map(function (m) { return porMarca[m].Tecido; }) },    estiloColuna(COR_A)),
-                Object.assign({ label: 'Aviamento', data: marcas.map(function (m) { return porMarca[m].Aviamento; }) }, estiloColuna(COR_B))
+                Object.assign({ label: 'Tecido',    data: marcas.map(function (m) { return porMarca[m].Tecido; }) },    estiloColuna(COR_A), juntas),
+                Object.assign({ label: 'Aviamento', data: marcas.map(function (m) { return porMarca[m].Aviamento; }) }, estiloColuna(COR_B), juntas)
             ]
         },
         options: opcoesColunas({
