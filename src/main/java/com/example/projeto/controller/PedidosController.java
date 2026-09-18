@@ -35,6 +35,7 @@ public class PedidosController {
             @RequestParam(required = false) String colecao,
             @RequestParam(required = false) String tipo,
             @RequestParam(required = false) StatusPedido statusPedido,
+            @RequestParam(required = false) String codigo,
             @RequestParam(required = false) String numeroPedido,
             @RequestParam(required = false) String fornecedor,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataInicio,
@@ -42,11 +43,11 @@ public class PedidosController {
             Model model) {
 
         List<FichaTecnica> fichas;
-        boolean temFiltro = colecao != null || tipo != null || numeroPedido != null || fornecedor != null
+        boolean temFiltro = colecao != null || tipo != null || codigo != null || numeroPedido != null || fornecedor != null
                 || statusPedido != null || dataInicio != null || dataFim != null;
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, null, numeroPedido, fornecedor);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, codigo, numeroPedido, fornecedor);
         } else {
             fichas = service.listarTodas();
         }
@@ -58,6 +59,7 @@ public class PedidosController {
         model.addAttribute("colecaoFiltro", colecao);
         model.addAttribute("tipoSelecionado", tipo);
         model.addAttribute("statusPedidoSelecionado", statusPedido);
+        model.addAttribute("codigoFiltro", codigo);
         model.addAttribute("numeroPedidoFiltro", numeroPedido);
         model.addAttribute("fornecedorFiltro", fornecedor);
         model.addAttribute("dataInicio", dataInicio);
