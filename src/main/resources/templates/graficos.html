@@ -13,7 +13,8 @@
          O filtro de coleção vale para a aba que estiver aberta. -->
     <ul class="nav nav-tabs mb-4 no-print">
         <li class="nav-item">
-            <a class="nav-link" th:classappend="${abaAtiva == 'comprado'} ? '' : ' active'"
+            <a class="nav-link"
+               th:classappend="${abaAtiva == 'comprado' or abaAtiva == 'leadtime'} ? '' : ' active'"
                th:href="@{/graficos(aba='cotacao', colecaoFiltro=${colecaoFiltro})}">
                 <i class="bi bi-clipboard-check me-1"></i> Cotado x Aprovado x Cancelado
             </a>
@@ -22,6 +23,12 @@
             <a class="nav-link" th:classappend="${abaAtiva == 'comprado'} ? ' active' : ''"
                th:href="@{/graficos(aba='comprado', colecaoFiltro=${colecaoFiltro})}">
                 <i class="bi bi-bag-check me-1"></i> Comprado por Coleção
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${abaAtiva == 'leadtime'} ? ' active' : ''"
+               th:href="@{/graficos(aba='leadtime', colecaoFiltro=${colecaoFiltro})}">
+                <i class="bi bi-hourglass-split me-1"></i> Leadtime Amostra de Produção
             </a>
         </li>
     </ul>
@@ -42,7 +49,7 @@
     </form>
 
     <!-- ══ ABA: COTADO x APROVADO x CANCELADO ═══════════════════════════════ -->
-    <div th:if="${abaAtiva != 'comprado'}">
+    <div th:if="${abaAtiva != 'comprado' and abaAtiva != 'leadtime'}">
 
     <!-- ── Gráfico 1: Cotado x Aprovado x Cancelado por Coleção ──────────────
          Dados do Quadro de Planejamento (soma das cinco marcas).
@@ -197,6 +204,74 @@
 
     </div>
     <!-- ══ fim da aba Comprado por Coleção ══════════════════════════════════ -->
+
+    <!-- ══ ABA: LEADTIME AMOSTRA DE PRODUÇÃO ════════════════════════════════ -->
+    <div th:if="${abaAtiva == 'leadtime'}">
+
+    <!-- ── Gráfico 3: Leadtime médio da amostra de produção ──────────────────
+         Da colocação do pedido até a aprovação da amostra de produção, em dias
+         úteis, por coleção/marca. Mesmo cálculo da tela de Aprovação/Embarque. -->
+    <div th:each="bloco, it : ${blocosLeadtime}" th:if="${!#lists.isEmpty(bloco.labels)}"
+         class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <strong th:text="'Leadtime da Amostra de Produção — ' + ${bloco.titulo}">Leadtime da Amostra de Produção</strong>
+            <span class="small text-white-50">Dias úteis, do pedido à aprovação</span>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-4 mb-3">
+                <div>
+                    <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Coleção/marca medidas</div>
+                    <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${bloco.qtdGrupos}">0</div>
+                </div>
+                <div>
+                    <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Menor média</div>
+                    <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;"
+                         th:text="${bloco.menorMedia} + ' d'">0</div>
+                </div>
+                <div>
+                    <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Maior média</div>
+                    <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;"
+                         th:text="${bloco.maiorMedia} + ' d'">0</div>
+                </div>
+            </div>
+
+            <div th:id="'wrapLeadtime' + ${it.index}" style="position:relative; height:340px;">
+                <canvas th:id="'graficoLeadtime' + ${it.index}"></canvas>
+            </div>
+
+            <details class="mt-3">
+                <summary class="small text-muted" style="cursor:pointer;">Ver os números em tabela</summary>
+                <div class="table-responsive mt-2">
+                    <table class="table table-sm table-bordered mb-0" style="font-size:0.82rem; max-width:620px;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Coleção / Marca</th>
+                                <th class="text-end">Média</th>
+                                <th class="text-end">Mínimo</th>
+                                <th class="text-end">Máximo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="i : ${#numbers.sequence(0, bloco.labels.size() - 1)}">
+                                <td th:text="${bloco.labels[i]}"></td>
+                                <td class="text-end" th:text="${bloco.medias[i]} + ' d'"></td>
+                                <td class="text-end" th:text="${bloco.minimos[i]} + ' d'"></td>
+                                <td class="text-end" th:text="${bloco.maximos[i]} + ' d'"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(blocosLeadtime[0].labels) and #lists.isEmpty(blocosLeadtime[1].labels)}"
+         class="text-center text-muted py-4">
+        Nenhuma amostra de produção aprovada com data de pedido e data de aprovação preenchidas.
+    </div>
+
+    </div>
+    <!-- ══ fim da aba Leadtime ══════════════════════════════════════════════ -->
 
 </div>
 </div>
@@ -414,6 +489,70 @@ function estiloColuna(cor) {
                     }
                 }
             })
+        });
+    });
+})();
+
+// ── Gráfico 3: Leadtime médio da amostra de produção ──────────────────────
+// Série única (a média), então não há legenda: o título do card já diz o que é.
+// Mínimo e máximo do grupo aparecem no tooltip, para dar a dispersão sem poluir.
+(function () {
+    if (typeof Chart === 'undefined') return;
+
+    var blocos = /*[[${blocosLeadtime}]]*/ [];
+
+    var rotulosLeadtime = {
+        id: 'rotulosLeadtime',
+        afterDatasetsDraw: function (chart) {
+            var ctx = chart.ctx;
+            ctx.save();
+            ctx.font = '600 11px system-ui, -apple-system, "Segoe UI", sans-serif';
+            ctx.fillStyle = INK;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            var meta = chart.getDatasetMeta(0);
+            meta.data.forEach(function (barra, i) {
+                var valor = chart.data.datasets[0].data[i];
+                if (!valor) return;
+                ctx.fillText(valor + ' d', barra.x, barra.y - 4);
+            });
+            ctx.restore();
+        }
+    };
+
+    blocos.forEach(function (bloco, indice) {
+        var canvas = document.getElementById('graficoLeadtime' + indice);
+        if (!canvas) return;
+
+        var labels  = bloco.labels  || [];
+        var medias  = bloco.medias  || [];
+        var minimos = bloco.minimos || [];
+        var maximos = bloco.maximos || [];
+
+        var wrap = document.getElementById('wrapLeadtime' + indice);
+        if (wrap) wrap.style.maxWidth = Math.max(420, 110 + labels.length * 150) + 'px';
+
+        var opcoes = opcoesColunas({
+            tooltip: {
+                callbacks: {
+                    label: function (item) { return 'Média: ' + item.parsed.y + ' dias úteis'; },
+                    afterBody: function (itens) {
+                        var i = itens[0].dataIndex;
+                        return 'Mínimo: ' + minimos[i] + ' d  ·  Máximo: ' + maximos[i] + ' d';
+                    }
+                }
+            }
+        });
+        opcoes.plugins.legend.display = false;
+
+        new Chart(canvas, {
+            type: 'bar',
+            plugins: [rotulosLeadtime],
+            data: {
+                labels: labels,
+                datasets: [Object.assign({ label: 'Média', data: medias }, estiloColuna(COR_A))]
+            },
+            options: opcoes
         });
     });
 })();
