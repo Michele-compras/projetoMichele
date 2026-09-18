@@ -500,6 +500,14 @@ function estiloColuna(cor) {
     if (typeof Chart === 'undefined') return;
 
     var blocos = /*[[${blocosLeadtime}]]*/ [];
+    var marcasCadastradas = /*[[${marcasCadastradas}]]*/ [];
+
+    // Cor pela posição da marca no cadastro, nunca pela posição da barra: as barras
+    // são ordenadas por média, e a marca não pode trocar de cor ao mudar de lugar.
+    function corDaMarca(marca) {
+        var i = marcasCadastradas.indexOf(marca);
+        return (i >= 0 && i < PALETA.length) ? PALETA[i] : COR_SOBRA;
+    }
 
     var rotulosLeadtime = {
         id: 'rotulosLeadtime',
@@ -525,12 +533,15 @@ function estiloColuna(cor) {
         if (!canvas) return;
 
         var labels  = bloco.labels  || [];
+        var marcas  = bloco.marcas  || [];
         var medias  = bloco.medias  || [];
         var minimos = bloco.minimos || [];
         var maximos = bloco.maximos || [];
 
         var wrap = document.getElementById('wrapLeadtime' + indice);
-        if (wrap) wrap.style.maxWidth = Math.max(420, 110 + labels.length * 150) + 'px';
+        // Colunas mais juntas que nos outros gráficos: aqui é uma barra por marca,
+        // não um grupo, então cabe menos espaço reservado por categoria.
+        if (wrap) wrap.style.maxWidth = Math.max(340, 90 + labels.length * 95) + 'px';
 
         var opcoes = opcoesColunas({
             tooltip: {
@@ -550,7 +561,19 @@ function estiloColuna(cor) {
             plugins: [rotulosLeadtime],
             data: {
                 labels: labels,
-                datasets: [Object.assign({ label: 'Média', data: medias }, estiloColuna(COR_A))]
+                datasets: [Object.assign(
+                    { label: 'Média', data: medias },
+                    estiloColuna(COR_A),
+                    {
+                        // Uma cor por marca, definida pelo cadastro e igual em
+                        // qualquer coleção.
+                        backgroundColor: marcas.map(corDaMarca),
+                        // Colunas mais juntas: uma barra por categoria, sem grupo.
+                        categoryPercentage: 0.9,
+                        barPercentage: 0.82,
+                        maxBarThickness: 70
+                    }
+                )]
             },
             options: opcoes
         });

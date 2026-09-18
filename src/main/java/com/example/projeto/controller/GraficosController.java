@@ -5,6 +5,7 @@ import com.example.projeto.model.QuadroPlanejamento;
 import com.example.projeto.repository.ColecaoRepository;
 import com.example.projeto.repository.FichaTecnicaRepository;
 import com.example.projeto.repository.InsumoRepository;
+import com.example.projeto.repository.MarcaRepository;
 import com.example.projeto.repository.QuadroPlanejamentoRepository;
 import com.example.projeto.service.FichaTecnicaService;
 import org.springframework.stereotype.Controller;
@@ -31,17 +32,20 @@ public class GraficosController {
     private final InsumoRepository insumoRepo;
     private final FichaTecnicaRepository fichaRepo;
     private final FichaTecnicaService fichaService;
+    private final MarcaRepository marcaRepo;
 
     public GraficosController(QuadroPlanejamentoRepository quadroRepo,
                               ColecaoRepository colecaoRepo,
                               InsumoRepository insumoRepo,
                               FichaTecnicaRepository fichaRepo,
-                              FichaTecnicaService fichaService) {
+                              FichaTecnicaService fichaService,
+                              MarcaRepository marcaRepo) {
         this.quadroRepo = quadroRepo;
         this.colecaoRepo = colecaoRepo;
         this.insumoRepo = insumoRepo;
         this.fichaRepo = fichaRepo;
         this.fichaService = fichaService;
+        this.marcaRepo = marcaRepo;
     }
 
     @GetMapping
@@ -132,6 +136,11 @@ public class GraficosController {
 
         // ── Gráfico 3: Leadtime médio da amostra de produção ──────────────────
         model.addAttribute("blocosLeadtime", montarBlocosLeadtime(selecionada));
+        // Ordem das marcas cadastradas: é ela que define a cor de cada barra. Por
+        // vir do cadastro, e não da ordenação do gráfico, a marca mantém a mesma
+        // cor mesmo quando muda de posição por ter ficado mais lenta ou mais rápida.
+        model.addAttribute("marcasCadastradas", marcaRepo.findAll().stream()
+                .map(m -> m.getNome()).toList());
 
         return "graficos";
     }
@@ -168,11 +177,14 @@ public class GraficosController {
         long distintas = linhas.stream().map(l -> (String) l.get("colecao")).distinct().count();
 
         List<String> labels  = new ArrayList<>();
+        List<String> marcas  = new ArrayList<>();
         List<Long> medias    = new ArrayList<>();
         List<Long> minimos   = new ArrayList<>();
         List<Long> maximos   = new ArrayList<>();
         for (Map<String, Object> l : linhas) {
             labels.add(distintas > 1 ? l.get("colecao") + " · " + l.get("marca") : (String) l.get("marca"));
+            // Marca crua, separada do rótulo: é por ela que o gráfico escolhe a cor.
+            marcas.add((String) l.get("marca"));
             medias.add(numero(l.get("mediaLeadtime")));
             minimos.add(numero(l.get("minLeadtime")));
             maximos.add(numero(l.get("maxLeadtime")));
@@ -181,6 +193,7 @@ public class GraficosController {
         Map<String, Object> b = new LinkedHashMap<>();
         b.put("titulo", titulo);
         b.put("labels", labels);
+        b.put("marcas", marcas);
         b.put("medias", medias);
         b.put("minimos", minimos);
         b.put("maximos", maximos);
