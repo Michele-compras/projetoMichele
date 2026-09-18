@@ -24,7 +24,7 @@
          Colunas agrupadas: duas medidas na mesma unidade, poucas coleções. -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <strong>Cotado x Aprovado por Coleção</strong>
+            <strong>Cotado x Aprovado x Cancelado por Coleção</strong>
             <span class="small text-white-50">Quadro de Planejamento</span>
         </div>
         <div class="card-body">
@@ -42,6 +42,10 @@
                     <div>
                         <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Total aprovado</div>
                         <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${cotAprTotalAprovado}">0</div>
+                    </div>
+                    <div>
+                        <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Total cancelado</div>
+                        <div class="fw-bold" style="font-size:1.6rem; line-height:1.1;" th:text="${cotAprTotalCancelado}">0</div>
                     </div>
                     <div>
                         <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">Aproveitamento</div>
@@ -68,6 +72,7 @@
                                     <th>Coleção</th>
                                     <th class="text-end">Cotado</th>
                                     <th class="text-end">Aprovado</th>
+                                    <th class="text-end">Cancelado</th>
                                     <th class="text-end">Aproveitamento</th>
                                 </tr>
                             </thead>
@@ -76,6 +81,7 @@
                                     <td th:text="${cotAprLabels[i]}"></td>
                                     <td class="text-end" th:text="${cotAprCotado[i]}"></td>
                                     <td class="text-end" th:text="${cotAprAprovado[i]}"></td>
+                                    <td class="text-end" th:text="${cotAprCancelado[i]}"></td>
                                     <td class="text-end" th:text="${cotAprCotado[i] > 0
                                         ? #numbers.formatDecimal(cotAprAprovado[i] * 100.0 / cotAprCotado[i], 1, 'POINT', 1, 'COMMA') + '%'
                                         : '—'}"></td>
@@ -97,9 +103,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script th:inline="javascript">
 /*<![CDATA[*/
-// Paleta validada para daltonismo (ΔE 26 protan) e contraste >= 3:1 sobre o card branco.
+// Paleta validada: separação para daltonismo em todos os pares (pior caso ΔE 9,7
+// deutan entre ouro e vermelho) e contraste >= 3:1 sobre o card branco.
+// O vermelho da marca (#c9453e) foi descartado: ficava a ΔE 5,2 do ouro em deutan,
+// ou seja, indistinguível de "Aprovado" para quem tem daltonismo vermelho-verde.
 var COR_A     = '#3b7dd8';
 var COR_B     = '#a8801f';
+var COR_C     = '#b5392f';
 var INK       = '#495057';
 var INK_MUTED = '#6c757d';
 var GRID      = 'rgba(33, 37, 41, 0.08)';
@@ -179,13 +189,15 @@ function estiloColuna(cor) {
     var canvas = document.getElementById('graficoCotAprv');
     if (!canvas || typeof Chart === 'undefined') return;
 
-    var labels   = /*[[${cotAprLabels}]]*/ [];
-    var cotado   = /*[[${cotAprCotado}]]*/ [];
-    var aprovado = /*[[${cotAprAprovado}]]*/ [];
+    var labels    = /*[[${cotAprLabels}]]*/ [];
+    var cotado    = /*[[${cotAprCotado}]]*/ [];
+    var aprovado  = /*[[${cotAprAprovado}]]*/ [];
+    var cancelado = /*[[${cotAprCancelado}]]*/ [];
 
-    // Sem isto, uma única coleção joga as duas colunas para cantos opostos da tela.
+    // Sem isto, uma única coleção joga as colunas para cantos opostos da tela.
+    // São três colunas por coleção, daí a folga maior.
     var wrap = document.getElementById('wrapCotAprv');
-    if (wrap) wrap.style.maxWidth = Math.max(380, 110 + labels.length * 230) + 'px';
+    if (wrap) wrap.style.maxWidth = Math.max(420, 110 + labels.length * 300) + 'px';
 
     new Chart(canvas, {
         type: 'bar',
@@ -193,8 +205,9 @@ function estiloColuna(cor) {
         data: {
             labels: labels,
             datasets: [
-                Object.assign({ label: 'Cotado',   data: cotado   }, estiloColuna(COR_A)),
-                Object.assign({ label: 'Aprovado', data: aprovado }, estiloColuna(COR_B))
+                Object.assign({ label: 'Cotado',    data: cotado    }, estiloColuna(COR_A)),
+                Object.assign({ label: 'Aprovado',  data: aprovado  }, estiloColuna(COR_B)),
+                Object.assign({ label: 'Cancelado', data: cancelado }, estiloColuna(COR_C))
             ]
         },
         options: opcoesColunas({
