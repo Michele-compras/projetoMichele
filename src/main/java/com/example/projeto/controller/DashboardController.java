@@ -207,15 +207,36 @@ public class DashboardController {
         model.addAttribute("fornecedorTotais", fornecedorTotais);
 
         // ── Por coleção: cotado vs aprovado do quadro de planejamento ─────
-        List<Object[]> qtdColecaoTipo = quadroRepository.sumCotadoAprovadoByColecao();
+        // Obedece ao mesmo campo "Filtrar coleções" do topo da tela. A lista mestre de
+        // coleções (colecaoLabels) não serve aqui: o quadro de planejamento tem as suas
+        // próprias coleções, então o filtro é aplicado direto sobre o resultado da query.
+        List<Object[]> qtdColecaoTipo = new ArrayList<>();
+        String buscaQuadro = colecaoFiltro != null ? colecaoFiltro.trim().toLowerCase() : "";
+        for (Object[] row : quadroRepository.sumCotadoAprovadoByColecao()) {
+            String col = (String) row[0];
+            if (!buscaQuadro.isBlank() && (col == null || !col.toLowerCase().contains(buscaQuadro))) continue;
+            qtdColecaoTipo.add(row);
+        }
         long qtdTotalOrc = 0, qtdTotalCmp = 0;
+        List<String> quadroLabels = new ArrayList<>();
+        List<Long> quadroCotado = new ArrayList<>();
+        List<Long> quadroAprovado = new ArrayList<>();
         for (Object[] row : qtdColecaoTipo) {
-            qtdTotalOrc += row[1] != null ? ((Number) row[1]).longValue() : 0;
-            qtdTotalCmp += row[2] != null ? ((Number) row[2]).longValue() : 0;
+            long cotado   = row[1] != null ? ((Number) row[1]).longValue() : 0;
+            long aprovado = row[2] != null ? ((Number) row[2]).longValue() : 0;
+            qtdTotalOrc += cotado;
+            qtdTotalCmp += aprovado;
+            quadroLabels.add((String) row[0]);
+            quadroCotado.add(cotado);
+            quadroAprovado.add(aprovado);
         }
         model.addAttribute("qtdColecaoTipo", qtdColecaoTipo);
         model.addAttribute("qtdTotalOrc", qtdTotalOrc);
         model.addAttribute("qtdTotalCmp", qtdTotalCmp);
+        // Listas paralelas prontas para o gráfico (evita indexar Object[] no template).
+        model.addAttribute("quadroLabels", quadroLabels);
+        model.addAttribute("quadroCotado", quadroCotado);
+        model.addAttribute("quadroAprovado", quadroAprovado);
 
 
         return "dashboard";
