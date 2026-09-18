@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Tela dedicada aos gráficos. Cada gráfico novo entra aqui: monta-se a série
@@ -50,11 +52,20 @@ public class GraficosController {
         // precisa mudar junto.
         List<String> insumos = insumoRepo.findAll().stream().map(i -> i.getNome()).toList();
 
-        List<String> cotAprLabels    = new ArrayList<>();
-        List<Integer> cotAprCotado    = new ArrayList<>();
-        List<Integer> cotAprAprovado  = new ArrayList<>();
-        List<Integer> cotAprCancelado = new ArrayList<>();
-        int totalCotado = 0, totalAprovado = 0, totalCancelado = 0;
+        // Verão e Inverno saem em séries separadas para virarem duas linhas na tela:
+        // Verão em cima, Inverno embaixo. Mesma classificação pelo nome que a aba
+        // Resumo de /quadro-planejamento usa.
+        List<String> veraoLabels     = new ArrayList<>();
+        List<Integer> veraoCotado     = new ArrayList<>();
+        List<Integer> veraoAprovado   = new ArrayList<>();
+        List<Integer> veraoCancelado  = new ArrayList<>();
+        int veraoTotCotado = 0, veraoTotAprovado = 0, veraoTotCancelado = 0;
+
+        List<String> invernoLabels    = new ArrayList<>();
+        List<Integer> invernoCotado    = new ArrayList<>();
+        List<Integer> invernoAprovado  = new ArrayList<>();
+        List<Integer> invernoCancelado = new ArrayList<>();
+        int invernoTotCotado = 0, invernoTotAprovado = 0, invernoTotCancelado = 0;
 
         for (var colecao : colecoesCadastradas) {
             String col = colecao.getNome();
@@ -72,24 +83,52 @@ public class GraficosController {
                 cancelado += soma(q.getAnimeCancelado(), q.getMomiCancelado(), q.getAuthoriaCancelado(),
                                   q.getBimbiCancelado(), q.getYoucciecancelado());
             }
-            cotAprLabels.add(col);
-            cotAprCotado.add(cotado);
-            cotAprAprovado.add(aprovado);
-            cotAprCancelado.add(cancelado);
-            totalCotado    += cotado;
-            totalAprovado  += aprovado;
-            totalCancelado += cancelado;
+
+            if (col.toLowerCase().contains("inverno")) {
+                invernoLabels.add(col);
+                invernoCotado.add(cotado);
+                invernoAprovado.add(aprovado);
+                invernoCancelado.add(cancelado);
+                invernoTotCotado    += cotado;
+                invernoTotAprovado  += aprovado;
+                invernoTotCancelado += cancelado;
+            } else {
+                veraoLabels.add(col);
+                veraoCotado.add(cotado);
+                veraoAprovado.add(aprovado);
+                veraoCancelado.add(cancelado);
+                veraoTotCotado    += cotado;
+                veraoTotAprovado  += aprovado;
+                veraoTotCancelado += cancelado;
+            }
         }
 
-        model.addAttribute("cotAprLabels", cotAprLabels);
-        model.addAttribute("cotAprCotado", cotAprCotado);
-        model.addAttribute("cotAprAprovado", cotAprAprovado);
-        model.addAttribute("cotAprCancelado", cotAprCancelado);
-        model.addAttribute("cotAprTotalCotado", totalCotado);
-        model.addAttribute("cotAprTotalAprovado", totalAprovado);
-        model.addAttribute("cotAprTotalCancelado", totalCancelado);
+        // Uma linha por estação, nesta ordem: Verão em cima, Inverno embaixo.
+        // O template percorre esta lista, então não há markup duplicado.
+        List<Map<String, Object>> blocos = new ArrayList<>();
+        blocos.add(bloco("Verão", veraoLabels, veraoCotado, veraoAprovado, veraoCancelado,
+                         veraoTotCotado, veraoTotAprovado, veraoTotCancelado));
+        blocos.add(bloco("Inverno", invernoLabels, invernoCotado, invernoAprovado, invernoCancelado,
+                         invernoTotCotado, invernoTotAprovado, invernoTotCancelado));
+        model.addAttribute("blocos", blocos);
 
         return "graficos";
+    }
+
+    /** Monta um bloco do gráfico (uma estação = uma linha na tela). */
+    private Map<String, Object> bloco(String titulo, List<String> labels,
+                                      List<Integer> cotado, List<Integer> aprovado, List<Integer> cancelado,
+                                      int totCotado, int totAprovado, int totCancelado) {
+        Map<String, Object> b = new LinkedHashMap<>();
+        b.put("titulo", titulo);
+        b.put("labels", labels);
+        b.put("cotado", cotado);
+        b.put("aprovado", aprovado);
+        b.put("cancelado", cancelado);
+        b.put("totCotado", totCotado);
+        b.put("totAprovado", totAprovado);
+        b.put("totCancelado", totCancelado);
+        return b;
     }
 
     private int soma(Integer... valores) {
