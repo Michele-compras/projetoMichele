@@ -327,6 +327,40 @@
                      id="wrapPecas" style="position:relative; height:340px;">
                     <canvas id="graficoPecas"></canvas>
                 </div>
+
+                <!-- Itens x peças por marca: o gráfico mostra as peças, e esta tabela
+                     diz de quantos itens elas saíram. -->
+                <div th:if="${!#lists.isEmpty(pecasResumo)}" class="table-responsive mt-3">
+                    <table class="table table-sm table-bordered mb-0" style="font-size:0.82rem; max-width:720px;">
+                        <thead class="table-light">
+                            <tr>
+                                <th rowspan="2" class="align-middle">Marca</th>
+                                <th colspan="2" class="text-center border-start border-2">Tecido</th>
+                                <th colspan="2" class="text-center border-start border-2">Aviamento</th>
+                                <th colspan="2" class="text-center border-start border-2">Total</th>
+                            </tr>
+                            <tr>
+                                <th class="text-end border-start border-2">Itens</th>
+                                <th class="text-end">Peças</th>
+                                <th class="text-end border-start border-2">Itens</th>
+                                <th class="text-end">Peças</th>
+                                <th class="text-end border-start border-2">Itens</th>
+                                <th class="text-end">Peças</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${pecasResumo}">
+                                <td class="fw-semibold" th:text="${r.marca}"></td>
+                                <td class="text-end border-start border-2" th:text="${r.itensTecido}"></td>
+                                <td class="text-end" th:text="${r.pecasTecido}"></td>
+                                <td class="text-end border-start border-2" th:text="${r.itensAviamento}"></td>
+                                <td class="text-end" th:text="${r.pecasAviamento}"></td>
+                                <td class="text-end border-start border-2 fw-bold" th:text="${r.totalItens}"></td>
+                                <td class="text-end fw-bold" th:text="${r.totalPecas}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -679,21 +713,15 @@ function estiloColuna(cor) {
     var canvas = document.getElementById('graficoPecas');
     if (!canvas || typeof Chart === 'undefined') return;
 
-    var linhas = /*[[${pecasDemo}]]*/ [];
+    // Resumo já pronto do controller (marca, itens e peças), o mesmo que alimenta
+    // a tabela abaixo do gráfico.
+    var resumo = /*[[${pecasResumo}]]*/ [];
+    if (!resumo.length) return;
 
-    var marcas = [];
-    var porMarca = {};
-    linhas.forEach(function (l) {
-        if (marcas.indexOf(l.marca) === -1) {
-            marcas.push(l.marca);
-            porMarca[l.marca] = { Tecido: 0, Aviamento: 0 };
-        }
-        porMarca[l.marca][l.grupo] += l.pecas;
-    });
-    // Mais peças primeiro: é a leitura que interessa.
-    marcas.sort(function (a, b) {
-        return (porMarca[b].Tecido + porMarca[b].Aviamento)
-             - (porMarca[a].Tecido + porMarca[a].Aviamento);
+    // Duas linhas no rótulo do eixo: a marca e quantos itens ela tem. Assim o
+    // gráfico responde "quantos itens" e "quantas peças" ao mesmo tempo.
+    var marcas = resumo.map(function (r) {
+        return [r.marca, r.totalItens + (r.totalItens === 1 ? ' item' : ' itens')];
     });
 
     var wrap = document.getElementById('wrapPecas');
@@ -711,19 +739,25 @@ function estiloColuna(cor) {
         data: {
             labels: marcas,
             datasets: [
-                Object.assign({ label: 'Tecido',    data: marcas.map(function (m) { return porMarca[m].Tecido; }) },    estiloColuna(COR_A), juntas),
-                Object.assign({ label: 'Aviamento', data: marcas.map(function (m) { return porMarca[m].Aviamento; }) }, estiloColuna(COR_B), juntas)
+                Object.assign({ label: 'Tecido',    data: resumo.map(function (r) { return r.pecasTecido; }) },    estiloColuna(COR_A), juntas),
+                Object.assign({ label: 'Aviamento', data: resumo.map(function (r) { return r.pecasAviamento; }) }, estiloColuna(COR_B), juntas)
             ]
         },
         options: opcoesColunas({
             tooltip: {
                 callbacks: {
+                    // Quantos itens geraram aquelas peças — a leitura
+                    // "7 tecidos produzem 13 peças".
                     label: function (item) {
-                        return item.dataset.label + ': ' + item.parsed.y + ' peças';
+                        var r = resumo[item.dataIndex];
+                        var itens = item.datasetIndex === 0 ? r.itensTecido : r.itensAviamento;
+                        var nome  = item.datasetIndex === 0 ? 'tecido' : 'aviamento';
+                        return itens + ' ' + nome + (itens === 1 ? '' : 's') + ' → '
+                             + item.parsed.y + (item.parsed.y === 1 ? ' peça' : ' peças');
                     },
                     afterBody: function (itens) {
-                        var m = itens[0].label;
-                        return 'Total da marca: ' + (porMarca[m].Tecido + porMarca[m].Aviamento) + ' peças';
+                        var r = resumo[itens[0].dataIndex];
+                        return 'Total da marca: ' + r.totalItens + ' itens · ' + r.totalPecas + ' peças';
                     }
                 }
             }

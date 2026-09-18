@@ -151,6 +151,9 @@ public class GraficosController {
                 .map(l -> (String) l.get("colecao"))
                 .distinct()
                 .collect(java.util.stream.Collectors.joining(", ")));
+        // Resumo por marca: quantos itens e quantas peças. Calculado aqui e usado
+        // tanto pela tabela quanto pelo gráfico, para os dois não divergirem.
+        model.addAttribute("pecasResumo", montarResumoPecas(pecas));
 
         return "graficos";
     }
@@ -184,6 +187,43 @@ public class GraficosController {
         linhas.add(linhaPecaDemo(colecao, "AV118.001.000002", "AVIAMENTO UNIDADE","BIMBI",    6));
         linhas.add(linhaPecaDemo(colecao, "AV305.001.000005", "AVIAMENTO UNIDADE","YOUCCIE",  2));
         return linhas;
+    }
+
+    /**
+     * Agrupa as linhas por marca contando duas coisas diferentes: quantos ITENS
+     * (tecidos e aviamentos distintos) e quantas PEÇAS saem deles. É a leitura do
+     * tipo "7 tecidos produzem 13 peças".
+     */
+    private List<Map<String, Object>> montarResumoPecas(List<Map<String, Object>> linhas) {
+        Map<String, Map<String, Object>> porMarca = new LinkedHashMap<>();
+        for (Map<String, Object> l : linhas) {
+            String marca = (String) l.get("marca");
+            boolean tecido = "Tecido".equals(l.get("grupo"));
+            int pecas = (int) l.get("pecas");
+
+            Map<String, Object> r = porMarca.computeIfAbsent(marca, k -> {
+                Map<String, Object> novo = new LinkedHashMap<>();
+                novo.put("marca", k);
+                novo.put("itensTecido", 0);
+                novo.put("pecasTecido", 0);
+                novo.put("itensAviamento", 0);
+                novo.put("pecasAviamento", 0);
+                return novo;
+            });
+            String chaveItens = tecido ? "itensTecido" : "itensAviamento";
+            String chavePecas = tecido ? "pecasTecido" : "pecasAviamento";
+            r.put(chaveItens, (int) r.get(chaveItens) + 1);
+            r.put(chavePecas, (int) r.get(chavePecas) + pecas);
+        }
+
+        List<Map<String, Object>> resumo = new ArrayList<>(porMarca.values());
+        for (Map<String, Object> r : resumo) {
+            r.put("totalItens", (int) r.get("itensTecido") + (int) r.get("itensAviamento"));
+            r.put("totalPecas", (int) r.get("pecasTecido") + (int) r.get("pecasAviamento"));
+        }
+        // Mais peças primeiro: é a leitura que interessa.
+        resumo.sort((a, b) -> Integer.compare((int) b.get("totalPecas"), (int) a.get("totalPecas")));
+        return resumo;
     }
 
     private Map<String, Object> linhaPecaDemo(String colecao, String codigo, String insumo, String marca, int pecas) {
