@@ -1,7 +1,9 @@
 package com.example.projeto.controller;
 
+import com.example.projeto.model.FichaTecnica;
 import com.example.projeto.model.QuadroPlanejamento;
 import com.example.projeto.repository.ColecaoRepository;
+import com.example.projeto.repository.FichaTecnicaRepository;
 import com.example.projeto.repository.InsumoRepository;
 import com.example.projeto.repository.QuadroPlanejamentoRepository;
 import org.springframework.stereotype.Controller;
@@ -26,17 +28,22 @@ public class GraficosController {
     private final QuadroPlanejamentoRepository quadroRepo;
     private final ColecaoRepository colecaoRepo;
     private final InsumoRepository insumoRepo;
+    private final FichaTecnicaRepository fichaRepo;
 
     public GraficosController(QuadroPlanejamentoRepository quadroRepo,
                               ColecaoRepository colecaoRepo,
-                              InsumoRepository insumoRepo) {
+                              InsumoRepository insumoRepo,
+                              FichaTecnicaRepository fichaRepo) {
         this.quadroRepo = quadroRepo;
         this.colecaoRepo = colecaoRepo;
         this.insumoRepo = insumoRepo;
+        this.fichaRepo = fichaRepo;
     }
 
     @GetMapping
-    public String exibir(@RequestParam(required = false) String colecaoFiltro, Model model) {
+    public String exibir(@RequestParam(required = false) String colecaoFiltro,
+                         @RequestParam(required = false, defaultValue = "cotacao") String aba,
+                         Model model) {
         // O filtro é uma lista das coleções cadastradas no Cadastro Prévio (tabela
         // Colecao), e não texto livre: assim só se filtra por coleção que existe.
         var colecoesCadastradas = colecaoRepo.findAll();
@@ -44,6 +51,7 @@ public class GraficosController {
 
         String selecionada = colecaoFiltro != null ? colecaoFiltro.trim() : "";
         model.addAttribute("colecaoFiltro", selecionada);
+        model.addAttribute("abaAtiva", aba);
 
         // ── Gráfico 1: Cotado x Aprovado por Coleção ───────────────────────────
         // Mesma regra da aba Resumo de /quadro-planejamento: parte da lista mestre
@@ -112,7 +120,80 @@ public class GraficosController {
                          invernoTotCotado, invernoTotAprovado, invernoTotCancelado));
         model.addAttribute("blocos", blocos);
 
+        // ── Gráfico 2: Comprado por Coleção, dividido por insumo ──────────────
+        // As categorias pedidas (tecido mtr, aviamento mtr, aviamento unidade) já são
+        // os proprios insumos cadastrados, então as séries saem da tabela Insumo em
+        // vez de serem fixas no código: cadastrou insumo novo, ele aparece no gráfico.
+        model.addAttribute("blocosComprado", montarBlocosComprado(insumos, selecionada));
+
         return "graficos";
+    }
+
+    /** Quantidade comprada por coleção, uma série por insumo, separada por estação. */
+    private List<Map<String, Object>> montarBlocosComprado(List<String> insumos, String selecionada) {
+        // Item cancelado não entra em quantidade comprada — mesma regra de
+        // /quadro-compras, para os dois números não se contradizerem.
+        List<FichaTecnica> fichas = fichaRepo.findAll().stream()
+                .filter(f -> !f.isCancelado())
+                .toList();
+
+        List<String> veraoLabels   = new ArrayList<>();
+        List<String> invernoLabels = new ArrayList<>();
+        // insumo -> valores na ordem dos labels da estação
+        Map<String, List<Double>> veraoSeries   = new LinkedHashMap<>();
+        Map<String, List<Double>> invernoSeries = new LinkedHashMap<>();
+        for (String ins : insumos) {
+            veraoSeries.put(ins, new ArrayList<>());
+            invernoSeries.put(ins, new ArrayList<>());
+        }
+
+        for (var colecao : colecaoRepo.findAll()) {
+            String col = colecao.getNome();
+            if (col == null) continue;
+            if (!selecionada.isBlank() && !selecionada.equals(col)) continue;
+
+            boolean inverno = col.toLowerCase().contains("inverno");
+            (inverno ? invernoLabels : veraoLabels).add(col);
+            Map<String, List<Double>> destino = inverno ? invernoSeries : veraoSeries;
+
+            for (String ins : insumos) {
+                double soma = 0;
+                for (FichaTecnica f : fichas) {
+                    if (!col.equals(f.getColecao())) continue;
+                    if (!ins.equals(f.getTipo())) continue;
+                    if (f.getQuantidadeComprada() == null) continue;
+                    soma += f.getQuantidadeComprada();
+                }
+                destino.get(ins).add(soma);
+            }
+        }
+
+        List<Map<String, Object>> blocos = new ArrayList<>();
+        blocos.add(blocoComprado("Verão", veraoLabels, veraoSeries));
+        blocos.add(blocoComprado("Inverno", invernoLabels, invernoSeries));
+        return blocos;
+    }
+
+    private Map<String, Object> blocoComprado(String titulo, List<String> labels,
+                                              Map<String, List<Double>> series) {
+        List<Map<String, Object>> listaSeries = new ArrayList<>();
+        double totalGeral = 0;
+        for (var e : series.entrySet()) {
+            double total = 0;
+            for (Double v : e.getValue()) total += v != null ? v : 0;
+            Map<String, Object> s = new LinkedHashMap<>();
+            s.put("nome", e.getKey());
+            s.put("valores", e.getValue());
+            s.put("total", total);
+            listaSeries.add(s);
+            totalGeral += total;
+        }
+        Map<String, Object> b = new LinkedHashMap<>();
+        b.put("titulo", titulo);
+        b.put("labels", labels);
+        b.put("series", listaSeries);
+        b.put("totalGeral", totalGeral);
+        return b;
     }
 
     /** Monta um bloco do gráfico (uma estação = uma linha na tela). */
