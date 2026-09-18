@@ -14,7 +14,7 @@
     <ul class="nav nav-tabs mb-4 no-print">
         <li class="nav-item">
             <a class="nav-link"
-               th:classappend="${abaAtiva == 'comprado' or abaAtiva == 'leadtime'} ? '' : ' active'"
+               th:classappend="${abaAtiva == 'comprado' or abaAtiva == 'leadtime' or abaAtiva == 'pecas'} ? '' : ' active'"
                th:href="@{/graficos(aba='cotacao', colecaoFiltro=${colecaoFiltro})}">
                 <i class="bi bi-clipboard-check me-1"></i> Cotado x Aprovado x Cancelado
             </a>
@@ -31,9 +31,19 @@
                 <i class="bi bi-hourglass-split me-1"></i> Leadtime Amostra de Produção
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${abaAtiva == 'pecas'} ? ' active' : ''"
+               th:href="@{/graficos(aba='pecas', colecaoFiltro=${colecaoFiltro})}">
+                <i class="bi bi-scissors me-1"></i> Peças por Material
+                <span class="badge bg-danger ms-1">exemplo</span>
+            </a>
+        </li>
     </ul>
 
-    <form method="get" action="/graficos" class="mb-4 d-flex align-items-end gap-2 no-print">
+    <!-- Escondido na aba de protótipo: lá os dados são fictícios e não têm coleção,
+         então um filtro que não muda nada só confundiria. -->
+    <form method="get" action="/graficos" th:if="${abaAtiva != 'pecas'}"
+          class="mb-4 d-flex align-items-end gap-2 no-print">
         <!-- Mantém a aba aberta ao filtrar. -->
         <input type="hidden" name="aba" th:value="${abaAtiva}">
         <div>
@@ -49,7 +59,7 @@
     </form>
 
     <!-- ══ ABA: COTADO x APROVADO x CANCELADO ═══════════════════════════════ -->
-    <div th:if="${abaAtiva != 'comprado' and abaAtiva != 'leadtime'}">
+    <div th:if="${abaAtiva != 'comprado' and abaAtiva != 'leadtime' and abaAtiva != 'pecas'}">
 
     <!-- ── Gráfico 1: Cotado x Aprovado x Cancelado por Coleção ──────────────
          Dados do Quadro de Planejamento (soma das cinco marcas).
@@ -272,6 +282,65 @@
 
     </div>
     <!-- ══ fim da aba Leadtime ══════════════════════════════════════════════ -->
+
+    <!-- ══ ABA: PEÇAS POR MATERIAL (PROTÓTIPO, DADOS FICTÍCIOS) ═════════════ -->
+    <div th:if="${abaAtiva == 'pecas'}">
+
+        <div class="alert alert-danger d-flex align-items-start gap-2">
+            <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+            <div>
+                <strong>Os números desta aba são fictícios.</strong>
+                O sistema ainda não registra quantas peças são desenvolvidas com cada
+                tecido ou aviamento — não existe esse campo na ficha técnica. Esta tela
+                serve só para avaliar o formato. Para valer de verdade, é preciso criar
+                o campo na ficha e passar a preenchê-lo.
+            </div>
+        </div>
+
+        <!-- Gráfico: peças desenvolvidas por marca, separando tecido de aviamento -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <strong>Peças Desenvolvidas por Marca</strong>
+                <span class="small text-white-50">Tecido x Aviamento · dados de exemplo</span>
+            </div>
+            <div class="card-body">
+                <div id="wrapPecas" style="position:relative; height:340px;">
+                    <canvas id="graficoPecas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalhe material a material, no formato do exemplo que você deu -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <strong>Detalhe por Material</strong>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-hover mb-0" style="font-size:0.85rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Código do material</th>
+                                <th>Insumo</th>
+                                <th>Marca</th>
+                                <th class="text-end">Peças desenvolvidas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="l : ${pecasDemo}">
+                                <td th:text="${l.codigo}"></td>
+                                <td th:text="${l.insumo}"></td>
+                                <td th:text="${l.marca}"></td>
+                                <td class="text-end fw-bold" th:text="${l.pecas}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- ══ fim da aba Peças por Material ════════════════════════════════════ -->
 
 </div>
 </div>
@@ -577,6 +646,60 @@ function estiloColuna(cor) {
             },
             options: opcoes
         });
+    });
+})();
+
+// ── Gráfico 4: Peças desenvolvidas por marca (PROTÓTIPO, dados fictícios) ──
+// Duas séries na mesma unidade (peças), poucas marcas: colunas agrupadas.
+// A agregação por marca é feita aqui porque o dado de origem é a linha por
+// material; quando existir campo real na ficha, isso migra para o controller.
+(function () {
+    var canvas = document.getElementById('graficoPecas');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    var linhas = /*[[${pecasDemo}]]*/ [];
+
+    var marcas = [];
+    var porMarca = {};
+    linhas.forEach(function (l) {
+        if (marcas.indexOf(l.marca) === -1) {
+            marcas.push(l.marca);
+            porMarca[l.marca] = { Tecido: 0, Aviamento: 0 };
+        }
+        porMarca[l.marca][l.grupo] += l.pecas;
+    });
+    // Mais peças primeiro: é a leitura que interessa.
+    marcas.sort(function (a, b) {
+        return (porMarca[b].Tecido + porMarca[b].Aviamento)
+             - (porMarca[a].Tecido + porMarca[a].Aviamento);
+    });
+
+    var wrap = document.getElementById('wrapPecas');
+    if (wrap) wrap.style.maxWidth = Math.max(420, 110 + marcas.length * 150) + 'px';
+
+    new Chart(canvas, {
+        type: 'bar',
+        plugins: [rotulosNoTopo],
+        data: {
+            labels: marcas,
+            datasets: [
+                Object.assign({ label: 'Tecido',    data: marcas.map(function (m) { return porMarca[m].Tecido; }) },    estiloColuna(COR_A)),
+                Object.assign({ label: 'Aviamento', data: marcas.map(function (m) { return porMarca[m].Aviamento; }) }, estiloColuna(COR_B))
+            ]
+        },
+        options: opcoesColunas({
+            tooltip: {
+                callbacks: {
+                    label: function (item) {
+                        return item.dataset.label + ': ' + item.parsed.y + ' peças';
+                    },
+                    afterBody: function (itens) {
+                        var m = itens[0].label;
+                        return 'Total da marca: ' + (porMarca[m].Tecido + porMarca[m].Aviamento) + ' peças';
+                    }
+                }
+            }
+        })
     });
 })();
 /*]]>*/

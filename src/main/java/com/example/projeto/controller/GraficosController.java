@@ -142,7 +142,50 @@ public class GraficosController {
         model.addAttribute("marcasCadastradas", marcaRepo.findAll().stream()
                 .map(m -> m.getNome()).toList());
 
+        // ── Gráfico 4: Peças desenvolvidas por material ───────────────────────
+        model.addAttribute("pecasDemo", montarPecasDemo());
+
         return "graficos";
+    }
+
+    /**
+     * DADOS FICTÍCIOS — protótipo.
+     *
+     * O sistema não registra quantas peças são desenvolvidas com cada tecido ou
+     * aviamento: não existe esse campo na ficha técnica. Este método devolve um
+     * conjunto inventado só para a tela poder ser avaliada.
+     *
+     * Para virar real, é preciso um campo de "peças desenvolvidas" na ficha (o
+     * campo "Qti pct" existe mas é texto livre e não é usado em nenhuma tela) e
+     * este método passa a ler do banco. Enquanto for demonstração, a aba avisa
+     * isso em vermelho e nada aqui toca o banco.
+     */
+    private List<Map<String, Object>> montarPecasDemo() {
+        List<Map<String, Object>> linhas = new ArrayList<>();
+        linhas.add(linhaPecaDemo("T5444.001.000001", "TECIDO METRO",     "ANIMÊ",    7));
+        linhas.add(linhaPecaDemo("T4985.001.BG0009", "TECIDO METRO",     "ANIMÊ",    4));
+        linhas.add(linhaPecaDemo("T5554.001.BG0009", "TECIDO METRO",     "AUTHORIA", 6));
+        linhas.add(linhaPecaDemo("T5102.001.000003", "TECIDO METRO",     "MOMI",     9));
+        linhas.add(linhaPecaDemo("T5310.001.000002", "TECIDO METRO",     "BIMBI",    3));
+        linhas.add(linhaPecaDemo("T5471.001.000004", "TECIDO METRO",     "YOUCCIE",  5));
+        linhas.add(linhaPecaDemo("PI345.001.000001", "AVIAMENTO METRO",  "ANIMÊ",    2));
+        linhas.add(linhaPecaDemo("PI338.001.000001", "AVIAMENTO METRO",  "AUTHORIA", 3));
+        linhas.add(linhaPecaDemo("PI336.001.000001", "AVIAMENTO METRO",  "MOMI",     4));
+        linhas.add(linhaPecaDemo("AV220.001.000007", "AVIAMENTO UNIDADE","ANIMÊ",    5));
+        linhas.add(linhaPecaDemo("AV118.001.000002", "AVIAMENTO UNIDADE","BIMBI",    6));
+        linhas.add(linhaPecaDemo("AV305.001.000005", "AVIAMENTO UNIDADE","YOUCCIE",  2));
+        return linhas;
+    }
+
+    private Map<String, Object> linhaPecaDemo(String codigo, String insumo, String marca, int pecas) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("codigo", codigo);
+        m.put("insumo", insumo);
+        // "Tecido" ou "Aviamento": é a divisão que o gráfico usa nas séries.
+        m.put("grupo", insumo.startsWith("TECIDO") ? "Tecido" : "Aviamento");
+        m.put("marca", marca);
+        m.put("pecas", pecas);
+        return m;
     }
 
     /**
