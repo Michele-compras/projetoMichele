@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -65,6 +68,32 @@ public class PedidosController {
         model.addAttribute("dataInicio", dataInicio);
         model.addAttribute("dataFim", dataFim);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
+        // URL desta tela com os filtros aplicados: enviada nos links Ver/Editar para que,
+        // ao salvar a ficha, o sistema volte para cá em vez de cair em /fichas sem filtro.
+        model.addAttribute("urlRetorno", montarUrlRetorno(colecao, tipo, statusPedido, codigo,
+                numeroPedido, fornecedor, dataInicio, dataFim));
         return "pedidos/lista";
+    }
+
+    /** Monta "/pedidos?..." com os filtros preenchidos, ignorando os vazios. */
+    private String montarUrlRetorno(String colecao, String tipo, StatusPedido statusPedido, String codigo,
+                                    String numeroPedido, String fornecedor,
+                                    LocalDate dataInicio, LocalDate dataFim) {
+        List<String> partes = new ArrayList<>();
+        adicionarFiltro(partes, "colecao", colecao);
+        adicionarFiltro(partes, "tipo", tipo);
+        adicionarFiltro(partes, "statusPedido", statusPedido != null ? statusPedido.name() : null);
+        adicionarFiltro(partes, "codigo", codigo);
+        adicionarFiltro(partes, "numeroPedido", numeroPedido);
+        adicionarFiltro(partes, "fornecedor", fornecedor);
+        adicionarFiltro(partes, "dataInicio", dataInicio != null ? dataInicio.toString() : null);
+        adicionarFiltro(partes, "dataFim", dataFim != null ? dataFim.toString() : null);
+        return "/pedidos" + (partes.isEmpty() ? "" : "?" + String.join("&", partes));
+    }
+
+    private void adicionarFiltro(List<String> partes, String nome, String valor) {
+        if (valor != null && !valor.isBlank()) {
+            partes.add(nome + "=" + URLEncoder.encode(valor, StandardCharsets.UTF_8));
+        }
     }
 }

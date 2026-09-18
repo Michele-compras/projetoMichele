@@ -133,6 +133,7 @@
             </thead>
             <tbody>
                 <tr th:each="ficha : ${fichas}"
+                    th:id="'ficha-' + ${ficha.id}"
                     th:classappend="${ficha.cancelado} ? 'linha-cancelada'"
                     th:title="${ficha.cancelado} ? ${ficha.motivoCancelamento} : null">
                     <td>
@@ -175,8 +176,8 @@
                         <span th:if="${ficha.statusPedido == null}" class="text-muted">-</span>
                     </td>
                     <td class="no-print">
-                        <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id})}" class="btn btn-sm btn-info">Ver</a>
-                        <a th:href="@{/fichas/editar/{id}(id=${ficha.id})}" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="@{/fichas/visualizar/{id}(id=${ficha.id},retorno=${urlRetorno})}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="@{/fichas/editar/{id}(id=${ficha.id},retorno=${urlRetorno})}" class="btn btn-sm btn-warning">Editar</a>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(fichas)}">
