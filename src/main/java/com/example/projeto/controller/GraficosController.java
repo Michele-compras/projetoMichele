@@ -6,6 +6,7 @@ import com.example.projeto.repository.ColecaoRepository;
 import com.example.projeto.repository.FichaTecnicaRepository;
 import com.example.projeto.repository.InsumoRepository;
 import com.example.projeto.repository.QuadroPlanejamentoRepository;
+import com.example.projeto.service.FichaTecnicaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,15 +30,18 @@ public class GraficosController {
     private final ColecaoRepository colecaoRepo;
     private final InsumoRepository insumoRepo;
     private final FichaTecnicaRepository fichaRepo;
+    private final FichaTecnicaService fichaService;
 
     public GraficosController(QuadroPlanejamentoRepository quadroRepo,
                               ColecaoRepository colecaoRepo,
                               InsumoRepository insumoRepo,
-                              FichaTecnicaRepository fichaRepo) {
+                              FichaTecnicaRepository fichaRepo,
+                              FichaTecnicaService fichaService) {
         this.quadroRepo = quadroRepo;
         this.colecaoRepo = colecaoRepo;
         this.insumoRepo = insumoRepo;
         this.fichaRepo = fichaRepo;
+        this.fichaService = fichaService;
     }
 
     @GetMapping
@@ -126,7 +130,70 @@ public class GraficosController {
         // vez de serem fixas no código: cadastrou insumo novo, ele aparece no gráfico.
         model.addAttribute("blocosComprado", montarBlocosComprado(insumos, selecionada));
 
+        // ── Gráfico 3: Leadtime médio da amostra de produção ──────────────────
+        model.addAttribute("blocosLeadtime", montarBlocosLeadtime(selecionada));
+
         return "graficos";
+    }
+
+    /**
+     * Leadtime médio, por coleção/marca, entre a colocação do pedido e a aprovação
+     * da amostra de produção. Usa o mesmo cálculo da tela de Aprovação/Embarque
+     * (service.leadtimeAprovacaoProducaoPorMarca), que conta DIAS ÚTEIS e só
+     * considera fichas com marca e com as duas datas preenchidas.
+     */
+    private List<Map<String, Object>> montarBlocosLeadtime(String selecionada) {
+        List<Map<String, Object>> verao   = new ArrayList<>();
+        List<Map<String, Object>> inverno = new ArrayList<>();
+
+        for (Map<String, Object> linha : fichaService.leadtimeAprovacaoProducaoPorMarca()) {
+            String col = (String) linha.get("colecao");
+            if (col == null) continue;
+            if (!selecionada.isBlank() && !selecionada.equals(col)) continue;
+            (col.toLowerCase().contains("inverno") ? inverno : verao).add(linha);
+        }
+
+        List<Map<String, Object>> blocos = new ArrayList<>();
+        blocos.add(blocoLeadtime("Verão", verao));
+        blocos.add(blocoLeadtime("Inverno", inverno));
+        return blocos;
+    }
+
+    private Map<String, Object> blocoLeadtime(String titulo, List<Map<String, Object>> linhas) {
+        // Maior média primeiro: num gráfico de leadtime o que interessa é quem demora mais.
+        linhas.sort((a, b) -> Long.compare(numero(b.get("mediaLeadtime")), numero(a.get("mediaLeadtime"))));
+
+        // Quando o bloco tem uma coleção só, repetir o nome dela em toda barra é ruído;
+        // com mais de uma, o nome é necessário para a marca não ficar ambígua.
+        long distintas = linhas.stream().map(l -> (String) l.get("colecao")).distinct().count();
+
+        List<String> labels  = new ArrayList<>();
+        List<Long> medias    = new ArrayList<>();
+        List<Long> minimos   = new ArrayList<>();
+        List<Long> maximos   = new ArrayList<>();
+        for (Map<String, Object> l : linhas) {
+            labels.add(distintas > 1 ? l.get("colecao") + " · " + l.get("marca") : (String) l.get("marca"));
+            medias.add(numero(l.get("mediaLeadtime")));
+            minimos.add(numero(l.get("minLeadtime")));
+            maximos.add(numero(l.get("maxLeadtime")));
+        }
+
+        Map<String, Object> b = new LinkedHashMap<>();
+        b.put("titulo", titulo);
+        b.put("labels", labels);
+        b.put("medias", medias);
+        b.put("minimos", minimos);
+        b.put("maximos", maximos);
+        // Sem "média geral": a média das médias ignoraria quantas fichas há em cada
+        // grupo e daria um número errado. Mostram-se os extremos, que são exatos.
+        b.put("qtdGrupos", labels.size());
+        b.put("menorMedia", medias.stream().mapToLong(Long::longValue).min().orElse(0));
+        b.put("maiorMedia", medias.stream().mapToLong(Long::longValue).max().orElse(0));
+        return b;
+    }
+
+    private long numero(Object v) {
+        return v instanceof Number n ? n.longValue() : 0L;
     }
 
     /** Quantidade comprada por coleção, uma série por insumo, separada por estação. */
