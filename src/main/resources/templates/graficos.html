@@ -718,11 +718,40 @@ function estiloColuna(cor) {
     var resumo = /*[[${pecasResumo}]]*/ [];
     if (!resumo.length) return;
 
-    // Duas linhas no rótulo do eixo: a marca e quantos itens ela tem. Assim o
-    // gráfico responde "quantos itens" e "quantas peças" ao mesmo tempo.
-    var marcas = resumo.map(function (r) {
-        return [r.marca, r.totalItens + (r.totalItens === 1 ? ' item' : ' itens')];
-    });
+    var marcas = resumo.map(function (r) { return r.marca; });
+
+    // Cada coluna carrega os seus dois números, um acima do outro: quantos itens
+    // aquela coluna representa e quantas peças saíram deles. No eixo ficava só o
+    // total da marca, que não correspondia a nenhuma das duas colunas.
+    var rotulosPecas = {
+        id: 'rotulosPecas',
+        afterDatasetsDraw: function (chart) {
+            var ctx = chart.ctx;
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            chart.data.datasets.forEach(function (dataset, di) {
+                var meta = chart.getDatasetMeta(di);
+                if (meta.hidden) return;
+                meta.data.forEach(function (barra, i) {
+                    var pecas = dataset.data[i];
+                    if (!pecas) return;
+                    var r = resumo[i];
+                    var itens = di === 0 ? r.itensTecido : r.itensAviamento;
+
+                    // Linha de cima: os itens. Linha de baixo, colada na barra: as peças.
+                    ctx.font = '500 10px system-ui, -apple-system, "Segoe UI", sans-serif';
+                    ctx.fillStyle = INK_MUTED;
+                    ctx.fillText(itens + (itens === 1 ? ' item' : ' itens'), barra.x, barra.y - 17);
+
+                    ctx.font = '600 12px system-ui, -apple-system, "Segoe UI", sans-serif';
+                    ctx.fillStyle = INK;
+                    ctx.fillText(pecas, barra.x, barra.y - 4);
+                });
+            });
+            ctx.restore();
+        }
+    };
 
     var wrap = document.getElementById('wrapPecas');
     // Colunas mais juntas: menos espaço reservado por marca e grupo mais largo
@@ -733,9 +762,31 @@ function estiloColuna(cor) {
     // com mais folga entre grupos.
     var juntas = { categoryPercentage: 0.82, barPercentage: 0.92, maxBarThickness: 44 };
 
+    var opcoesPecas = opcoesColunas({
+        tooltip: {
+            callbacks: {
+                // Quantos itens geraram aquelas peças — a leitura
+                // "7 tecidos produzem 13 peças".
+                label: function (item) {
+                    var r = resumo[item.dataIndex];
+                    var itens = item.datasetIndex === 0 ? r.itensTecido : r.itensAviamento;
+                    var nome  = item.datasetIndex === 0 ? 'tecido' : 'aviamento';
+                    return itens + ' ' + nome + (itens === 1 ? '' : 's') + ' → '
+                         + item.parsed.y + (item.parsed.y === 1 ? ' peça' : ' peças');
+                },
+                afterBody: function (itens) {
+                    var r = resumo[itens[0].dataIndex];
+                    return 'Total da marca: ' + r.totalItens + ' itens · ' + r.totalPecas + ' peças';
+                }
+            }
+        }
+    });
+    // Duas linhas de rótulo acima de cada coluna precisam de mais folga no topo.
+    opcoesPecas.layout.padding.top = 34;
+
     new Chart(canvas, {
         type: 'bar',
-        plugins: [rotulosNoTopo],
+        plugins: [rotulosPecas],
         data: {
             labels: marcas,
             datasets: [
@@ -743,25 +794,7 @@ function estiloColuna(cor) {
                 Object.assign({ label: 'Aviamento', data: resumo.map(function (r) { return r.pecasAviamento; }) }, estiloColuna(COR_B), juntas)
             ]
         },
-        options: opcoesColunas({
-            tooltip: {
-                callbacks: {
-                    // Quantos itens geraram aquelas peças — a leitura
-                    // "7 tecidos produzem 13 peças".
-                    label: function (item) {
-                        var r = resumo[item.dataIndex];
-                        var itens = item.datasetIndex === 0 ? r.itensTecido : r.itensAviamento;
-                        var nome  = item.datasetIndex === 0 ? 'tecido' : 'aviamento';
-                        return itens + ' ' + nome + (itens === 1 ? '' : 's') + ' → '
-                             + item.parsed.y + (item.parsed.y === 1 ? ' peça' : ' peças');
-                    },
-                    afterBody: function (itens) {
-                        var r = resumo[itens[0].dataIndex];
-                        return 'Total da marca: ' + r.totalItens + ' itens · ' + r.totalPecas + ' peças';
-                    }
-                }
-            }
-        })
+        options: opcoesPecas
     });
 })();
 /*]]>*/
