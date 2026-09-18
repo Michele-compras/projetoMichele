@@ -143,7 +143,14 @@ public class GraficosController {
                 .map(m -> m.getNome()).toList());
 
         // ── Gráfico 4: Peças desenvolvidas por material ───────────────────────
-        model.addAttribute("pecasDemo", montarPecasDemo());
+        List<Map<String, Object>> pecas = montarPecasDemo().stream()
+                .filter(l -> selecionada.isBlank() || selecionada.equals(l.get("colecao")))
+                .toList();
+        model.addAttribute("pecasDemo", pecas);
+        model.addAttribute("pecasColecoesTexto", pecas.stream()
+                .map(l -> (String) l.get("colecao"))
+                .distinct()
+                .collect(java.util.stream.Collectors.joining(", ")));
 
         return "graficos";
     }
@@ -161,24 +168,27 @@ public class GraficosController {
      * isso em vermelho e nada aqui toca o banco.
      */
     private List<Map<String, Object>> montarPecasDemo() {
+        // Tudo atribuído a VERÃO 28, como combinado.
+        String colecao = "VERÃO 28";
         List<Map<String, Object>> linhas = new ArrayList<>();
-        linhas.add(linhaPecaDemo("T5444.001.000001", "TECIDO METRO",     "ANIMÊ",    7));
-        linhas.add(linhaPecaDemo("T4985.001.BG0009", "TECIDO METRO",     "ANIMÊ",    4));
-        linhas.add(linhaPecaDemo("T5554.001.BG0009", "TECIDO METRO",     "AUTHORIA", 6));
-        linhas.add(linhaPecaDemo("T5102.001.000003", "TECIDO METRO",     "MOMI",     9));
-        linhas.add(linhaPecaDemo("T5310.001.000002", "TECIDO METRO",     "BIMBI",    3));
-        linhas.add(linhaPecaDemo("T5471.001.000004", "TECIDO METRO",     "YOUCCIE",  5));
-        linhas.add(linhaPecaDemo("PI345.001.000001", "AVIAMENTO METRO",  "ANIMÊ",    2));
-        linhas.add(linhaPecaDemo("PI338.001.000001", "AVIAMENTO METRO",  "AUTHORIA", 3));
-        linhas.add(linhaPecaDemo("PI336.001.000001", "AVIAMENTO METRO",  "MOMI",     4));
-        linhas.add(linhaPecaDemo("AV220.001.000007", "AVIAMENTO UNIDADE","ANIMÊ",    5));
-        linhas.add(linhaPecaDemo("AV118.001.000002", "AVIAMENTO UNIDADE","BIMBI",    6));
-        linhas.add(linhaPecaDemo("AV305.001.000005", "AVIAMENTO UNIDADE","YOUCCIE",  2));
+        linhas.add(linhaPecaDemo(colecao, "T5444.001.000001", "TECIDO METRO",     "ANIMÊ",    7));
+        linhas.add(linhaPecaDemo(colecao, "T4985.001.BG0009", "TECIDO METRO",     "ANIMÊ",    4));
+        linhas.add(linhaPecaDemo(colecao, "T5554.001.BG0009", "TECIDO METRO",     "AUTHORIA", 6));
+        linhas.add(linhaPecaDemo(colecao, "T5102.001.000003", "TECIDO METRO",     "MOMI",     9));
+        linhas.add(linhaPecaDemo(colecao, "T5310.001.000002", "TECIDO METRO",     "BIMBI",    3));
+        linhas.add(linhaPecaDemo(colecao, "T5471.001.000004", "TECIDO METRO",     "YOUCCIE",  5));
+        linhas.add(linhaPecaDemo(colecao, "PI345.001.000001", "AVIAMENTO METRO",  "ANIMÊ",    2));
+        linhas.add(linhaPecaDemo(colecao, "PI338.001.000001", "AVIAMENTO METRO",  "AUTHORIA", 3));
+        linhas.add(linhaPecaDemo(colecao, "PI336.001.000001", "AVIAMENTO METRO",  "MOMI",     4));
+        linhas.add(linhaPecaDemo(colecao, "AV220.001.000007", "AVIAMENTO UNIDADE","ANIMÊ",    5));
+        linhas.add(linhaPecaDemo(colecao, "AV118.001.000002", "AVIAMENTO UNIDADE","BIMBI",    6));
+        linhas.add(linhaPecaDemo(colecao, "AV305.001.000005", "AVIAMENTO UNIDADE","YOUCCIE",  2));
         return linhas;
     }
 
-    private Map<String, Object> linhaPecaDemo(String codigo, String insumo, String marca, int pecas) {
+    private Map<String, Object> linhaPecaDemo(String colecao, String codigo, String insumo, String marca, int pecas) {
         Map<String, Object> m = new LinkedHashMap<>();
+        m.put("colecao", colecao);
         m.put("codigo", codigo);
         m.put("insumo", insumo);
         // "Tecido" ou "Aviamento": é a divisão que o gráfico usa nas séries.
@@ -233,8 +243,16 @@ public class GraficosController {
             maximos.add(numero(l.get("maxLeadtime")));
         }
 
+        // Coleções presentes no bloco: aqui o eixo mostra marcas, então sem isto
+        // o gráfico não diria de que coleção são os números.
+        String colecoesTexto = linhas.stream()
+                .map(l -> (String) l.get("colecao"))
+                .distinct()
+                .collect(java.util.stream.Collectors.joining(", "));
+
         Map<String, Object> b = new LinkedHashMap<>();
         b.put("titulo", titulo);
+        b.put("colecoesTexto", colecoesTexto);
         b.put("labels", labels);
         b.put("marcas", marcas);
         b.put("medias", medias);
@@ -313,6 +331,7 @@ public class GraficosController {
         }
         Map<String, Object> b = new LinkedHashMap<>();
         b.put("titulo", titulo);
+        b.put("colecoesTexto", String.join(", ", labels));
         b.put("labels", labels);
         b.put("series", listaSeries);
         b.put("totalGeral", totalGeral);
@@ -325,6 +344,8 @@ public class GraficosController {
                                       int totCotado, int totAprovado, int totCancelado) {
         Map<String, Object> b = new LinkedHashMap<>();
         b.put("titulo", titulo);
+        // Coleções do bloco, escritas no card: cada gráfico diz a que coleção se refere.
+        b.put("colecoesTexto", String.join(", ", labels));
         b.put("labels", labels);
         b.put("cotado", cotado);
         b.put("aprovado", aprovado);
