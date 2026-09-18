@@ -16,7 +16,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/pedidos")
@@ -68,6 +70,41 @@ public class PedidosController {
         model.addAttribute("dataInicio", dataInicio);
         model.addAttribute("dataFim", dataFim);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
+
+        // ── Total comprado da listagem ────────────────────────────────────────
+        // Soma sobre as fichas que estão na tela, então o total acompanha o filtro
+        // sozinho: sem filtro é o geral, com filtro é o do recorte.
+        // Somado por insumo, e não num número só, porque metro, quilo e unidade não
+        // se somam. Itens cancelados ficam de fora, mesma regra de /quadro-compras
+        // e dos gráficos, para os números não se contradizerem entre as telas.
+        Map<String, Double> totalCompradoPorInsumo = new LinkedHashMap<>();
+        java.util.Set<String> unidades = new java.util.LinkedHashSet<>();
+        double totalQuantidade = 0;
+        int itensSomados = 0, itensCancelados = 0;
+        for (FichaTecnica f : fichas) {
+            if (f.isCancelado()) {
+                itensCancelados++;
+                continue;
+            }
+            if (f.getQuantidadeComprada() == null || f.getTipo() == null) continue;
+            totalCompradoPorInsumo.merge(f.getTipo(), f.getQuantidadeComprada(), Double::sum);
+            totalQuantidade += f.getQuantidadeComprada();
+            if (f.getUnidadeMedida() != null && !f.getUnidadeMedida().isBlank()) {
+                unidades.add(f.getUnidadeMedida());
+            }
+            itensSomados++;
+        }
+        model.addAttribute("totalCompradoPorInsumo", totalCompradoPorInsumo);
+        // Soma da coluna Qtd. da listagem.
+        model.addAttribute("totalQuantidade", totalQuantidade);
+        // Com mais de uma unidade no recorte, o total geral soma metro com unidade
+        // e com quilo. O número é mostrado assim mesmo, mas avisando na tela.
+        model.addAttribute("unidadesMisturadas", unidades.size() > 1);
+        model.addAttribute("unidadesListadas", String.join(", ", unidades));
+        model.addAttribute("itensSomados", itensSomados);
+        model.addAttribute("itensCancelados", itensCancelados);
+        model.addAttribute("temFiltro", temFiltro);
+
         // URL desta tela com os filtros aplicados: enviada nos links Ver/Editar para que,
         // ao salvar a ficha, o sistema volte para cá em vez de cair em /fichas sem filtro.
         model.addAttribute("urlRetorno", montarUrlRetorno(colecao, tipo, statusPedido, codigo,
