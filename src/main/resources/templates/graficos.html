@@ -738,15 +738,21 @@ function estiloColuna(cor) {
                     if (!pecas) return;
                     var r = resumo[i];
                     var itens = di === 0 ? r.itensTecido : r.itensAviamento;
+                    // Nomeia o que está sendo contado em vez de dizer "itens":
+                    // "2 tecidos" e "2 aviamentos" em vez de "2 itens" nos dois.
+                    // Abreviado de propósito: "2 aviamentos" por extenso encostaria
+                    // no rótulo da coluna vizinha e obrigaria a afastar as colunas.
+                    var nome = di === 0 ? ' tec.' : ' aviam.';
 
-                    // Linha de cima: os itens. Linha de baixo, colada na barra: as peças.
+                    // Linha de cima: o que foi comprado. Linha de baixo, colada na
+                    // barra: o que aquilo produziu.
                     ctx.font = '500 10px system-ui, -apple-system, "Segoe UI", sans-serif';
                     ctx.fillStyle = INK_MUTED;
-                    ctx.fillText(itens + (itens === 1 ? ' item' : ' itens'), barra.x, barra.y - 17);
+                    ctx.fillText(itens + nome, barra.x, barra.y - 17);
 
                     ctx.font = '600 12px system-ui, -apple-system, "Segoe UI", sans-serif';
                     ctx.fillStyle = INK;
-                    ctx.fillText(pecas, barra.x, barra.y - 4);
+                    ctx.fillText(pecas + (pecas === 1 ? ' pç' : ' pçs'), barra.x, barra.y - 4);
                 });
             });
             ctx.restore();
