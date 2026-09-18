@@ -11,9 +11,12 @@
 
     <form method="get" action="/graficos" class="mb-4 d-flex align-items-end gap-2 no-print">
         <div>
-            <label class="form-label mb-1">Filtrar coleções</label>
-            <input type="text" name="colecaoFiltro" class="form-control" style="min-width:220px"
-                   th:value="${colecaoFiltro}" placeholder="Ex: verão, inverno...">
+            <label class="form-label mb-1">Coleção</label>
+            <select name="colecaoFiltro" class="form-select" style="min-width:220px">
+                <option value="">Todas</option>
+                <option th:each="c : ${colecoesCadastradas}" th:value="${c.nome}" th:text="${c.nome}"
+                        th:selected="${colecaoFiltro != null and colecaoFiltro == c.nome}"></option>
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Filtrar</button>
         <a href="/graficos" class="btn btn-outline-secondary">Limpar</a>

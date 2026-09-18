@@ -35,8 +35,13 @@ public class GraficosController {
 
     @GetMapping
     public String exibir(@RequestParam(required = false) String colecaoFiltro, Model model) {
-        String busca = colecaoFiltro != null ? colecaoFiltro.trim().toLowerCase() : "";
-        model.addAttribute("colecaoFiltro", colecaoFiltro != null ? colecaoFiltro : "");
+        // O filtro é uma lista das coleções cadastradas no Cadastro Prévio (tabela
+        // Colecao), e não texto livre: assim só se filtra por coleção que existe.
+        var colecoesCadastradas = colecaoRepo.findAll();
+        model.addAttribute("colecoesCadastradas", colecoesCadastradas);
+
+        String selecionada = colecaoFiltro != null ? colecaoFiltro.trim() : "";
+        model.addAttribute("colecaoFiltro", selecionada);
 
         // ── Gráfico 1: Cotado x Aprovado por Coleção ───────────────────────────
         // Mesma regra da aba Resumo de /quadro-planejamento: parte da lista mestre
@@ -51,10 +56,11 @@ public class GraficosController {
         List<Integer> cotAprCancelado = new ArrayList<>();
         int totalCotado = 0, totalAprovado = 0, totalCancelado = 0;
 
-        for (var colecao : colecaoRepo.findAll()) {
+        for (var colecao : colecoesCadastradas) {
             String col = colecao.getNome();
             if (col == null) continue;
-            if (!busca.isBlank() && !col.toLowerCase().contains(busca)) continue;
+            // Comparação exata: o valor vem da própria lista, não digitado à mão.
+            if (!selecionada.isBlank() && !selecionada.equals(col)) continue;
 
             int cotado = 0, aprovado = 0, cancelado = 0;
             for (QuadroPlanejamento q : quadroRepo.findByColecaoOrderByTipoSolicitacaoAsc(col)) {
