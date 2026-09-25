@@ -17,16 +17,43 @@
         text-align: center;
         padding: 3px 6px;
     }
+    /* Cartões de contagem do topo da aba de embarque. */
+    .card-kpi .valor {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+    .card-kpi .rotulo {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    /* Linha de detalhe do PO: fundo mais claro para separar do resumo. */
+    .detalhe-po {
+        background-color: #f8f9fa;
+    }
+    .detalhe-po td, .detalhe-po th {
+        font-size: 0.74rem;
+    }
 </style>
 
 <div class="main-content">
 <div class="container-fluid p-3">
     <h2>Pedidos</h2>
 
-    <!-- Filtros -->
+    <!-- Filtros gerais: valem para as duas abas. -->
     <div class="card mb-3 no-print">
         <div class="card-body">
-            <form th:action="@{/pedidos}" method="get">
+            <form th:action="@{/pedidos}" method="get" id="form-filtros">
+                <!-- Mantém a aba aberta depois de filtrar, em vez de voltar sempre na primeira. -->
+                <input type="hidden" name="aba" id="campo-aba" th:value="${abaAtiva}">
+                <!-- Os filtros de embarque seguem junto para não se perderem ao filtrar pela aba de itens. -->
+                <input type="hidden" name="navio" th:value="${navioFiltro}">
+                <input type="hidden" name="situacaoEmbarque" th:value="${situacaoEmbarqueFiltro}">
+                <input type="hidden" name="saidaInicio" th:value="${saidaInicio}">
+                <input type="hidden" name="saidaFim" th:value="${saidaFim}">
+                <input type="hidden" name="chegadaInicio" th:value="${chegadaInicio}">
+                <input type="hidden" name="chegadaFim" th:value="${chegadaFim}">
                 <div class="row g-2 align-items-end mb-2">
                     <div class="col-md-3">
                         <label class="form-label">Coleção</label>
@@ -54,8 +81,12 @@
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Nº Pedido</label>
+                        <!-- Aceita mais de um pedido no mesmo campo: vírgula, espaço ou
+                             ponto e vírgula separam, então dá para colar uma lista do Excel. -->
                         <input type="text" class="form-control form-control-sm" name="numeroPedido"
-                               th:value="${numeroPedidoFiltro}" placeholder="Ex: 1234">
+                               th:value="${numeroPedidoFiltro}" placeholder="Ex: 1234, 5678"
+                               title="Vários pedidos: separe por vírgula ou espaço">
+                        <div class="form-text small">Vários: separe por vírgula</div>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Status Pedido</label>
@@ -86,12 +117,38 @@
                         <button type="submit" class="btn btn-sm btn-primary w-100">Filtrar</button>
                     </div>
                     <div class="col-md-auto">
-                        <a th:href="@{/pedidos}" class="btn btn-sm btn-outline-secondary">Limpar</a>
+                        <!-- Limpa tudo, mas continua na aba em que a pessoa está. -->
+                        <a th:href="@{/pedidos(aba=${abaAtiva})}" class="btn btn-sm btn-outline-secondary">Limpar</a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- Abas: itens (listagem linha a linha) e embarque (um pedido por linha). -->
+    <ul class="nav nav-tabs mb-3 no-print" id="abas-pedidos" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" th:classappend="${abaAtiva == 'itens'} ? 'active'"
+                    id="aba-itens-btn" data-bs-toggle="tab" data-bs-target="#aba-itens"
+                    data-aba="itens" type="button" role="tab">
+                <i class="bi bi-list-ul me-1"></i>Itens
+                <span class="badge bg-secondary ms-1" th:text="${#lists.size(fichas)}">0</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" th:classappend="${abaAtiva == 'embarque'} ? 'active'"
+                    id="aba-embarque-btn" data-bs-toggle="tab" data-bs-target="#aba-embarque"
+                    data-aba="embarque" type="button" role="tab">
+                <i class="bi bi-truck me-1"></i>Embarque por PO
+                <span class="badge bg-secondary ms-1" th:text="${totalPos}">0</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+    <!-- ══════════════════ ABA 1 — ITENS ══════════════════ -->
+    <div class="tab-pane fade" th:classappend="${abaAtiva == 'itens'} ? 'show active'"
+         id="aba-itens" role="tabpanel">
 
     <!-- Quantidade por Coleção -->
     <div class="card mb-3 no-print" th:if="${!#maps.isEmpty(qtdPorColecao)}">
@@ -122,32 +179,17 @@
             </span>
         </div>
         <div class="card-body p-2">
-            <div th:if="${#maps.isEmpty(totalCompradoPorInsumo)}" class="text-muted small px-2 py-1">
+            <div class="d-flex flex-wrap gap-2" th:if="${!#maps.isEmpty(totalCompradoPorInsumo)}">
+                <span th:each="entry : ${totalCompradoPorInsumo}"
+                      class="badge rounded-pill bg-success fs-6 px-3 py-2">
+                    <span th:text="${entry.key}"></span>
+                    <span class="ms-2 badge bg-light text-dark"
+                          th:text="${#numbers.formatDecimal(entry.value, 1, 'POINT', 2, 'COMMA')}"></span>
+                </span>
+            </div>
+            <div th:if="${#maps.isEmpty(totalCompradoPorInsumo)}" class="text-muted small px-1">
                 Nenhuma quantidade comprada nos itens listados.
             </div>
-
-            <div th:if="${!#maps.isEmpty(totalCompradoPorInsumo)}"
-                 class="d-flex flex-wrap align-items-center gap-3 px-2">
-                <!-- Soma da coluna Qtd. da listagem -->
-                <div>
-                    <div class="text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:0.08em;">
-                        Total da coluna Qtd.
-                    </div>
-                    <div class="fw-bold text-success" style="font-size:1.8rem; line-height:1.1;"
-                         th:text="${#numbers.formatDecimal(totalQuantidade, 1, 'POINT', 2, 'COMMA')}">0</div>
-                </div>
-
-                <!-- Quebra por insumo: é o mesmo total, separado por unidade de medida -->
-                <div class="d-flex flex-wrap gap-2">
-                    <span th:each="entry : ${totalCompradoPorInsumo}"
-                          class="badge rounded-pill bg-success fs-6 px-3 py-2">
-                        <span th:text="${entry.key}"></span>
-                        <span class="ms-2 badge bg-light text-dark"
-                              th:text="${#numbers.formatDecimal(entry.value, 1, 'POINT', 2, 'COMMA')}"></span>
-                    </span>
-                </div>
-            </div>
-
             <div th:if="${unidadesMisturadas}" class="small text-muted px-2 pt-2">
                 <i class="bi bi-info-circle me-1"></i>
                 O total geral soma unidades diferentes (<span th:text="${unidadesListadas}">—</span>).
@@ -244,9 +286,266 @@
             </tfoot>
         </table>
     </div>
+    </div><!-- /aba itens -->
+
+    <!-- ══════════════════ ABA 2 — EMBARQUE POR PO ══════════════════ -->
+    <div class="tab-pane fade" th:classappend="${abaAtiva == 'embarque'} ? 'show active'"
+         id="aba-embarque" role="tabpanel">
+
+        <!-- Contagem de pedidos por etapa do embarque. Conta PO, não item. -->
+        <div class="row g-2 mb-3">
+            <div class="col-6 col-md">
+                <div class="card card-kpi text-center h-100">
+                    <div class="card-body py-2">
+                        <div class="valor" th:text="${totalPos}">0</div>
+                        <div class="rotulo text-muted">Pedidos (PO)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md">
+                <div class="card card-kpi text-center h-100 border-primary">
+                    <div class="card-body py-2">
+                        <div class="valor text-primary" th:text="${qtdPrevisto}">0</div>
+                        <div class="rotulo text-muted">Previstos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md">
+                <div class="card card-kpi text-center h-100 border-info">
+                    <div class="card-body py-2">
+                        <div class="valor text-info" th:text="${qtdEmTransito}">0</div>
+                        <div class="rotulo text-muted">Em trânsito</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md">
+                <div class="card card-kpi text-center h-100 border-success">
+                    <div class="card-body py-2">
+                        <div class="valor text-success" th:text="${qtdChegado}">0</div>
+                        <div class="rotulo text-muted">Chegaram</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md">
+                <div class="card card-kpi text-center h-100">
+                    <div class="card-body py-2">
+                        <div class="valor text-secondary" th:text="${qtdSemData}">0</div>
+                        <div class="rotulo text-muted">Sem data</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros próprios do embarque. Somam-se aos filtros gerais lá de cima e valem
+             só nesta aba: os campos gerais viajam junto em campos ocultos. -->
+        <div class="card mb-3 no-print">
+            <div class="card-header py-2">
+                <strong class="small">Filtros de embarque</strong>
+                <span class="small text-muted ms-2">aplicados sobre o recorte dos filtros gerais</span>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/pedidos}" method="get">
+                    <input type="hidden" name="aba" value="embarque">
+                    <input type="hidden" name="colecao" th:value="${colecaoFiltro}">
+                    <input type="hidden" name="tipo" th:value="${tipoSelecionado}">
+                    <input type="hidden" name="fornecedor" th:value="${fornecedorFiltro}">
+                    <input type="hidden" name="numeroPedido" th:value="${numeroPedidoFiltro}">
+                    <input type="hidden" name="statusPedido"
+                           th:value="${statusPedidoSelecionado != null ? statusPedidoSelecionado.name() : ''}">
+                    <input type="hidden" name="codigo" th:value="${codigoFiltro}">
+                    <input type="hidden" name="dataInicio" th:value="${dataInicio}">
+                    <input type="hidden" name="dataFim" th:value="${dataFim}">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Navio</label>
+                            <select class="form-select form-select-sm" name="navio">
+                                <option value="">Todos</option>
+                                <option th:each="n : ${naviosCadastrados}" th:value="${n}" th:text="${n}"
+                                        th:selected="${navioFiltro != null and navioFiltro == n}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Situação</label>
+                            <select class="form-select form-select-sm" name="situacaoEmbarque">
+                                <option value="">Todas</option>
+                                <option value="PREVISTO" th:selected="${situacaoEmbarqueFiltro == 'PREVISTO'}">Previsto</option>
+                                <option value="EM_TRANSITO" th:selected="${situacaoEmbarqueFiltro == 'EM_TRANSITO'}">Em trânsito</option>
+                                <option value="CHEGADO" th:selected="${situacaoEmbarqueFiltro == 'CHEGADO'}">Chegou</option>
+                                <option value="SEM_DATA" th:selected="${situacaoEmbarqueFiltro == 'SEM_DATA'}">Sem data</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Saída de</label>
+                            <input type="date" class="form-control form-control-sm" name="saidaInicio"
+                                   th:value="${saidaInicio}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Saída até</label>
+                            <input type="date" class="form-control form-control-sm" name="saidaFim"
+                                   th:value="${saidaFim}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Chegada de</label>
+                            <input type="date" class="form-control form-control-sm" name="chegadaInicio"
+                                   th:value="${chegadaInicio}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Chegada até</label>
+                            <input type="date" class="form-control form-control-sm" name="chegadaFim"
+                                   th:value="${chegadaFim}">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-sm btn-primary w-100">Filtrar embarque</button>
+                        </div>
+                        <div class="col-md-auto">
+                            <!-- Zera só os filtros de embarque: os gerais seguem aplicados. -->
+                            <a th:href="@{/pedidos(aba='embarque',colecao=${colecaoFiltro},tipo=${tipoSelecionado},fornecedor=${fornecedorFiltro},numeroPedido=${numeroPedidoFiltro},statusPedido=${statusPedidoSelecionado != null ? statusPedidoSelecionado.name() : null},codigo=${codigoFiltro},dataInicio=${dataInicio},dataFim=${dataFim})}"
+                               class="btn btn-sm btn-outline-secondary">Limpar embarque</a>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2" th:if="${temFiltroEmbarque}">
+                        <i class="bi bi-funnel me-1"></i>
+                        Filtro de data descarta o item que ainda não tem a data correspondente preenchida.
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-sm tabela-aprovacao align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="min-width:110px">Nº PO</th>
+                        <th>Fornecedor</th>
+                        <th>Coleção</th>
+                        <th style="min-width:150px">Navio</th>
+                        <th>Saída origem</th>
+                        <th>Chegada destino</th>
+                        <th>Trânsito</th>
+                        <th>Situação</th>
+                        <th>Itens</th>
+                        <th style="min-width:130px">Qtd. comprada</th>
+                        <th>Valor USD</th>
+                        <th class="no-print" style="width:90px">Detalhe</th>
+                    </tr>
+                </thead>
+                <tbody th:each="e, stat : ${embarques}">
+                    <tr>
+                        <td class="fw-bold" th:text="${e.numeroPedido}">—</td>
+                        <td th:text="${e.fornecedores != null ? e.fornecedores : '-'}">-</td>
+                        <td th:text="${e.colecoes != null ? e.colecoes : '-'}">-</td>
+                        <td>
+                            <span th:if="${e.navios != null}" th:text="${e.navios}">-</span>
+                            <span th:if="${e.navios == null}" class="text-muted">sem navio</span>
+                            <span th:if="${e.qtdNavios > 1}" class="badge bg-warning text-dark ms-1"
+                                  th:title="'Pedido embarcado em ' + ${e.qtdNavios} + ' navios'"
+                                  th:text="${e.qtdNavios} + ' navios'">2 navios</span>
+                        </td>
+                        <td th:text="${e.saida != null ? #temporals.format(e.saida, 'dd/MM/yyyy') : '-'}">-</td>
+                        <td th:text="${e.chegada != null ? #temporals.format(e.chegada, 'dd/MM/yyyy') : '-'}">-</td>
+                        <td>
+                            <span th:if="${e.diasTransito != null}" th:text="${e.diasTransito} + ' d'">-</span>
+                            <span th:if="${e.diasTransito == null}" class="text-muted">-</span>
+                        </td>
+                        <td>
+                            <span class="badge" th:classappend="'bg-' + ${e.situacaoCor}"
+                                  th:text="${e.situacaoLabel}">-</span>
+                            <!-- Quantos dias faltam (ou já passaram) para a chegada prevista. -->
+                            <div class="small text-muted" th:if="${e.diasParaChegar != null and e.situacao != 'CHEGADO'}"
+                                 th:text="'faltam ' + ${e.diasParaChegar} + ' dias'">faltam 0 dias</div>
+                        </td>
+                        <td>
+                            <span th:text="${e.itens}">0</span>
+                            <span th:if="${e.itensCancelados > 0}" class="badge bg-danger ms-1"
+                                  th:title="'Itens cancelados, fora da quantidade e do valor'"
+                                  th:text="${e.itensCancelados} + ' canc.'">0 canc.</span>
+                        </td>
+                        <td th:text="${e.qtdResumo != null ? e.qtdResumo : '-'}">-</td>
+                        <td th:text="${e.valorUsd != null ? '$ ' + #numbers.formatDecimal(e.valorUsd, 1, 'POINT', 2, 'COMMA') : '-'}">-</td>
+                        <td class="no-print">
+                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                    data-bs-toggle="collapse" th:data-bs-target="'#detalhe-' + ${stat.index}">
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Detalhe item a item: é aqui que se vê o navio de cada item quando o
+                         pedido foi embarcado em partes. O collapse fica dentro da célula
+                         porque o Bootstrap quebra o layout se aplicado direto no <tr>. -->
+                    <tr class="detalhe-po">
+                        <td colspan="12" class="p-0 border-0">
+                            <div class="collapse" th:id="'detalhe-' + ${stat.index}">
+                                <div class="p-2">
+                                    <table class="table table-sm mb-0 tabela-aprovacao">
+                                        <thead class="table-secondary">
+                                            <tr>
+                                                <th>Insumo</th>
+                                                <th>Cor</th>
+                                                <th>Ref. Forn.</th>
+                                                <th>Navio</th>
+                                                <th>Saída</th>
+                                                <th>Chegada</th>
+                                                <th>Qtd.</th>
+                                                <th>Unid.</th>
+                                                <th>Status</th>
+                                                <th class="no-print">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="i : ${e.itensLista}"
+                                                th:classappend="${i.cancelado} ? 'linha-cancelada'">
+                                                <td th:text="${i.tipo}"></td>
+                                                <td th:text="${i.cor}"></td>
+                                                <td th:text="${i.refFornecedor}"></td>
+                                                <td th:text="${i.nomeNavio != null ? i.nomeNavio : '-'}">-</td>
+                                                <td th:text="${i.dataSaidaOrigem != null ? #temporals.format(i.dataSaidaOrigem, 'dd/MM/yyyy') : '-'}">-</td>
+                                                <td th:text="${i.dataChegadaDestino != null ? #temporals.format(i.dataChegadaDestino, 'dd/MM/yyyy') : '-'}">-</td>
+                                                <td th:text="${i.quantidadeComprada != null ? #numbers.formatDecimal(i.quantidadeComprada, 1, 'POINT', 2, 'COMMA') : '-'}">-</td>
+                                                <td th:text="${i.unidadeMedida}"></td>
+                                                <td>
+                                                    <span th:if="${i.statusPedido != null}"
+                                                          th:text="${i.statusPedido.descricao}"
+                                                          th:class="${i.statusPedido.name() == 'EM_ANDAMENTO'} ? 'badge bg-warning text-dark' :
+                                                                    (${i.statusPedido.name() == 'EMBARCADO'} ? 'badge bg-info text-dark' :
+                                                                    (${i.statusPedido.name() == 'RECEBIDO'} ? 'badge bg-success' : 'badge bg-danger'))">
+                                                    </span>
+                                                    <span th:if="${i.statusPedido == null}" class="text-muted">-</span>
+                                                </td>
+                                                <td class="no-print">
+                                                    <a th:href="@{/fichas/visualizar/{id}(id=${i.id},retorno=${urlRetorno})}"
+                                                       class="btn btn-sm btn-info">Ver</a>
+                                                    <a th:href="@{/fichas/editar/{id}(id=${i.id},retorno=${urlRetorno})}"
+                                                       class="btn btn-sm btn-warning">Editar</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody th:if="${#lists.isEmpty(embarques)}">
+                    <tr>
+                        <td colspan="12" class="text-center text-muted">Nenhum embarque encontrado com estes filtros.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- /aba embarque -->
+    </div><!-- /tab-content -->
 </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Ao trocar de aba, o formulário de filtros gerais passa a apontar para a aba aberta,
+    // para que "Filtrar" devolva a tela na mesma aba em vez de voltar para a de itens.
+    document.querySelectorAll('#abas-pedidos button[data-aba]').forEach(function (botao) {
+        botao.addEventListener('shown.bs.tab', function () {
+            document.getElementById('campo-aba').value = botao.dataset.aba;
+        });
+    });
+</script>
 </body>
 </html>
