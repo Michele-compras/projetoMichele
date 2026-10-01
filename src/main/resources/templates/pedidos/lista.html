@@ -35,6 +35,13 @@
     .detalhe-po td, .detalhe-po th {
         font-size: 0.74rem;
     }
+    /* Posiciona/realça a ficha recém-editada ao voltar para a lista */
+    tr[id^="ficha-"], tr[data-ficha-id] { scroll-margin-top: 90px; }
+    tr.ficha-destacada > td { animation: flashFicha 2.6s ease-out; }
+    @keyframes flashFicha {
+        0%, 30% { background-color: #fff3cd; }
+        100%    { background-color: transparent; }
+    }
 </style>
 
 <div class="main-content">
@@ -102,16 +109,6 @@
                         <label class="form-label">Código / Ref. Forn.</label>
                         <input type="text" class="form-control form-control-sm" name="codigo"
                                th:value="${codigoFiltro}" placeholder="Buscar por código...">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Data Início</label>
-                        <input type="date" class="form-control form-control-sm" name="dataInicio"
-                               th:value="${dataInicio}">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Data Fim</label>
-                        <input type="date" class="form-control form-control-sm" name="dataFim"
-                               th:value="${dataFim}">
                     </div>
                     <div class="col-md-1">
                         <button type="submit" class="btn btn-sm btn-primary w-100">Filtrar</button>
@@ -353,8 +350,6 @@
                     <input type="hidden" name="statusPedido"
                            th:value="${statusPedidoSelecionado != null ? statusPedidoSelecionado.name() : ''}">
                     <input type="hidden" name="codigo" th:value="${codigoFiltro}">
-                    <input type="hidden" name="dataInicio" th:value="${dataInicio}">
-                    <input type="hidden" name="dataFim" th:value="${dataFim}">
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
                             <label class="form-label">Navio</label>
@@ -399,7 +394,7 @@
                         </div>
                         <div class="col-md-auto">
                             <!-- Zera só os filtros de embarque: os gerais seguem aplicados. -->
-                            <a th:href="@{/pedidos(aba='embarque',colecao=${colecaoFiltro},tipo=${tipoSelecionado},fornecedor=${fornecedorFiltro},numeroPedido=${numeroPedidoFiltro},statusPedido=${statusPedidoSelecionado != null ? statusPedidoSelecionado.name() : null},codigo=${codigoFiltro},dataInicio=${dataInicio},dataFim=${dataFim})}"
+                            <a th:href="@{/pedidos(aba='embarque',colecao=${colecaoFiltro},tipo=${tipoSelecionado},fornecedor=${fornecedorFiltro},numeroPedido=${numeroPedidoFiltro},statusPedido=${statusPedidoSelecionado != null ? statusPedidoSelecionado.name() : null},codigo=${codigoFiltro})}"
                                class="btn btn-sm btn-outline-secondary">Limpar embarque</a>
                         </div>
                     </div>
@@ -493,6 +488,7 @@
                                         </thead>
                                         <tbody>
                                             <tr th:each="i : ${e.itensLista}"
+                                                th:data-ficha-id="${i.id}"
                                                 th:classappend="${i.cancelado} ? 'linha-cancelada'">
                                                 <td th:text="${i.tipo}"></td>
                                                 <td th:text="${i.cor}"></td>
@@ -545,6 +541,31 @@
         botao.addEventListener('shown.bs.tab', function () {
             document.getElementById('campo-aba').value = botao.dataset.aba;
         });
+    });
+
+    // Ao voltar da edição (#ficha-<id>), rola até a ficha alterada na aba aberta e a destaca.
+    // Na aba de embarque o item fica dentro do detalhe recolhido do PO, que é aberto antes.
+    document.addEventListener('DOMContentLoaded', function () {
+        var hash = window.location.hash;
+        if (!hash || hash.indexOf('#ficha-') !== 0) return;
+        var id = hash.substring('#ficha-'.length);
+        var destacar = function (linha) {
+            linha.scrollIntoView({ block: 'center' });
+            linha.classList.add('ficha-destacada');
+        };
+        var itemEmbarque = document.querySelector('.tab-pane.active [data-ficha-id="' + id + '"]');
+        if (itemEmbarque) {
+            var detalhe = itemEmbarque.closest('.collapse');
+            if (detalhe && !detalhe.classList.contains('show')) {
+                detalhe.addEventListener('shown.bs.collapse', function () { destacar(itemEmbarque); }, { once: true });
+                bootstrap.Collapse.getOrCreateInstance(detalhe).show();
+            } else {
+                destacar(itemEmbarque);
+            }
+            return;
+        }
+        var linha = document.getElementById('ficha-' + id);
+        if (linha) destacar(linha);
     });
 </script>
 </body>

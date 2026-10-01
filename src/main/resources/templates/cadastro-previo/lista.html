@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header('Cadastro Prévio')}"></head>
+<head th:replace="~{fragments/layout :: header('Pré cadastro')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: sidebar}"></nav>
 
 <div class="main-content">
 <div class="container-fluid p-4">
-    <h2 class="mb-4">Cadastro Prévio</h2>
+    <h2 class="mb-4">Pré cadastro</h2>
 
     <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
         <span th:text="${sucesso}"></span>

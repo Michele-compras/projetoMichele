@@ -1,7 +1,7 @@
 # Project: projeto
 
 Spring Boot 4.0.3 application using Java 25 and Maven.
-Sistema de Ficha Técnica para itens importados (tecidos e acessórios).
+Acompanhamento Coleção: sistema de fichas técnicas para itens importados (tecidos e acessórios).
 
 ## Commands
 

@@ -46,8 +46,6 @@ public class PedidosController {
             @RequestParam(required = false) String codigo,
             @RequestParam(required = false) String numeroPedido,
             @RequestParam(required = false) String fornecedor,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataInicio,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataFim,
             // ── Filtros da aba "Embarque por PO" ──────────────────────────────
             @RequestParam(required = false) String navio,
             @RequestParam(required = false) String situacaoEmbarque,
@@ -62,10 +60,10 @@ public class PedidosController {
 
         List<FichaTecnica> fichas;
         boolean temFiltro = colecao != null || tipo != null || codigo != null || numeroPedido != null || fornecedor != null
-                || statusPedido != null || dataInicio != null || dataFim != null;
+                || statusPedido != null;
 
         if (temFiltro) {
-            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, dataInicio, dataFim, null, null, codigo, numeroPedido, fornecedor);
+            fichas = service.buscarComFiltros(colecao, tipo, statusPedido, null, null, null, null, codigo, numeroPedido, fornecedor);
         } else {
             fichas = service.listarTodas();
         }
@@ -80,8 +78,6 @@ public class PedidosController {
         model.addAttribute("codigoFiltro", codigo);
         model.addAttribute("numeroPedidoFiltro", numeroPedido);
         model.addAttribute("fornecedorFiltro", fornecedor);
-        model.addAttribute("dataInicio", dataInicio);
-        model.addAttribute("dataFim", dataFim);
         model.addAttribute("qtdPorColecao", service.qtdPorColecao());
 
         // ── Total comprado da listagem ────────────────────────────────────────
@@ -162,7 +158,7 @@ public class PedidosController {
         // URL desta tela com os filtros aplicados: enviada nos links Ver/Editar para que,
         // ao salvar a ficha, o sistema volte para cá em vez de cair em /fichas sem filtro.
         model.addAttribute("urlRetorno", montarUrlRetorno(colecao, tipo, statusPedido, codigo,
-                numeroPedido, fornecedor, dataInicio, dataFim, navio, situacaoEmbarque,
+                numeroPedido, fornecedor, navio, situacaoEmbarque,
                 saidaInicio, saidaFim, chegadaInicio, chegadaFim, aba));
         return "pedidos/lista";
     }
@@ -210,7 +206,6 @@ public class PedidosController {
     /** Monta "/pedidos?..." com os filtros preenchidos, ignorando os vazios. */
     private String montarUrlRetorno(String colecao, String tipo, StatusPedido statusPedido, String codigo,
                                     String numeroPedido, String fornecedor,
-                                    LocalDate dataInicio, LocalDate dataFim,
                                     String navio, String situacaoEmbarque,
                                     LocalDate saidaInicio, LocalDate saidaFim,
                                     LocalDate chegadaInicio, LocalDate chegadaFim, String aba) {
@@ -221,8 +216,6 @@ public class PedidosController {
         adicionarFiltro(partes, "codigo", codigo);
         adicionarFiltro(partes, "numeroPedido", numeroPedido);
         adicionarFiltro(partes, "fornecedor", fornecedor);
-        adicionarFiltro(partes, "dataInicio", dataInicio != null ? dataInicio.toString() : null);
-        adicionarFiltro(partes, "dataFim", dataFim != null ? dataFim.toString() : null);
         adicionarFiltro(partes, "navio", navio);
         adicionarFiltro(partes, "situacaoEmbarque", situacaoEmbarque);
         adicionarFiltro(partes, "saidaInicio", saidaInicio != null ? saidaInicio.toString() : null);

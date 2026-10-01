@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header('Cadastro Prévio')}"></head>
+<head th:replace="~{fragments/layout :: header('Pré cadastro')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: sidebar}"></nav>
 
 <div class="main-content">
 <div class="container-fluid p-4">
-    <h2 th:text="${cadastro.id != null ? 'Editar Cadastro Prévio' : 'Novo Cadastro Prévio'}"></h2>
+    <h2 th:text="${cadastro.id != null ? 'Editar Pré cadastro' : 'Novo Pré cadastro'}"></h2>
 
     <form th:action="@{/cadastro-previo/salvar}" th:object="${cadastro}" method="post">
         <input type="hidden" th:field="*{id}">
