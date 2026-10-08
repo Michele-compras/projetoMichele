@@ -165,6 +165,29 @@ public class FichaTecnicaService {
         return resultado;
     }
 
+    /**
+     * Como {@link #qtdPorColecaoETipoPlano()}, mas só com itens não cancelados, para o resumo
+     * da listagem de fichas separar os cancelados numa coluna própria.
+     */
+    public java.util.Map<String, Long> qtdAtivosPorColecaoETipoPlano() {
+        java.util.Map<String, Long> resultado = new java.util.LinkedHashMap<>();
+        for (FichaTecnica f : repository.findAll()) {
+            if (f.isCancelado() || f.getColecao() == null || f.getColecao().isEmpty()) continue;
+            resultado.merge(f.getColecao() + "|" + f.getTipo(), 1L, Long::sum);
+        }
+        return resultado;
+    }
+
+    /** Itens cancelados por coleção, pela mesma regra de {@link FichaTecnica#isCancelado()}. */
+    public java.util.Map<String, Long> qtdCanceladosPorColecao() {
+        java.util.Map<String, Long> resultado = new java.util.LinkedHashMap<>();
+        for (FichaTecnica f : repository.findAll()) {
+            if (!f.isCancelado() || f.getColecao() == null || f.getColecao().isEmpty()) continue;
+            resultado.merge(f.getColecao(), 1L, Long::sum);
+        }
+        return resultado;
+    }
+
     /** Insumos distintos realmente usados pelas fichas (usado como colunas da listagem). */
     public java.util.List<String> tiposUsados() {
         java.util.List<String> tipos = new ArrayList<>();

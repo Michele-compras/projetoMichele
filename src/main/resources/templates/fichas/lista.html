@@ -114,15 +114,20 @@
                         <th th:each="ins,st : ${tiposColunas}" class="text-center" style="width:140px"
                             th:classappend="${st.index % 3 == 0} ? 'text-primary' : (${st.index % 3 == 1} ? 'text-info' : 'text-success')"
                             th:text="${ins}"></th>
+                        <th class="text-center text-danger" style="width:100px">Cancelado</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="entry : ${qtdPorColecao}">
+                    <!-- Total e colunas por insumo contam só itens ativos; os cancelados ficam
+                         na última coluna, então Total + Cancelado = todos os itens da coleção. -->
+                    <tr th:each="entry : ${qtdPorColecao}"
+                        th:with="canc=${canceladosPorColecao[entry.key] != null ? canceladosPorColecao[entry.key] : 0}">
                         <td th:text="${entry.key}"></td>
-                        <td class="text-center fw-bold" th:text="${entry.value}"></td>
+                        <td class="text-center fw-bold" th:text="${entry.value - canc}"></td>
                         <td th:each="ins,st : ${tiposColunas}" class="text-center fw-bold"
                             th:classappend="${st.index % 3 == 0} ? 'text-primary' : (${st.index % 3 == 1} ? 'text-info' : 'text-success')"
                             th:text="${qtdPorColecaoETipo[entry.key + '|' + ins] != null ? qtdPorColecaoETipo[entry.key + '|' + ins] : 0}"></td>
+                        <td class="text-center fw-bold text-danger" th:text="${canc}"></td>
                     </tr>
                 </tbody>
             </table>
