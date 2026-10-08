@@ -351,13 +351,13 @@ public class FichaTecnicaService {
         return resultado;
     }
 
+    /** Conta os dias úteis entre as duas datas, sem sábados, domingos e feriados (ver {@link Feriados}). */
     private long calcularDiasUteis(LocalDate inicio, LocalDate fim) {
         if (fim.isBefore(inicio)) return 0;
         long dias = 0;
         LocalDate data = inicio;
         while (!data.isAfter(fim)) {
-            java.time.DayOfWeek dow = data.getDayOfWeek();
-            if (dow != java.time.DayOfWeek.SATURDAY && dow != java.time.DayOfWeek.SUNDAY) {
+            if (Feriados.isDiaUtil(data)) {
                 dias++;
             }
             data = data.plusDays(1);
