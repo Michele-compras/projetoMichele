@@ -86,7 +86,13 @@ public class FichaTecnica {
 
     private String contratoCambioAdiant;
 
+    /** Taxa de câmbio do adiantamento de 30%. */
+    private Double cambioAdiant;
+
     private String contratoCambioPgtoFinal;
+
+    /** Taxa de câmbio do pagamento final. */
+    private Double cambioPgtoFinal;
 
     @Enumerated(EnumType.STRING)
     private StatusAmostra statusAmostraCor;
@@ -283,6 +289,22 @@ public class FichaTecnica {
 
     public void setContratoCambioPgtoFinal(String contratoCambioPgtoFinal) {
         this.contratoCambioPgtoFinal = contratoCambioPgtoFinal;
+    }
+
+    public Double getCambioAdiant() {
+        return cambioAdiant;
+    }
+
+    public void setCambioAdiant(Double cambioAdiant) {
+        this.cambioAdiant = cambioAdiant;
+    }
+
+    public Double getCambioPgtoFinal() {
+        return cambioPgtoFinal;
+    }
+
+    public void setCambioPgtoFinal(Double cambioPgtoFinal) {
+        this.cambioPgtoFinal = cambioPgtoFinal;
     }
 
     public StatusAmostra getStatusAmostraCor() {

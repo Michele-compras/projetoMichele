@@ -219,16 +219,24 @@
                         <label for="duimpDi" class="form-label">DUIMP/DI - Protocolo</label>
                         <input type="text" id="duimpDi" class="form-control" th:field="*{duimpDi}">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <label class="form-label fw-semibold">Contrato de Câmbio</label>
                         <div class="row g-1">
-                            <div class="col-6">
+                            <div class="col-3">
                                 <label for="contratoCambioAdiant" class="form-label form-label-sm text-muted mb-0">Adiant. 30%</label>
                                 <input type="text" id="contratoCambioAdiant" class="form-control form-control-sm" th:field="*{contratoCambioAdiant}">
                             </div>
-                            <div class="col-6">
+                            <div class="col-3">
+                                <label for="cambioAdiant" class="form-label form-label-sm text-muted mb-0">TX Câmbio 30%</label>
+                                <input type="number" step="0.0001" id="cambioAdiant" class="form-control form-control-sm" th:field="*{cambioAdiant}">
+                            </div>
+                            <div class="col-3">
                                 <label for="contratoCambioPgtoFinal" class="form-label form-label-sm text-muted mb-0">Pgto Final</label>
                                 <input type="text" id="contratoCambioPgtoFinal" class="form-control form-control-sm" th:field="*{contratoCambioPgtoFinal}">
+                            </div>
+                            <div class="col-3">
+                                <label for="cambioPgtoFinal" class="form-label form-label-sm text-muted mb-0">TX Câmbio Final</label>
+                                <input type="number" step="0.0001" id="cambioPgtoFinal" class="form-control form-control-sm" th:field="*{cambioPgtoFinal}">
                             </div>
                         </div>
                     </div>

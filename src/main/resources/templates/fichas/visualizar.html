@@ -169,8 +169,16 @@
                     <td th:text="${ficha.contratoCambioAdiant ?: '-'}"></td>
                 </tr>
                 <tr>
+                    <th>TX Câmbio 30%:</th>
+                    <td th:text="${ficha.cambioAdiant != null ? #numbers.formatDecimal(ficha.cambioAdiant, 1, 'POINT', 4, 'COMMA') : '-'}"></td>
+                </tr>
+                <tr>
                     <th>Contrato de Câmbio Pgto Final:</th>
                     <td th:text="${ficha.contratoCambioPgtoFinal ?: '-'}"></td>
+                </tr>
+                <tr>
+                    <th>TX Câmbio Final:</th>
+                    <td th:text="${ficha.cambioPgtoFinal != null ? #numbers.formatDecimal(ficha.cambioPgtoFinal, 1, 'POINT', 4, 'COMMA') : '-'}"></td>
                 </tr>
             </table>
         </div>
